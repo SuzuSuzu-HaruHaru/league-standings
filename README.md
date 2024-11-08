@@ -37,7 +37,7 @@ const matches = [
 ];
 table.addMatches(matches);
 ```
-where `matches` is an array of arrays where each subarray represents one match, of entries respectively: a unique identifier for each match; the matchday; the unique identifier of the home team; the unique identifier of the away team; the number of points scored by the home team; the number of points scored by the away team.
+where `matches` is an array of arrays where each subarray represents one match, of entries respectively: a unique identifier for each match; the matchday; the unique identifier of the home team; the unique identifier of the away team; the **number of points scored by the home team;** the **number of points scored by the away team.**
 
 Finally, the standings can be retrieved via
 
