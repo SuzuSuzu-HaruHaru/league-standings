@@ -29,7 +29,7 @@ const table = new LeagueTable({
     teams: teams
 });
 ```
-where `team` is an array of unique identifiers of any type (ideally strings containing the names of the teams). Matches can be added via the `addMatches()` method
+where `team` is an array of unique identifiers of any type (ideally strings containing the names of the teams, as per the example above). Matches can be added via the `addMatches()` method
 
 ```javascript
 const matches = [
@@ -42,7 +42,7 @@ const matches = [
 ];
 table.addMatches(matches);
 ```
-where `matches` is an array of arrays where each subarray represents one match, of entries respectively: a unique identifier for each match; the matchday; the unique identifier of the home team; the unique identifier of the away team; the **number of points scored by the home team;** and finally the **number of points scored by the away team.**
+where `matches` is an array of arrays, each representing one match. As per the example above, any match array must have entries that are respectively: a unique identifier for each match; the matchday; the unique identifier of the home team; the unique identifier of the away team; the number of points scored by the home team; and finally the number of points scored by the away team.
 
 Finally, the standings can be retrieved via
 
