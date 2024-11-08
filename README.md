@@ -15,7 +15,7 @@ A Javascript package that computes league tables from an array of matches. Types
 
 The main purpose of this package is to accept a list of matches for a given set of teams and compute their standings based on the number of *points* they have earned. While it was heavily inspired by football (soccer), it can be applied to any sport—real or fictional. Due to this versatility, I will use a few naming conventions here: I will refer to any competing party as a **team**, any encounter between two teams as a **match**, any act of scoring during a match as a **goal**, and the primary variable used to sort teams for the final standings as **points**.
 
-Although these terms are taken from soccer for simplicity, the principles apply to other sports as well, with only minor changes to the terminology.
+Although these terms are taken from soccer for simplicity, the principles apply to other sports as well, with only minor changes to the terminology (e.g. a team may very well constitute of just one person in case of single-player sports).
 
 ## Installation
 
