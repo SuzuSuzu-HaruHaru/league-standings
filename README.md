@@ -54,3 +54,7 @@ Finally, the standings can be retrieved via
 table.standings();
 ```
 The result will be an array of objects containing all the properties of the various teams.
+
+## Tiebreakers and sorting options
+
+...
