@@ -7,15 +7,17 @@ A Javascript package that computes league tables from an array of matches. Types
 1. [Introduction](#introduction)
 2. [Installation](#installation)
 3. [Quick start](#quick-start)
-4. [Sorting options](#features)
+4. [Sorting options](#sorting-options)
 5. [Contributing](#contributing)
 6. [License](#license)
 
 ## Introduction
 
-The main purpose of this package is to accept a list of matches for a given set of teams and compute their standings based on the number of *points* they have earned. While it was heavily inspired by football (soccer), it can be applied to any sport—real or fictional. Due to this versatility, I will use a few naming conventions here: I will refer to any competing party as a **team**, any encounter between two teams as a **match**, any act of scoring during a match as a **goal**, and the primary variable used to sort teams for the final standings as **points**.
+The main purpose of this package is to accept a list of matches for a given set of teams and compute their standings based on the number of *points* they have earned. While it was heavily inspired by football (soccer), it can be applied to any sport—real or fictional. Due to this versatility, I will use a few naming conventions: I will refer to any competing party as a **team**, any encounter between two teams as a **match**, any act of scoring during a match as a **goal**, and the primary variable used to sort teams in the standings as **points**.
 
-Although these terms are taken from soccer for simplicity, the principles apply to other sports as well, with only minor changes to the terminology (e.g. a team may very well constitute of just one person in case of single-player sports).
+Although these terms are borrowed from soccer for simplicity, the underlying principles apply to other sports as well, with only minor changes to the terminology (e.g., a team may consist of just one person in single-player sports).
+
+Standings are easy to compute when all teams have earned a different number of points, as these are by definition the primary criterion for determining the final position in the table. Tiebreakers, however, come into play when teams finish with an equal number of points. These tiebreakers add flexibility and complexity to the package, so feel free to check the [Sorting options](#sorting-options) section below to explore the customization options available for selecting tiebreakers, determining their application order, and handling other nuances associated with them.
 
 ## Installation
 
