@@ -1,0 +1,21 @@
+{
+    "name": "rankings",
+    "version": "1.0.0",
+    "main": "dist/index.js",
+    "scripts": {
+        "test": "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js",
+        "build": "babel src --out-dir dist"
+    },
+    "type": "module",
+    "keywords": [],
+    "author": "SuzuSuzu-HaruHaru",
+    "license": "MIT",
+    "description": "A Javascript package that computes league tables from an array of matches. Types and order of tiebreakers are fully customizable, and it is possible to access the full description of which tiebreakers were used at what point in both textual and raw data form.",
+    "devDependencies": {
+        "@babel/cli": "^7.25.9",
+        "@babel/core": "^7.26.0",
+        "@babel/preset-env": "^7.26.0",
+        "babel-jest": "^29.7.0",
+        "jest": "^29.7.0"
+    }
+}
