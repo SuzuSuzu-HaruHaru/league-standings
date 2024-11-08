@@ -7,7 +7,7 @@ A Javascript package that computes league tables from an array of matches. Types
 1. [Introduction](#introduction)
 2. [Installation](#installation)
 3. [Quick start](#quick-start)
-4. [Sorting options](#sorting-options)
+4. [Tiebreakers and sorting options](#tiebreakers-and-sorting-options)
 5. [Contributing](#contributing)
 6. [License](#license)
 
@@ -17,7 +17,7 @@ The main purpose of this package is to accept a list of matches for a given set 
 
 Although these terms are borrowed from soccer for simplicity, the underlying principles apply to other sports as well, with only minor changes to the terminology (e.g., a team may consist of just one person in single-player sports).
 
-Standings are easy to compute when all teams have earned a different number of points, as these are by definition the primary criterion for determining the final position in the table. Tiebreakers, however, come into play when teams finish with an equal number of points: these are what truly gives life to the package, so feel free to check the [Sorting options](#sorting-options) section below to explore the customization options available for selecting tiebreakers, determining their application order, and handling other nuances associated with them.
+Standings are easy to compute when all teams have earned a different number of points, as these are by definition the primary criterion for determining the final position in the table. Tiebreakers, however, come into play when teams finish with an equal number of points: these are what truly gives life to the package, so feel free to check the [Tiebreakers and sorting options](#tiebreakers-and-sorting-options) section below to explore the customization options available for selecting tiebreakers, determining their application order, and handling other nuances associated with them.
 
 ## Installation
 
