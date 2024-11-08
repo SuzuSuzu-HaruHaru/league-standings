@@ -4,11 +4,16 @@ A Javascript package that computes league tables from an array of matches. Types
 
 ## Table of Contents
 
-1. [Installation](#installation)
-2. [Quick start](#quickstart)
-3. [Features](#features)
-4. [Contributing](#contributing)
-5. [License](#license)
+1. [Introduction](#introduction)
+2. [Installation](#installation)
+3. [Quick start](#quickstart)
+4. [Sorting options](#features)
+5. [Contributing](#contributing)
+6. [License](#license)
+
+## Introduction
+
+...
 
 ## Installation
 
