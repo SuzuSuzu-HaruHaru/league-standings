@@ -6,7 +6,7 @@ A Javascript package that computes league tables from an array of matches. Types
 
 1. [Introduction](#introduction)
 2. [Installation](#installation)
-3. [Quick start](#quickstart)
+3. [Quick start](#quick-start)
 4. [Sorting options](#features)
 5. [Contributing](#contributing)
 6. [License](#license)
