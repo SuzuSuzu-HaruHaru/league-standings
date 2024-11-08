@@ -16,4 +16,21 @@ A Javascript package that computes league tables from an array of matches. Types
 
 ## Usage
 
-To use the package, simply instantiate a 
+To use the package, simply instantiate a new `LeagueTable` object via
+
+```javascript
+const table = new LeagueTable({
+    teams: teams,
+    format: "round-robin",
+    points: "standard",
+    sorting: {
+        criteria: ["diff", "for", "won"],
+        h2h: {
+            when: "before",
+            span: "all"
+        },
+        final: "lots"
+    }
+});
+```
+where `team` is an array of unique identifiers of any type (ideally strings containing the names of the teams).
