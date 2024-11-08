@@ -19,7 +19,7 @@ A Javascript package that computes league tables from an array of matches. Types
 To use the package, simply instantiate a new `LeagueTable` object via
 
 ```javascript
-const teams10 = ["San Marino", "Italy", "Spain", "France"];
+const teams = ["San Marino", "Italy", "Spain", "France"];
 const table = new LeagueTable({
     teams: teams
 });
@@ -37,10 +37,11 @@ const matches = [
 ];
 table.addMatches(matches);
 ```
-where `matches` is an array of arrays where each subarray represents one match, of entries:
-- a unique identifier for each match;
-- the matchday;
-- the unique identifier of the home team;
-- the unique identifier of the away team;
-- the number of points scored by the home team;
-- the number of points scored by the away team.
+where `matches` is an array of arrays where each subarray represents one match, of entries respectively: a unique identifier for each match; the matchday; the unique identifier of the home team; the unique identifier of the away team; the number of points scored by the home team; the number of points scored by the away team.
+
+Finally, the standings can be retrieved via
+
+```javascript
+table.standings();
+```
+The result will be an array of objects containing all the properties of the various teams.
