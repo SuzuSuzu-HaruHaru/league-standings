@@ -92,4 +92,13 @@ Again, the full list of `criteria` and `final` keywords (as well as their meanin
 
 The `h2h` key, meaning *head-to-head*, deserves its own subsection to be explained properly. As you may know, it is often the case that when a list of criteria does not return a useful result for two or more teams, then one way of breaking the tie is to reapply all the criteria from the start, but restricting ourselves only to the matches played between those teams. The `h2h` key gives you full control over this process via two parameters.
 
-The first is `when`, which simply lets you choose whether you want the head-to-head comparisons to be done immediately (here signified by the `before` keyword, as per the example above), or only after the comparison using the overall results of the whole table has not been able to sort all the teams (here signified by the `after` keyword). Those of you who like soccer may already be familiar with this concept: **FIFA** uses overall criteria first in all of their competition, only resorting to head-to-head if this does not work fully (`when: after`), whereas **UEFA** famously uses head-to-head comparisons as their first row of criteria, with overall results being used only to solve any still-existing ties (`when: before`).
+The first is `when`, which simply lets you choose whether you want the head-to-head comparisons to be done immediately (here signified by the `before` keyword, as per the example above), or only after the comparison using the overall results of the whole table has not been able to sort all the teams (here signified by the `after` keyword). Those of you who like soccer may already be familiar with this concept: FIFA uses overall criteria first in all of their competition, only resorting to head-to-head if this does not work fully, whereas UEFA famously uses head-to-head comparisons as their first row of criteria, with overall results being used only to solve any still-existing ties.
+
+One such example comes from [Group E at the UEFA EURO 2016](https://en.wikipedia.org/wiki/UEFA_Euro_2016), where the final table ended up looking like this
+
+| Position | Team       | Played | Won | Drawn | Lost | GF | GA | GD  | Points |
+|----------|------------|--------|-----|-------|------|----|----|-----|--------|
+| 1        | Italy      | 3      | 2   | 0     | 1    | 3  | 1  | +2  | 6      |
+| 2        | Belgium    | 3      | 2   | 0     | 1    | 4  | 2  | +2  | 6      |
+| 3        | Republic of Ireland | 3 | 1 | 1   | 1    | 2  | 4  | -2  | 4      |
+| 4        | Sweden     | 3      | 0   | 1     | 2    | 1  | 3  | -2  | 1      |
