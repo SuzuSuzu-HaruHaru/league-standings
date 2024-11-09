@@ -98,9 +98,20 @@ One such example comes from [Group E at the UEFA EURO 2016](https://en.wikipedia
 
 | Position | Team       | Won | Drawn | Lost | GF | GA | GD  | Points |
 |----------|------------|:---:|:-----:|:----:|:--:|:--:|:---:|:------:|
-| 1        | Italy      | 2   | 0     | 1    | 3  | 1  | +2  | **6**      |
-| 2        | Belgium    | 2   | 0     | 1    | 4  | 2  | +2  | **6**      |
-| 3        | Republic of Ireland | 1 | 1     | 1  | 2  | 4  | -2  | **4** |
-| 4        | Sweden     | 0   | 1     | 2    | 1  | 3  | -2  | **1**      |
+| 1        | Italy      | 2   | 0     | 1    | 3  | 1  | +2  | **6**  |
+| 2        | Belgium    | 2   | 0     | 1    | 4  | 2  | +2  | **6**  |
+| 3        | Republic of Ireland | 1 | 1 | 1 | 2  | 4  | -2  | **4**  |
+| 4        | Sweden     | 0   | 1     | 2    | 1  | 3  | -2  | **1**  |
 
-Normally one would expect to see Belgium come on top, as the list of criteria used at the European Championship runs through goal difference (Italy 2, Begium 2), then goals scored (Italy 3, Belgium 4) in case of a tie on points: however, since UEFA uses the head-to-head score first, the criteria are reapplied from the beginning (points) only to the matches between the teams concerned---which in this case was just one match, that Italy had won 2-0 in the very first matchday of the group stage.
+Normally one would expect to see Belgium come out on top, as the list of tiebreakers used at the European Championship runs through goal difference (Italy 2, Begium 2), then goals scored (Italy 3, Belgium 4): however, since UEFA uses the head-to-head score first, the criteria are reapplied from the beginning (points) only to the matches between the teams concerned—which in this case was just one match, that Italy had won 2-0 in the very first matchday of the group stage.
+
+For what concerns the `span` key, once again an example will illustrate the concept much better. We will be looking at the European Championship once more, and specifically to the famous [Group E at the UEFA EURO 2024](https://en.wikipedia.org/wiki/UEFA_Euro_2024) where every single team finished their group with 4 points.
+
+| Position | Team       | Won | Drawn | Lost | GF | GA | GD  | Points |
+|----------|------------|:---:|:-----:|:----:|:--:|:--:|:---:|:------:|
+| 1        | Romania    | 1   | 1     | 1    | 4  | 3  | +1  | **6**  |
+| 2        | Belgium    | 1   | 1     | 1    | 2  | 1  | +1  | **6**  |
+| 3        | Slovakia   | 1   | 1     | 1    | 3  | 3  | 0   | **4**  |
+| 4        | Ukraine    | 1   | 1     | 1    | 2  | 4  | -2  | **1**  |
+
+In this spectacular group, every team won, drew and lost exactly one game which resulted in these final standings. What made many perplexed is the position of Belgium, whose first place spot was curiously enough taken away from them via a technicality in the rules just eight years after the group we discussed in the previous example, where once again Belgium were the runners-up.
