@@ -109,14 +109,14 @@ Normally one would expect to see Belgium come out on top, as the list of tiebrea
 
 #### span
 
-For what concerns the `span` key, once again an example will illustrate the concept much better. We will be looking at the European Championship once more, and specifically to the famous [Group E at the UEFA EURO 2024](https://en.wikipedia.org/wiki/UEFA_Euro_2024) where every single team finished their group with 4 points.
+For what concerns the `span` key, once again an example will illustrate the concept much better. We will be looking at the European Championship once more, and specifically at the famous [Group E at the UEFA EURO 2024](https://en.wikipedia.org/wiki/UEFA_Euro_2024) where every single team finished their group with 4 points.
 
 | Position | Team       | Won | Drawn | Lost | GF | GA | GD  | Points |
 |----------|------------|:---:|:-----:|:----:|:--:|:--:|:---:|:------:|
-| 1        | Romania    | 1   | 1     | 1    | 4  | 3  | +1  | **6**  |
-| 2        | Belgium    | 1   | 1     | 1    | 2  | 1  | +1  | **6**  |
+| 1        | Romania    | 1   | 1     | 1    | 4  | 3  | +1  | **4**  |
+| 2        | Belgium    | 1   | 1     | 1    | 2  | 1  | +1  | **4**  |
 | 3        | Slovakia   | 1   | 1     | 1    | 3  | 3  | 0   | **4**  |
-| 4        | Ukraine    | 1   | 1     | 1    | 2  | 4  | -2  | **1**  |
+| 4        | Ukraine    | 1   | 1     | 1    | 2  | 4  | -2  | **4**  |
 
 In this spectacular group, every team won, drew and lost exactly one game which resulted in these final standings. What made many perplexed is the position of Belgium, whose first place spot was curiously enough taken away from them via a technicality in the rules just eight years after the group we discussed in the previous example, where once again Belgium were the runners-up. The confusion stems from the fact that, seeing how all the teams are tied on points (and therefore the head-to-head comparisons end up involving the whole table anyway), we should move onto goal difference where only Romania and Belgium remain tied; but nevertheless Romania ended up taking the first place, even though their head-to-head match ended in a 2-0 win for Belgium during the second matchday.
 
