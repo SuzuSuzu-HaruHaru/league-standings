@@ -57,7 +57,7 @@ The result will be an array of objects containing all the properties of the vari
 
 ## Tiebreakers and sorting options
 
-A sorting method can be implemented via the `sorting` key in the starting object, where the simplest value it can take is a defauly keyword; for example, in
+A sorting method can be implemented via the `sorting` key in the starting object, where the simplest value it can take is a default keyword; for example, in
 
 ```javascript
 const teams = ["San Marino", "Italy", "Spain", "France"];
@@ -76,15 +76,17 @@ const table = new LeagueTable({
     teams: teams,
     sorting: {
         criteria: ["diff", "for"],
+        final: "lots",
         h2h: {
             when: "before",
             span: "all"
-        },
-    final: "lots"
+        }
     }
 });
 ```
-where `criteria` is the list of tiebreakers that will be applied one after the other to break any ties; again, the full list of such criteria is available in the documentation below.
+where `criteria` is the list of tiebreakers that will be applied one after the other to break any ties, and `final` tells the code what to do when all criteria have been used and the standings are still inconclusive: in this case, the criteria to apply would be *goal difference* and *goal scored*, while the final criterion in case of absolute tie on all records will be a drawing of random lots.
+
+Again, the full list of criterion keywords (as well as their meaning) is available in the documentation below.
 
 ### Head-to-head
 
