@@ -57,7 +57,7 @@ The result will be an array of objects containing all the properties of the vari
 
 ## Tiebreakers and sorting options
 
-A sorting method can be implemented via the `sorting` key in the starting object, where the simplest value it can take is a defauly keyword.
+A sorting method can be implemented via the `sorting` key in the starting object, where the simplest value it can take is a defauly keyword; for example, in
 
 ```javascript
 const teams = ["San Marino", "Italy", "Spain", "France"];
@@ -66,7 +66,7 @@ const table = new LeagueTable({
     sorting: "FIFA"
 });
 ```
-In the example above, any ties between teams that finished level on points will be resolved using the standard procedure employed by FIFA during the FIFA World Cup group stage and qualification rounds (the full list of such keywords is available in the [Documentation](#documentation) section below).
+any ties between teams that finished level on points will be resolved using the standard procedure employed by FIFA during the FIFA World Cup group stage and qualification rounds (the full list of such keywords is available in the [Documentation](#documentation) section below).
 
 In general, `sorting` will accept an object in the form of
 
