@@ -8,7 +8,7 @@ A Javascript package that computes league tables from an array of matches. Types
 2. [Installation](#installation)
 3. [Quick start](#quick-start)
 4. [Tiebreakers and sorting options](#tiebreakers-and-sorting-options)
-5. [Contributing](#contributing)
+5. [Documentation](#documentation)
 6. [License](#license)
 
 ## Introduction
@@ -57,4 +57,35 @@ The result will be an array of objects containing all the properties of the vari
 
 ## Tiebreakers and sorting options
 
-...
+A sorting method can be implemented via the `sorting` key in the starting object, where the simplest value it can take is a defauly keyword.
+
+```javascript
+const teams = ["San Marino", "Italy", "Spain", "France"];
+const table = new LeagueTable({
+    teams: teams,
+    sorting: "FIFA"
+});
+```
+In the example above, any ties between teams that finished level on points will be resolved using the standard procedure employed by FIFA during the FIFA World Cup group stage and qualification rounds (the full list of such keywords is available in the [Documentation](#documentation) section below).
+
+In general, `sorting` will accept an object in the form of
+
+```javascript
+const teams = ["San Marino", "Italy", "Spain", "France"];
+const table = new LeagueTable({
+    teams: teams,
+    sorting: {
+        criteria: ["diff", "for"],
+        h2h: {
+            when: "before",
+            span: "all"
+        },
+    final: "lots"
+    }
+});
+```
+where `criteria` is the list of tiebreakers that will be applied one after the other to break any ties; again, the full list of such criteria is available in the documentation below.
+
+### Head-to-head
+
+The `h2h` key, meaning *head-to-head*, deserves its own subsection to be explained properly.
