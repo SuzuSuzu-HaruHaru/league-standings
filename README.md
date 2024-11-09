@@ -107,6 +107,8 @@ One such example comes from [Group E at the UEFA EURO 2016](https://en.wikipedia
 
 Normally one would expect to see Belgium come out on top, as the list of tiebreakers used at the European Championship runs through goal difference (Italy 2, Begium 2), then goals scored (Italy 3, Belgium 4): however, since UEFA uses the head-to-head score first, the criteria are reapplied from the beginning (points) only to the matches between the teams concerned—which in this case was just one match, that Italy had won 2-0 in the very first matchday of the group stage.
 
+#### span
+
 For what concerns the `span` key, once again an example will illustrate the concept much better. We will be looking at the European Championship once more, and specifically to the famous [Group E at the UEFA EURO 2024](https://en.wikipedia.org/wiki/UEFA_Euro_2024) where every single team finished their group with 4 points.
 
 | Position | Team       | Won | Drawn | Lost | GF | GA | GD  | Points |
