@@ -235,9 +235,7 @@ export default class LeagueTable {
             const type = this.cycles[index + 1].type == "h2h" ?
                 "head-to-head " :
                 "overall ";
-            const criterion = this.cycles[index + 1].special ?
-                this.cycles[index + 1].special :
-                this.cycles[index + 1].criterion;
+            const criterion = this.cycles[index + 1].criterion;
             const special = this.cycles[index + 1].special ?
                 `Reapplying criteria 1-${this.sorting.criteria.length}: ` :
                 "";
@@ -408,9 +406,11 @@ export default class LeagueTable {
             }
 
             // The new this.cycle entry for this iteration
+            const current = 
             this.cycles.push({
                 type: iteration.type,
                 criterion: null,
+                special: false,
                 snapshot: JSON.parse(JSON.stringify(table))
             });
             let run;
@@ -419,6 +419,7 @@ export default class LeagueTable {
             if (special) {
                 run = 0;
                 tiebreaker = this.sorting.criteria[0];
+                this.cycles[this.cycles.length - 1].special = true;
                 special = false;
             } else {
                 run = this.#run(this.cycles, table) % this.sorting.criteria.length;
@@ -427,10 +428,7 @@ export default class LeagueTable {
 
             // Values and booleans needed for deciding what to do next at the end of each run
             const criteriaLimitReached = run > this.sorting.criteria.length - 2;
-           
             this.cycles[this.cycles.length - 1].criterion = tiebreaker;
-            this.cycles[this.cycles.length - 1].special = special ? tiebreaker : null;
-            special = false;
 
             // Step (2) of the algorithm
             const recompute = iteration.type == "h2h" && (this.sorting.h2h.span == "all" ? run == 0 : true);
@@ -484,15 +482,6 @@ export default class LeagueTable {
             const groups = groupByTiebreaker(table, tiebreaker);
             this.groups.push(groups);
 
-            // If the sorting type is head-to-head and the span is set to "single", and we are doing progress (i.e. one or more teams have broken away from the tie), then even before the run has completed we set it back to zero so to reapply the criteria from the beginning (points)
-            const isProgress = () => groups.length > 1;
-
-            if (iteration.index >= 2 && this.sorting.h2h.span == "single" && iteration.type === "h2h" && isProgress()) {
-                run = 0;
-                tiebreaker = this.sorting.criteria[0];
-                special = true;
-            }
-
             // Step (4) of the algorithm
             if (this.timeline.length == 0) {
                 this.timeline.push(JSON.parse(JSON.stringify(table)).sort((a, b) => {
@@ -540,6 +529,15 @@ export default class LeagueTable {
                         }
                     }
                 }));
+            }
+
+            // If the sorting type is head-to-head and the span is set to "single", and we are doing progress (i.e. one or more teams have broken away from the tie), then even before the run has completed we set it back to zero so to reapply the criteria from the beginning (points)
+            const isProgress = () => groups.length > 1;
+
+            if (iteration.index >= 2 && this.sorting.h2h.span == "single" && iteration.type === "h2h" && isProgress()) {
+                run = 0;
+                tiebreaker = this.sorting.criteria[0];
+                special = true;
             }
 
             // Step (5) of the algorithm
