@@ -86,8 +86,10 @@ const table = new LeagueTable({
 ```
 where `criteria` is the list of tiebreakers that will be applied one after the other to break any ties, and `final` tells the code what to do when all criteria have been used and the standings are still inconclusive: in this case, the criteria to apply would be *goal difference* and *goal scored*, while the final criterion in case of absolute tie on all records will be a drawing of random lots.
 
-Again, the full list of criterion keywords (as well as their meaning) is available in the documentation below.
+Again, the full list of `criteria` and `final` keywords (as well as their meaning) is available in the documentation below.
 
 ### Head-to-head
 
-The `h2h` key, meaning *head-to-head*, deserves its own subsection to be explained properly.
+The `h2h` key, meaning *head-to-head*, deserves its own subsection to be explained properly. As you may know, it is often the case that when a list of criteria does not return a useful result for two or more teams, then these are reapplied from the start but restricted only to the matches played between those teams. The `h2h` key gives you full control over this process via two parameters.
+
+The first is `when`, which simply lets you choose whether you want the head-to-head check to be done immediately (here signified by the `before` keyword), or only after the comparison using the overall results of the whole table has not been able to sort all the teams (here signified by the `after` keyword). Those of you who like soccer may already be familiar with this concept: FIFA uses overall criteria first in all of their competition, only resorting to head-to-head if this does not work fully (`when: after`), whereas UEFA uses head-to-head comparisons as their first row of criteria, with overall results being used only to solve any still-existing ties (`when: before`).
