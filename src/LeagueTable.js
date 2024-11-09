@@ -68,21 +68,6 @@ export default class LeagueTable {
 
     ties() {
 
-        const greatConsoleLogs = () => {
-            console.log("The cycles", this.cycles.map(cycle => {
-                return {
-                    type: cycle.type,
-                    criterion: cycle.criterion,
-                    snapshot: cycle.snapshot.map(team => team.id + " (points: " + team.points + ", diff: " + team.diff + ").")
-                }
-            }));
-            this.groups.forEach(step => {
-                console.log("The groups", step.map(group => group.map(team => team.id + " (points: " + team.points + ", diff: " + team.diff + ").")));
-            });
-        }
-
-        // greatConsoleLogs();
-
         const repeat = (group, depth = 1) => {
 
             // Recursion failsafe
@@ -90,10 +75,17 @@ export default class LeagueTable {
                 throw new Error("Maximum recursion depth exceeded for the information messages.");
             }
 
+            let information = {
+                group: group.map(team => team.id),
+                messages: []
+            };
+
+            this.information.push(information);
+
             // Step 1.
             // We find the teams and state that they need explaining
             if (depth == 1) {
-                this.information.push(`${formatNames(group.map(team => team.id))} are tied on points (${this.cycles[0].snapshot.filter(team => group.some(element => element.id == team.id))[0].points}).`);
+                information.messages.push(`${formatNames(group.map(team => team.id))} are tied on points (${this.cycles[0].snapshot.filter(team => group.some(element => element.id == team.id))[0].points}).`);
             }
             
             // Step 2.
@@ -115,22 +107,20 @@ export default class LeagueTable {
             const target = JSON.stringify(history[history.length - 1]);
             const index = this.groups.length - 1 - this.groups.slice().reverse().findIndex(step => JSON.stringify(step) === target);
 
-            // console.log("And so the index is...", index);
-
-            const h2h = this.cycles[index].type == "h2h" ?
+            const h2h = this.cycles[index + 1].type == "h2h" ?
                 "head-to-head " :
-                "";
+                "overall ";
 
             const criterion = this.cycles[index + 1].criterion;;
             switch (this.cycles[index + 1].type) {
                 case "lots":
-                    this.information.push(`${formatNames(group.map(team => team.id))} are sorted on drawing of random lots.`);
+                    information.messages.push(`${formatNames(group.map(team => team.id))} are sorted on drawing of random lots.`);
                     break;
                 case "alphabetical":
-                    this.information.push(`${formatNames(group.map(team => team.id))} are sorted on the alphabetical order of their names.`);
+                    information.messages.push(`${formatNames(group.map(team => team.id))} are sorted on the alphabetical order of their names.`);
                     break;
                 default:
-                    this.information.push(`${formatNames(group.map(team => team.id))} are sorted on ${h2h}${this.#longNames(criterion)} (${this.cycles[index + 1].snapshot.sort((a, b) => { b[criterion] - a[criterion] }).map(team => `${team.id}: ${team[criterion]}`).join('; ')}).`);
+                    information.messages.push(`${formatNames(group.map(team => team.id))} are sorted on ${h2h}${this.#longNames(criterion)} (${this.cycles[index + 1].snapshot.sort((a, b) => { b[criterion] - a[criterion] }).map(team => `${team.id}: ${team[criterion]}`).join('; ')}).`);
                     break
             }
 
@@ -234,8 +224,6 @@ export default class LeagueTable {
             throw new Error("Maximum recursion depth exceeded.");
         }
 
-        console.log("-----------------------------------", depth, "-----------------------------------");
-
         let tiebreaker;
         let run;
 
@@ -251,21 +239,14 @@ export default class LeagueTable {
 
         const criteriaLimitReached = run > this.sorting.criteria.length - 2;
         const cycleIndex = this.cycles.length - run - 1;
-        console.log("Il grande debugging mi dice che run è", run, "con un ciclo di lunghezza", this.cycles.length, "che cycleIndex è", cycleIndex);
         const isProgress = () => JSON.stringify(this.cycles[cycleIndex].snapshot.map(team => team.id)) !== JSON.stringify(table.map(team => team.id));
 
         if (iteration.index > 2 && iteration.type === "h2h" && isProgress()) {
-            console.log("\x1b[31mSembra che stiamo facendo progressi anche prima di aver concluso un ciclo, e siccome\nsiamo in regime di \"single\", ritorniamo a point solo per queste nuove squadre.\x1b[0m");
-            console.log("");
 
             this.sorting.h2h.span == "single" ?
                 run = 0 :
                 null;
         }
-
-        console.log("I cicli sono...", this.cycles.map(cycle => cycle.type));
-        console.log("Di snapshot...", this.cycles.map(cycle => cycle.snapshot.map(team => team.id)));
-        console.log("Il run è...", run);
 
         // We handle what to do whenever the current iteration is going beyond the criteria we have, which usually means
         // (a) that we switch from one type to the other (e.g. overall to h2h or viceversa)
@@ -274,11 +255,6 @@ export default class LeagueTable {
 
         tiebreaker = this.sorting.criteria[run];
         this.cycles[this.cycles.length - 1].criterion = tiebreaker;
-
-        console.log("La tabella che mi è stata data è", table.map(team => team.id + " (pts: " + team.points + "; diff: " + team.diff + ")"));
-        console.log("Per quest'iterazione, il criterio di spareggio è", tiebreaker);
-        console.log("\x1b[31mSorting round di tipo:\x1b[0m ", iteration.type);
-        console.log("\x1b[31mChe in cycles è marcato come:\x1b[0m ", this.cycles[this.cycles.length - 1].type);
 
         // Pre-step
         // If this is a head-to-head iteration, we have to rebuild the table that we are using so that it is made only of current matches
@@ -305,13 +281,8 @@ export default class LeagueTable {
                 this.#computeTableRows(match, key, table);
             });
 
-            console.log("L'ultimo snapshot prima...", this.cycles[this.cycles.length - 1].snapshot);
             this.cycles[this.cycles.length - 1].snapshot = JSON.parse(JSON.stringify(table));
-            console.log("L'ultimo snapshot dopo...", this.cycles[this.cycles.length - 1].snapshot);
-
-            console.log("");
-            console.log("\x1b[95mCome parte di head-to-head, ho ricostruito la classifica delle squadre dei gruppi\nche abbiamo generato a partire dalla tabella che abbiamo al momento\n(escludendo ovviamente i gruppi di lunghezza 1). Ora è\x1b[0m", table.map(team => team.id + " (pts: " + team.points + "; diff: " + team.diff + ")"));
-            console.log("");
+            this.cycles[this.cycles.length - 1].type = "h2h";
         }
 
         // Step 1
@@ -340,8 +311,6 @@ export default class LeagueTable {
 
         const groups = group(table, tiebreaker);
         this.groups.push(groups);
-
-        console.log("Fin qui, l'elemento più recente dei gruppi è...", this.groups[this.groups.length - 1].map(group => group.map(team => team.id + ": " + team[tiebreaker] + " (on " + tiebreaker + ").")));
 
         // Step 2
         // We take back all elements from the latest entry in the timeline, and we sort them against their positions in the subgroups
@@ -378,10 +347,8 @@ export default class LeagueTable {
 
                         switch (iteration.type) {
                             case "overall":
-                                console.log("\x1b[34mSto confrontando\x1b[0m", a.id, "(", a[tiebreaker], ") \x1b[34mcon\x1b[0m", b.id, "(", b[tiebreaker], ").");
                                 return b[tiebreaker] - a[tiebreaker];
                             case "h2h":
-                                console.log("\x1b[34mSto confrontando\x1b[0m", aTeam.id, "(", aTeam[tiebreaker], ") \x1b[34mcon\x1b[0m", bTeam.id, "(", bTeam[tiebreaker], ").");
                                 return bTeam[tiebreaker] - aTeam[tiebreaker];
                         }
                     } else {
@@ -403,8 +370,6 @@ export default class LeagueTable {
             }));
         }
 
-        console.log("Fin qui, la versione più recente della timeline è...", this.timeline[this.timeline.length - 1].map(team => team.id + " (pts: " + team.points + "; diff: " + team.diff + ")"));
-
         // Step 3
         // For each of the groups that we have thus obtained, we rerun the function so long as they are at least two in length; however we have to keep a few things in mind, and namely:
         Object.entries(groups).forEach(([key, group]) => {
@@ -421,7 +386,6 @@ export default class LeagueTable {
             // Function to log and trigger drawing of lots
             const decide = () => {
                 final = true;
-                console.log("\x1b[35mCurrent teams cannot be resolved further. Proceeding to sort by", this.sorting.final, ".\x1b[0m");
             };
 
             if (iteration.index === 0 && this.sorting.h2h.when === "before") {
@@ -443,12 +407,9 @@ export default class LeagueTable {
                 if (isProgress()) {
                     // Progress detected, rerun with h2h type
                     change = iteration.type;
-                    console.log("\n\x1b[36mProgress detected\x1b[0m: Continuing with current head-to-head sorting.\n");
-                    console.log("Comparing previous cycle:", JSON.stringify(this.cycles[cycleIndex].snapshot.map(team => team.id)), "with current table:", JSON.stringify(table.map(team => team.id)), "\n");
                 } else if (this.sorting.h2h.when === "before") {
                     // No progress and h2h is "before", switch to overall
                     change = "overall";
-                    console.log("\x1b[35mSwitching to overall!\x1b[0m");
                 } else {
                     // No progress and h2h is "after", proceed to drawing of lots
                     decide();
