@@ -2,6 +2,7 @@
 dist/
 examples/
 node_modules/
+tests/
 .npmignore
 *.config.js
 *.test.js

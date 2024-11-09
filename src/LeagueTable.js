@@ -1,24 +1,102 @@
 export default class LeagueTable {
 
     constructor(data) {
-        if (
-            typeof data !== "object" ||
-            data === null ||
-            !("teams" in data) ||
-            !("format" in data) ||
-            !("points" in data) ||
-            !("sorting" in data)
-        ) {
-            throw new Error("Invalid constructor argument (expected an object with properties: teams, format, points, sorting).");
+        if (data === null || typeof data !== "object") {
+            throw new Error(`Invalid constructor argument (expected an object).`);
+        } else if (!("teams" in data)) {
+            throw new Error(`Invalid constructor argument (object must at least contain a key named "teams").`);
         }
 
-        this.teams = data.teams;
-        this.format = data.format;
-        this.points = data.points;
-        this.sorting = data.sorting;
+        // Checks whether or not the identifiers provided for the teams are unique
+        if (new Set(data.teams).size === data.teams.length) {
+            this.teams = data.teams;
+        } else {
+            throw new Error(`Team identifiers must be unique.`);
+        }
 
-        this.warning = false;
-        this.tiesteps = [];
+        // Checks whether the inputs for the optional fields are correct, and fills them in if they are not present
+        if (!("format" in data)) {
+            this.format = "round-robin";
+        } else if (data.format !== "round-robin" && data.format !== "home-and-away") {
+            throw new Error(`An explicitly specified "format" must be either "round-robin" or "home-and-away".`);
+        } else {
+            this.format = data.format;
+        }
+
+        if (!("points" in data)) {
+            this.points = "standard";
+        } else if (data.points !== "standard" && data.points !== "classic") {
+            throw new Error(`An explicitly specified "points" must be either "standard" or "classic".`);
+        } else {
+            this.points = data.points;
+        }
+
+        if (!("sorting" in data)) {
+            this.sorting = {
+                criteria: ["diff", "for", "won"],
+                h2h: {
+                    when: "before",
+                    span: "all"
+                },
+                final: "lots"
+            };
+        } else if (data.sorting == "FIFA") {
+            this.sorting = {
+                criteria: ["diff", "for"],
+                h2h: {
+                    when: "after",
+                    span: "all"
+                },
+                final: "lots"
+            };
+        } else if (data.sorting == "UEFA") {
+            this.sorting = {
+                criteria: ["diff", "for"],
+                h2h: {
+                    when: "before",
+                    span: "all"
+                },
+                final: "lots"
+            };
+        } else {
+            // Check that sorting is an object with required keys
+            if (typeof data.sorting !== "object") {
+                throw new Error(`An explicitly specified "sorting" must be an object.`);
+            }
+            const { criteria, h2h, final } = data.sorting;
+            if (!criteria || !h2h || !final) {
+                throw new Error(`An explicitly specified "sorting" must contain keys named "criteria", "h2h", and "final".`);
+            }
+
+            // Check that h2h is an object with required keys and valid values for "when" and "span"
+            if (typeof h2h !== "object" || !("when" in h2h) || !("span" in h2h)) {
+                throw new Error(`An explicitly specified "sorting.h2h" must be an object containing keys named "when" and "span".`);
+            }
+            if (h2h.when !== "before" && h2h.when !== "after") {
+                throw new Error(`An explicitly specified "sorting.h2h.when" must be either "before" or "after". Found: "${h2h.when}".`);
+            }
+            if (h2h.span !== "all" && h2h.span !== "single") {
+                throw new Error(`An explicitly specified "sorting.h2h.span" must be either "all" or "single". Found: "${h2h.span}".`);
+            }
+
+            // Validate criteria array contents
+            if (!Array.isArray(criteria)) {
+                throw new Error(`An explicitly specified "sorting.criteria" must be an array.`);
+            }
+            const allowedCriteria = ["diff", "for", "won", "away_for", "away_won"];
+            for (const criterion of criteria) {
+                if (!allowedCriteria.includes(criterion)) {
+                    throw new Error(`An explicitly specified "sorting.criteria" can only contain the values "diff", "for", "won", "away_for", or "away_won". Found invalid criterion: "${criterion}".`);
+                }
+            }
+
+            // Validate final key
+            if (typeof final !== "string" || (final !== "lots" && final !== "alphabetical")) {
+                throw new Error(`An explicitly specified "sorting.final" must be either "lots" or "alphabetical". Found: "${final}".`);
+            }
+
+            this.sorting = data.sorting;
+        }
 
         this.matches = new Map();
 
@@ -27,20 +105,21 @@ export default class LeagueTable {
         this.timeline = [];
 
         this.information = [];
+        this.warning = false;
     }
 
     addMatches(data) {
-        const idSet = new Set();
+        const identifiers = new Set();
         data.forEach(item => {
-            if (idSet.has(item[0])) {
-                throw new Error(`Match ids must be unique (first thrown at a match with match id ${item[0]}).`);
+            if (identifiers.has(item[0])) {
+                throw new Error(`Match identifiers must be unique (first thrown at a match with match identifier ${item[0]}).`);
             } else {
-                idSet.add(item[0]);
+                identifiers.add(item[0]);
             }
 
             switch (this.format) {
                 case "round-robin":
-                    if (Array.from(this.matches.values()).find(match => match.home == item[1] && match.away == item[2] || match.home == item[2] && match.away == item[1])) {
+                    if (Array.from(this.matches.values()).find(match => match.home == item[2] && match.away == item[3] || match.home == item[3] && match.away == item[2])) {
                         if (!this.warning) {
                             console.warn(`Round-robin format should allow for only one match between given teams.`);
                             this.warning = true;
@@ -48,7 +127,7 @@ export default class LeagueTable {
                     }
                     break;
                 case "home-and-away":
-                    if (Array.from(this.matches.values()).filter(match => match.home == item[1] && match.away == item[2] || match.home == item[2] && match.away == item[1]).length > 1) {
+                    if (Array.from(this.matches.values()).filter(match => match.home == item[2] && match.away == item[3] || match.home == item[3] && match.away == item[2]).length > 1) {
                         if (!this.warning) {
                             console.warn(`Home-and-away format should allow for only two matches between given teams.`);
                             this.warning = true;
@@ -66,10 +145,8 @@ export default class LeagueTable {
         });
     }
 
-    ties() {
-
+    ties(options) {
         const repeat = (group, depth = 1) => {
-
             // Recursion failsafe
             if (depth > 10) {
                 throw new Error("Maximum recursion depth exceeded for the information messages.");
@@ -87,7 +164,7 @@ export default class LeagueTable {
             if (depth == 1) {
                 information.messages.push(`${formatNames(group.map(team => team.id))} are tied on points (${this.cycles[0].snapshot.filter(team => group.some(element => element.id == team.id))[0].points}).`);
             }
-            
+
             // Step 2.
             // Running through all of this.groups, we select the steps where the teams are somewhere within the arrays and then declare them sorted according to the criterion that is concurrently written in the same entry of this.cycles, also looking at the "h2h" or "overall" flags for better descriptions
             const history = [];
@@ -95,7 +172,7 @@ export default class LeagueTable {
             // Assuming group is defined outside of the loop
             const groupIds = group.map(_team => _team.id);
 
-            this.groups.forEach(step => {
+            JSON.parse(JSON.stringify(this.groups)).forEach(step => {
                 step.forEach(_group => {
                     // Check if any team in _group has an id that is in the groupIds array
                     if (groupIds.every(id => _group.map(team => team.id).includes(id))) {
@@ -105,7 +182,7 @@ export default class LeagueTable {
             });
 
             const target = JSON.stringify(history[history.length - 1]);
-            const index = this.groups.length - 1 - this.groups.slice().reverse().findIndex(step => JSON.stringify(step) === target);
+            const index = JSON.parse(JSON.stringify(this.groups)).length - 1 - JSON.parse(JSON.stringify(this.groups)).slice().reverse().findIndex(step => JSON.stringify(step) === target);
 
             const h2h = this.cycles[index + 1].type == "h2h" ?
                 "head-to-head " :
@@ -125,7 +202,7 @@ export default class LeagueTable {
             }
 
             const filterNonUniqueProperties = (arr, property) => {
-                if (arr.length == 2 && arr[0][property] != arr[1][property]) {
+                if (arr.length == 2 && this.cycles[index + 1].snapshot[0][property] != this.cycles[index + 1].snapshot[1][property]) {
                     arr.length = 1;
                     return arr;
                 }
@@ -166,20 +243,37 @@ export default class LeagueTable {
         }
 
         // We iterate over the groups of length greater than 1 in the first element of this.groups, are these are the teams that were tied in the first place and thus need explaining.
-        this.groups[0].forEach(group => {
+        JSON.parse(JSON.stringify(this.groups))[0].forEach(group => {
             if (group.length > 1) {
-                repeat(group);
+                repeat(JSON.parse(JSON.stringify(group)));
             }
         });
 
-        return this.information;
+        switch (options) {
+            case undefined:
+                return this.information;
+            case "sequential":
+                return this.information.map(group => group.messages).flat();
+            case "raw":
+                return this.cycles;
+            default:
+                throw new Error(`The argument of .ties() can only be "sequential", "raw" or none.`);
+        }
     }
 
     standings(options) {
+
+        /* EXPLANATION
+
+        This method relies on the private method this.#recursive which, as the name implies, is applied recursively until the table is sorted. More on this in the appropriate method below.
+
+        For now, we initialize the standings by pushing a row for each team and filling it in with the points, the goals scored and such as per the matches that have been given by the user.
+        */
+
         const standings = [];
 
         if (!this.matches.size) {
-            console.warn("Matches Array is empty (no matches have been provided for this instance of LeagueTable).");
+            console.warn(`Matches array is empty (no matches have been provided for this instance of LeagueTable).`);
         } else {
             this.teams.forEach(team => {
                 standings.push({
@@ -201,10 +295,11 @@ export default class LeagueTable {
                 this.#computeTableRows(match, key, standings);
             });
 
+            // As the first criteria is always points, there is no need for the user to input it manually in the list; but as we need it for the sorting, we add it here.
             this.sorting.criteria.unshift("points");
         }
 
-        this.recursive(standings, {
+        this.#recursive(standings, {
             index: 0,
             type: "overall"
         })
@@ -213,52 +308,75 @@ export default class LeagueTable {
             case "all":
                 return this.timeline[this.timeline.length - 1];
             default:
-                return this.timeline[this.timeline.length - 1].map(({ away_for, away_won, ...rest }) => rest);;
+                return this.timeline[this.timeline.length - 1].map(({ away_for, away_won, ...rest }) => rest);
         }
     }
 
-    recursive(table, iteration, depth = 1, final = false) {
+    #recursive(table, iteration, depth = 1, final = false) {
+
+        /* EXPLANATION
+
+        This is the main method that is called to sort the teams into the table. It is a recursive function, with a recursive failsafe set at depth 50.
+
+        ALGORITHM     
+        The algorithm is the following:
+
+            (1) at any given step, we have a table consisting of the teams to be sorted and their relative data; if this is the first iteration, the table consists of all teams;
+            (2) if the current sorting criterion is of type head-to-head, the table in question is rewritten so that the data is only relative to the matches that were played between the teams in question (if the span is set to "all", then this is only recomputed for the teams that are still even when a cycle is completed and we are back to points; otherwise, if it is set to "single", we do it every single time);
+            (3) the table is divided according to the current criterion by pairing up teams that are still tied: for example, for Team A (pts 6), Team B (pts 3), Team C (pts 6), with the current criterion being points, we would end up with an array [[Team A, Team C], [Team C]] (where each entry in the subarrays is an object containing all the relevant information about the teams) which is then pushed into this.groups.
+
+            Now it is time to sort the teams: if this is the first iteration, an array that contains the initial standings is pushed into this.timeline; for all other iterations, the latest entry of this.timeline is retrieved, sorted and pushed as a new entry back into this.timeline; when the recursion eventually ends, the latest entry will be the output of the entire sorting process. As the entries in this.timeline are never rewritten even during sorting criteria of type head-to-head, the overall data for each team is conserved which is exactly what we want when we need to actually print the final table for viewing purposes.
+
+            (4) As for the sorting itself:
+                only teams that are part of the table that is being considered at this recursion level are taken into account, and they are sorted according to the values they have (by matching via team id)
+                    - in the latest entry of this.timeline, if the current sorting critetion is of type overall;
+                    - in the latest entry of this.groups, if the current sorting critetion is of type head-to-head.
+
+            (5) And finally, the recursive step: for each of the groups obtained in (3), so long as their length is at least 2, we call this,#recursive again on them.
+            (6) When a new iteration starts, under general circumstances the next criterion in the list is applied this time.
+
+        This process is guaranteed to end because, if a group contains teams that are sortable according to the current criterion, each of the subarrays will be of length strictly smaller; and if not, and some of the teams remain even for all the criteria, the method activates the "final" variable which sorts the teams either by drawing of random lots or by alphabetical order, and then artificially makes the group of length 1 to guarantee that the recursion ends for this specific group.
+
+        VARIABLES
+            run:
+                the number of consecutive steps of the same type (overall or head-to-head) that we have taken so far, up to and including the latest one; when this reaches the length of the array, we trigger the checks for deciding what to do next (switching to head-to-head, or switching to overall, or reapplying head-to-head to a subset of the team concerned, or proceding to randomization).
+            this.cycles:
+                array whose each entry contains information about the current sorting step (head-to-head or overall, criterion used, teams being sorted which reflect those in the this.groups element of index one fewer).
+        */
 
         // Recursion failsafe
         if (depth > 50) {
-            throw new Error("Maximum recursion depth exceeded.");
+            throw new Error(`Maximum recursion depth exceeded while trying to sort the teams.`);
         }
 
         let tiebreaker;
         let run;
 
-        // Depending on whether we are starting as overall or h2h, we specify what cycle we are starting and where we're at; in particular, overall iterations start immediately while h2h are one offset (and so in any case we are always starting from "overall" regardless of whether h2h is "before" or "after", or even there)
+        // The new this.cycle entry for this iteration
         this.cycles.push({
             type: iteration.type,
             criterion: null,
             snapshot: JSON.parse(JSON.stringify(table))
         });
 
-        // This constant reads the number of steps that we have taken into the current cycle (whether "h2h" or "overall"), which of course is important for reading criteria
         run = this.#run(this.cycles, table) % this.sorting.criteria.length;
 
+        // Values and booleans needed for deciding what to do next at the end of each run
         const criteriaLimitReached = run > this.sorting.criteria.length - 2;
         const cycleIndex = this.cycles.length - run - 1;
         const isProgress = () => JSON.stringify(this.cycles[cycleIndex].snapshot.map(team => team.id)) !== JSON.stringify(table.map(team => team.id));
 
+        // If the sorting type is head-to-head and the span is set to "single", and we are doing progress (i.e. one or more teams have broken away from the tie), then even before the run has completed we set it back to zero so to reapply the criteria from the beginning (points)
         if (iteration.index > 2 && iteration.type === "h2h" && isProgress()) {
-
             this.sorting.h2h.span == "single" ?
                 run = 0 :
                 null;
         }
 
-        // We handle what to do whenever the current iteration is going beyond the criteria we have, which usually means
-        // (a) that we switch from one type to the other (e.g. overall to h2h or viceversa)
-        // (b) that we are in h2h and we are to reapply the criteria to the beginning to those teams that are still tied
-        // (C) that we are to move onto drawing of lots, or leave the standings undecided
-
         tiebreaker = this.sorting.criteria[run];
         this.cycles[this.cycles.length - 1].criterion = tiebreaker;
 
-        // Pre-step
-        // If this is a head-to-head iteration, we have to rebuild the table that we are using so that it is made only of current matches
-        // If this.sorting.h2h.interval is set to "all", then this is only recomputed for the teams that are still even when a cycle is completed and we are back to points; otherwise, if it is set to "single", we do it every single time.
+        // Step (2) of the algorithm
         const recompute = iteration.type == "h2h" && (this.sorting.h2h.span == "all" ? run == 0 : true);
 
         if (recompute) {
@@ -285,12 +403,10 @@ export default class LeagueTable {
             this.cycles[this.cycles.length - 1].type = "h2h";
         }
 
-        // Step 1
-        // As first step upon receiving a table, we sort it according to the current tiebreaker and via .reduce() we group together those entries that are tied according to the criterion in question
-
+        // Step (3) of the algorithm
         const group = (array, key) => {
 
-            // If this is an overall round, any info from the team from which to base the subarrays has to be based on the origina standings as per the timeline, and not from the groups which may have been tampered with by h2h
+            // If this is an overall round, any info from the team from which to create the subarrays has to be based on the original standings as per the timeline, and not from the groups themselves which are susceptible to rewriting
             if (iteration.type == "overall" && iteration.index != 0) {
                 array = JSON.parse(JSON.stringify(this.timeline[this.timeline.length - 1].filter(team => table.some(element => team.id == element.id))));
             }
@@ -312,18 +428,12 @@ export default class LeagueTable {
         const groups = group(table, tiebreaker);
         this.groups.push(groups);
 
-        // Step 2
-        // We take back all elements from the latest entry in the timeline, and we sort them against their positions in the subgroups
-
+        // Step (4) of the algorithm
         if (this.timeline.length == 0) {
-
-            // At the first step, we always base the sorting just on the table that we were provided
             this.timeline.push(JSON.parse(JSON.stringify(table)).sort((a, b) => {
                 return b[tiebreaker] - a[tiebreaker];
             }));
         } else {
-
-            // Otherwise, the sorting happens on the timeline (i.e. on the rows containing the actual data to display), only between those teams that are part of the current subtable that we are examining; the comparison happens over the table itself if the iteration type is overall, and over the groups (which have been rewritten with the 'classifica avulsa') if it is h2h, and then the results are matches by id to sort the timeline as said
             this.timeline.push(JSON.parse(JSON.stringify(this.timeline[this.timeline.length - 1])).sort((a, b) => {
                 if (table.some(team => team.id === a.id) &&
                     table.some(team => team.id === b.id)) {
@@ -352,8 +462,6 @@ export default class LeagueTable {
                                 return bTeam[tiebreaker] - aTeam[tiebreaker];
                         }
                     } else {
-
-                        // If we have to draw lots, we artificially make each group one so to brea the recursion and then draw teams at random
                         groups.forEach(
                             group => group.length = 1
                         );
@@ -370,21 +478,23 @@ export default class LeagueTable {
             }));
         }
 
-        // Step 3
-        // For each of the groups that we have thus obtained, we rerun the function so long as they are at least two in length; however we have to keep a few things in mind, and namely:
+        // Step (5) of the algorithm
         Object.entries(groups).forEach(([key, group]) => {
 
-            // We change the type of iteration only when
-            // (a) h2h is set to "before", and thus right after the first iteration we automatically switch to "h2h" and thus ready ourselves to push the cycles
-            // (b) an overall list of criteria has run its course and h2h is set at "after" (so h2h next)
-            // (c) an h2h list of criteria has run its course, even including the eventual reruns, and h2h is set at "before" (so overall next)
+            /* EXPLANATION
+            
+            Reminder that, at the end of a run, we change the type of iteration (from head-to-head to overall or vice versa) only when:
+                (a) h2h.when is set to "before", and thus right after the first iteration we automatically switch from the default overall to head-to-head;
+                (b) an overall list of criteria has run its course and h2h.when is set to "after", so head-to-head criteria are coming next;
+                (c) an head-to-head list of criteria has run its course, even including any reruns for teams that have broken away from the ties, and h2h.when is set to "before", so overall criteria are coming next.
 
-            // To check whether or not these have indeed run their course, we check the array of cycles to see whether the last number of iterations were of the same type, with that number being of course the number of criteria, at which point we decide if we have to switch to another type, rerun h2h for separated teams, or draw lots.
+            This also includes the triggering of final = true in case there is nothing coming up next (e.g. an overall run of criteria reaching its limit while h2h.when was set to "before", and so those are already gone too).
+            */
 
             let change;
 
             // Function to log and trigger drawing of lots
-            const decide = () => {
+            const finalize = () => {
                 final = true;
             };
 
@@ -399,7 +509,7 @@ export default class LeagueTable {
                     change = "h2h";
                 } else if (this.sorting.h2h.when === "before" && !isProgress()) {
                     // Point (b-bis): Set to drawing of lots if no progress and h2h is "before"
-                    decide();
+                    finalize();
                 }
 
             } else if (iteration.type === "h2h" && criteriaLimitReached) {
@@ -412,7 +522,7 @@ export default class LeagueTable {
                     change = "overall";
                 } else {
                     // No progress and h2h is "after", proceed to drawing of lots
-                    decide();
+                    finalize();
                 }
             } else {
                 // Default case: Use current iteration type
@@ -421,7 +531,7 @@ export default class LeagueTable {
 
             // Recursively call with updated iteration type, if group length > 1
             if (group.length > 1) {
-                this.recursive(group, { index: iteration.index + 1, type: change }, depth + 1, final);
+                this.#recursive(group, { index: iteration.index + 1, type: change }, depth + 1, final);
             }
         });
 
@@ -443,9 +553,6 @@ export default class LeagueTable {
         }
         return count - 1;
     }
-
-    //-------------------------------------------------------------------------------------------------------------
-    //-------------------------------------------------------------------------------------------------------------
 
     #computeTableRows(match, key, array) {
         const homeTeamRow = array.find(row => row.id == match.home);
@@ -514,6 +621,10 @@ export default class LeagueTable {
                 return "goals scored";
             case "won":
                 return "number of games won";
+            case "away_for":
+                return "number of goals scored away from home";
+            case "away_won":
+                return "number of games won away from home";
             case "lots":
                 return "drawing of random lots";
             case "alphabetical":
