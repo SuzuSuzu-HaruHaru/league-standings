@@ -96,9 +96,9 @@ The first is `when`, which simply lets you choose whether you want the head-to-h
 
 One such example comes from [Group E at the UEFA EURO 2016](https://en.wikipedia.org/wiki/UEFA_Euro_2016), where the final table ended up looking like this
 
-| Position | Team       | Played | Won | Drawn | Lost | GF | GA | GD  | Points |
-|----------|------------|--------|-----|-------|------|----|----|-----|--------|
-| 1        | Italy      | 3      | 2   | 0     | 1    | 3  | 1  | +2  | 6      |
-| 2        | Belgium    | 3      | 2   | 0     | 1    | 4  | 2  | +2  | 6      |
-| 3        | Republic of Ireland | 3 | 1 | 1   | 1    | 2  | 4  | -2  | 4      |
-| 4        | Sweden     | 3      | 0   | 1     | 2    | 1  | 3  | -2  | 1      |
+| Position | Team       | Won | Drawn | Lost | GF | GA | GD  | Points |
+|----------|------------|--------|-----|-------|------|----|----|-----|
+| 1        | Italy      | 2   | 0     | 1    | 3  | 1  | +2  | 6      |
+| 2        | Belgium    | 2   | 0     | 1    | 4  | 2  | +2  | 6      |
+| 3        | Republic of Ireland | 1 | 1     | 1  | 2  | 4  | -2  | 4 |
+| 4        | Sweden     | 0   | 1     | 2    | 1  | 3  | -2  | 1      |
