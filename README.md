@@ -102,3 +102,5 @@ One such example comes from [Group E at the UEFA EURO 2016](https://en.wikipedia
 | 2        | Belgium    | 2   | 0     | 1    | 4  | 2  | +2  | **6**      |
 | 3        | Republic of Ireland | 1 | 1     | 1  | 2  | 4  | -2  | **4** |
 | 4        | Sweden     | 0   | 1     | 2    | 1  | 3  | -2  | **1**      |
+
+Normally one would expect to see Belgium come on top, as the list of criteria used at the European Championship runs through goal difference (Italy 2, Begium 2), then goals scored (Italy 3, Belgium 4) in case of a tie on points: however, since UEFA uses the head-to-head score first, the criteria are reapplied from the beginning (points) only to the matches between the teams concerned---which in this case was just one match, that Italy had won 2-0 in the very first matchday of the group stage.
