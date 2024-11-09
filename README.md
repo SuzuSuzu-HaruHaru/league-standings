@@ -131,7 +131,7 @@ The truth of the matter is that, according to the official regulations of the Eu
 ```javascript
 <Object of type LeagueTable> = new LeagueTable(<Object>);
 ```
-
+| Attribute      | Description                     |
 |----------------|---------------------------------|
 | **Expects**    | `/api/v1/getUserProfile`        |
 | **Returns**      | `GET`                           |
