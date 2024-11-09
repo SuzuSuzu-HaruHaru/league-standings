@@ -27,8 +27,8 @@ export default class LeagueTable {
             this.points = "standard";
         } else if (data.points !== "standard" && data.points !== "old" && typeof data.points !== "function") {
             throw new Error(`An explicitly specified "points" must be either "standard", "old" or a function.`);
-        } else if (typeof data.points === "function" && data.points.length < 3) {
-            throw new Error(`An explicitly specified "points" that is a function must accept at least three parameters (matches won, drawn, lost).`);
+        } else if (typeof data.points === "function" && data.points.length != 3) {
+            throw new Error(`An explicitly specified "points" that is a function must accept exactly three parameters (matches won, drawn, lost).`);
         } else {
             this.points = data.points;
         }
@@ -56,7 +56,7 @@ export default class LeagueTable {
                 criteria: ["diff", "for"],
                 h2h: {
                     when: "before",
-                    span: "all"
+                    span: "single"
                 },
                 final: "lots"
             };
@@ -235,7 +235,12 @@ export default class LeagueTable {
             const type = this.cycles[index + 1].type == "h2h" ?
                 "head-to-head " :
                 "overall ";
-            const criterion = this.cycles[index + 1].criterion;
+            const criterion = this.cycles[index + 1].special ?
+                this.cycles[index + 1].special :
+                this.cycles[index + 1].criterion;
+            const special = this.cycles[index + 1].special ?
+                `Reapplying criteria 1-${this.sorting.criteria.length}: ` :
+                "";
 
             switch (this.cycles[index + 1].type) {
                 case "lots":
@@ -245,7 +250,24 @@ export default class LeagueTable {
                     information.messages.push(`${formatNames(group.map(team => team.id))} are sorted on the alphabetical order of their names.`);
                     break;
                 default:
-                    information.messages.push(`${formatNames(group.map(team => team.id))} are sorted on ${type}${this.#longNames(criterion)} (${this.cycles[index + 1].snapshot.sort((a, b) => { b[criterion] - a[criterion] }).map(team => `${team.id}: ${team[criterion]}`).join('; ')}).`);
+                    // If more than two teams were tied and are now being resolved, we esclude from the message those that are still tied
+                    const snapshot = this.cycles[index + 1].snapshot;
+                    const pointsCount = snapshot.reduce((count, obj) => {
+                        count[obj[criterion]] = (count[obj[criterion]] || 0) + 1;
+                        return count;
+                    }, {});
+
+                    const sorted = snapshot.filter(team => pointsCount[team[criterion]] === 1);
+
+                    if (group.length > 2 && group.length != sorted.length) {
+                        if (sorted.length == 1) {
+                            information.messages.push(`${special}The position of ${formatNames([sorted[0].id])} is decided on ${type}${this.#longNames(criterion)} (${this.cycles[index + 1].snapshot.sort((a, b) => { b[criterion] - a[criterion] }).map(team => `${team.id}: ${team[criterion]}`).join('; ')}).`);
+                        } else {
+                            information.messages.push(`${special}${formatNames(sorted.map(team => team.id))} are sorted on ${type}${this.#longNames(criterion)} (${this.cycles[index + 1].snapshot.sort((a, b) => { b[criterion] - a[criterion] }).map(team => `${team.id}: ${team[criterion]}`).join('; ')}).`);
+                        }
+                    } else {
+                        information.messages.push(`${special}${formatNames(group.map(team => team.id))} are sorted on ${type}${this.#longNames(criterion)} (${this.cycles[index + 1].snapshot.sort((a, b) => { b[criterion] - a[criterion] }).map(team => `${team.id}: ${team[criterion]}`).join('; ')}).`);
+                    }
                     break
             }
 
@@ -348,7 +370,7 @@ export default class LeagueTable {
             this.sorting.criteria.unshift("points");
         }
 
-        const sortAndDivideTable = (table, iteration, depth = 1, final = false) => {
+        const sortAndDivideTable = (table, iteration, depth = 1, final = false, special = false) => {
 
             /* EXPLANATION
     
@@ -391,23 +413,24 @@ export default class LeagueTable {
                 criterion: null,
                 snapshot: JSON.parse(JSON.stringify(table))
             });
+            let run;
+            let tiebreaker;
 
-            let run = this.#run(this.cycles, table) % this.sorting.criteria.length;
+            if (special) {
+                run = 0;
+                tiebreaker = this.sorting.criteria[0];
+                special = false;
+            } else {
+                run = this.#run(this.cycles, table) % this.sorting.criteria.length;
+                tiebreaker = this.sorting.criteria[run];
+            }
 
             // Values and booleans needed for deciding what to do next at the end of each run
             const criteriaLimitReached = run > this.sorting.criteria.length - 2;
-            const cycleIndex = this.cycles.length - run - 1;
-            const isProgress = () => JSON.stringify(this.cycles[cycleIndex].snapshot.map(team => team.id)) !== JSON.stringify(table.map(team => team.id));
-
-            // If the sorting type is head-to-head and the span is set to "single", and we are doing progress (i.e. one or more teams have broken away from the tie), then even before the run has completed we set it back to zero so to reapply the criteria from the beginning (points)
-            if (iteration.index > 2 && iteration.type === "h2h" && isProgress()) {
-                this.sorting.h2h.span == "single" ?
-                    run = 0 :
-                    null;
-            }
-
-            let tiebreaker = this.sorting.criteria[run];
+           
             this.cycles[this.cycles.length - 1].criterion = tiebreaker;
+            this.cycles[this.cycles.length - 1].special = special ? tiebreaker : null;
+            special = false;
 
             // Step (2) of the algorithm
             const recompute = iteration.type == "h2h" && (this.sorting.h2h.span == "all" ? run == 0 : true);
@@ -460,6 +483,15 @@ export default class LeagueTable {
 
             const groups = groupByTiebreaker(table, tiebreaker);
             this.groups.push(groups);
+
+            // If the sorting type is head-to-head and the span is set to "single", and we are doing progress (i.e. one or more teams have broken away from the tie), then even before the run has completed we set it back to zero so to reapply the criteria from the beginning (points)
+            const isProgress = () => groups.length > 1;
+
+            if (iteration.index >= 2 && this.sorting.h2h.span == "single" && iteration.type === "h2h" && isProgress()) {
+                run = 0;
+                tiebreaker = this.sorting.criteria[0];
+                special = true;
+            }
 
             // Step (4) of the algorithm
             if (this.timeline.length == 0) {
@@ -551,7 +583,7 @@ export default class LeagueTable {
 
                 // The recursive step, where we call the function again if the length of the group is greater than one
                 if (group.length > 1) {
-                    sortAndDivideTable(group, { index: iteration.index + 1, type: change }, depth + 1, final);
+                    sortAndDivideTable(group, { index: iteration.index + 1, type: change }, depth + 1, final, special);
                 }
             });
 
