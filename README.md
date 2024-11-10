@@ -157,7 +157,7 @@ const table = new LeagueTable({
 ```
 where for example wins would still be worth three points here, but draws would not contribute anything.
 
-In `names`, the first keys correspond to the acceptable criteria for sorting teams so feel free to check [Properties of the sorting object](#### Properties of the sorting object) down below to see a description of what they represent; `lots` and `alphabetical` are used respectively when describing that all criteria have been unhelpful and teams are being sorted either by random drawing or lots or by the alphabetical order of their names; `h2h` means the criterion is being applied as part of the head-to-head process only between the teams concerned, whereas `overall` means the criterion is a global one and is comparing values from across all of the matches.
+In `names`, the first keys correspond to the acceptable criteria for sorting teams so feel free to check [Properties of the sorting object](#properties-of-the-sorting-object) down below to see a description of what they represent; `lots` and `alphabetical` are used respectively when describing that all criteria have been unhelpful and teams are being sorted either by random drawing or lots or by the alphabetical order of their names; `h2h` means the criterion is being applied as part of the head-to-head process only between the teams concerned, whereas `overall` means the criterion is a global one and is comparing values from across all of the matches.
 
 For example, `names: { points: "points earned", lots: "at random" }` will have this effect when `.ties()` is called
 
