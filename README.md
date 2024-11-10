@@ -150,4 +150,4 @@ const table = new LeagueTable({
     points: (w, d, l) => 3*w
 });
 ```
-where for example draws do not award any points.
+where for example wins would still be worth two points here, but draws would not contribute anything.
