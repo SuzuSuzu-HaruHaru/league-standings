@@ -166,10 +166,17 @@ The `sorting` key from the table above accepts either the string `"FIFA"`, the s
     final: "lots"
 }
 ```
-In all other circumstances, `sorting` will accept an object with the following properties (see also the [Tiebreakers and sorting options](#tiebreakers-and-sorting-options) section above for the practical explanation of the phenomena some of these keys model).
+In all other circumstances, `sorting` will accept an object with the following properties (see also the [Tiebreakers and sorting options](#tiebreakers-and-sorting-options) section above for the practical explanation of the phenomena some of these keys model):
+
+| Key            | Description                                                       | Expected input      | Compulsory | Default |
+|----------------|-------------------------------------------------------------------|---------------------|:----------:|-----|
+| `criteria`        | The list of criteria that will be applied one after the other to sort teams that are equal on points. | An array containing any of the strings `"diff"`, `"for"`, `"won"`, `"away_for"`, `"away_won"`. | **Yes** | *n/a* |
+| `h2h`        | *See below** | Either the string `"all"` or the string `"single"`. | **Yes** | *n/a* |
+| `final`       | How to sort the teams after every other criterion has proven inconclusive. | Either the string `"lots"` or the string `"alphabetical"`. | **Yes** | *n/a* |
+
+With the `h2h` key accepting an object with the properties:
 
 | Key            | Description                                                       | Expected input      | Compulsory | Default |
 |----------------|-------------------------------------------------------------------|---------------------|:----------:|-----|
 | `when`        | Whether head-to-head criteria are to be applied before or after the over all ones. | Either the string `"before"` or the string `"after"`. | **Yes** | *n/a* |
-| `span`        | Whether the head-to-head criteria have to wait until the end before restarting in case of an early break-away | Either the string `"all"` or the string `"single"`. | **Yes** | *n/a* |
-| `final`       | How to sort the teams after every other criterion has proven inconclusive. | Either the string `"lots"` or the string `"alphabetical"`. | **Yes** | *n/a* |
+| `span`        | Whether the head-to-head criteria have to wait until the end before restarting in case of an early break-away. | Either the string `"all"` or the string `"single"`. | **Yes** | *n/a* |
