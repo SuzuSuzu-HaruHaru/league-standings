@@ -105,8 +105,13 @@ export default class LeagueTable {
             }
 
             const { criteria, h2h, additional, shootout, flags, final } = data.sorting;
-            if (!criteria || !h2h || !additional || !shootout || !flags || !final) {
-                throw new Error(`An explicitly specified "sorting" must contain keys named "criteria", "h2h", and "final".`);
+            if (criteria === undefined ||
+                h2h === undefined ||
+                additional === undefined ||
+                shootout === undefined ||
+                flags === undefined ||
+                final === undefined) {
+                throw new Error(`An explicitly specified "sorting" must contain keys named "criteria", "h2h", "additional", "shootout", "flags" and "final".`);
             }
 
             const allowed = ["diff", "for", "won", "away_for", "away_won"];
@@ -507,6 +512,7 @@ export default class LeagueTable {
                             }
                         } else {
                             // Additional overall criteria after the standard h2h / overall routine
+                            console.log("Am I getting at this check at the very least?");
                             for (const tiebreaker of this.sorting.additional) {
                                 if (b[tiebreaker] != a[tiebreaker]) {
                                     groups.forEach(group => group.length = 1);
@@ -517,40 +523,42 @@ export default class LeagueTable {
                             }
 
                             // If two teams that are still tied meet on the last matchday and their match is drawn, and the shootout key is set to true, then trigger a request for a shootout result
-                            const numberOfMatches = this.format == "round-robin" ?
-                                this.teams.length - 1 :
-                                2 * (this.teams.length - 1);
-                            const check = a.played == numberOfMatches && b.played == numberOfMatches;
-                            const lastMatch = Array.from(this.matches.values()).filter(match => match.matchday == numberOfMatches).find(match => (match.home == a.id && match.away == b.id) || (match.home == b.id && match.away == a.id));
+                            if (this.sorting.shootout) {
+                                const numberOfMatches = this.format == "round-robin" ?
+                                    this.teams.length - 1 :
+                                    2 * (this.teams.length - 1);
+                                const check = a.played == numberOfMatches && b.played == numberOfMatches;
+                                const lastMatch = Array.from(this.matches.values()).filter(match => match.matchday == numberOfMatches).find(match => (match.home == a.id && match.away == b.id) || (match.home == b.id && match.away == a.id));
 
-                            if (table.length == 2 &&
-                                check &&
-                                lastMatch &&
-                                lastMatch.home_for == lastMatch.away_for
-                            ) {
-                                const shootout = this.shootouts.find(shootout => (shootout[0] == a.id && shootout[1] == b.id) || (shootout[0] == b.id && shootout[1] == a.id));
+                                if (table.length == 2 &&
+                                    check &&
+                                    lastMatch &&
+                                    lastMatch.home_for == lastMatch.away_for
+                                ) {
+                                    const shootout = this.shootouts.find(shootout => (shootout[0] == a.id && shootout[1] == b.id) || (shootout[0] == b.id && shootout[1] == a.id));
 
-                                if (shootout) {
-                                    const aTeam = shootout.findIndex(element => element == a.id);
-                                    const bTeam = shootout.findIndex(element => element == b.id);
-                                    let aShootout, bShootout;
-                                    if (aTeam == 0 && bTeam == 1) {
-                                        aShootout = shootout[2];
-                                        bShootout = shootout[3];
+                                    if (shootout) {
+                                        const aTeam = shootout.findIndex(element => element == a.id);
+                                        const bTeam = shootout.findIndex(element => element == b.id);
+                                        let aShootout, bShootout;
+                                        if (aTeam == 0 && bTeam == 1) {
+                                            aShootout = shootout[2];
+                                            bShootout = shootout[3];
+                                        } else {
+                                            aShootout = shootout[3];
+                                            bShootout = shootout[2];
+                                        }
+
+                                        groups.forEach(group => group.length = 1);
+                                        this.cycles[this.cycles.length - 1].type = "shootout";
+                                        this.cycles[this.cycles.length - 1].criterion = "shootout";
+                                        return bShootout - aShootout;
                                     } else {
-                                        aShootout = shootout[3];
-                                        bShootout = shootout[2];
+                                        groups.forEach(group => group.length = 1);
+                                        this.cycles[this.cycles.length - 1].type = "shootout";
+                                        this.cycles[this.cycles.length - 1].criterion = "provisional";
+                                        return Math.random() > 0.5 ? -1 : 1;
                                     }
-
-                                    groups.forEach(group => group.length = 1);
-                                    this.cycles[this.cycles.length - 1].type = "shootout";
-                                    this.cycles[this.cycles.length - 1].criterion = "shootout";
-                                    return bShootout - aShootout;
-                                } else {
-                                    groups.forEach(group => group.length = 1);
-                                    this.cycles[this.cycles.length - 1].type = "shootout";
-                                    this.cycles[this.cycles.length - 1].criterion = "provisional";
-                                    return Math.random() > 0.5 ? -1 : 1;
                                 }
                             }
 
@@ -661,72 +669,113 @@ export default class LeagueTable {
     }
 
     ties(options) {
-        const groups = JSON.parse(JSON.stringify(this.groups));
+        const groupAndFilterByPoints = (arr) => {
+            const grouped = arr.reduce((acc, obj) => {
+                const key = obj.points;
+                if (!acc[key]) {
+                    acc[key] = [];
+                }
+                acc[key].push(obj);
+                return acc;
+            }, {});
 
-        const explainAndDivideGroup = (group, depth = 1) => {
+            const result = Object.values(grouped).filter(group => group.length > 1);
+            return result;
+        }
 
-            /* EXPLANATION
-            
-            This is the main function that is called to describe the various ties that have been encountered and resolved while sorting the table. It is a recursive function, with a recursive failsafe set at depth 50.
-            
-            ALGORITHM
-            The algorithm is the following:
-            
-                (1) if this is the first iteration, then we merely state which teams are tied on points at the very start;
-                (2) we run through all of this.groups and find the latest entry that contains all of the teams that we are currently working on at this iteration, as this means that this is the iteration where they are broken (remember that due to the recursive nature of sortAndDivideTable, the groups in this.groups can only get smaller and smaller); thus, if this is this.groups[index], we look at this.cycles[index + 1] to actually retrieve information about which criterion has been used at that step, or whether this criteria is of type head-to-head or overall; (*)
-                (3) from the current group of teams we filter out those whose property is non-unique;
-                (4) if what remains is of length at least two, we reapply the recursive function. 
+        const findAllMatchingSubarrays = (arr) => {
+            const seenPairs = new Set();
+            const results = [];
 
-            */
+            for (let i = arr.length - 1; i >= 0; i--) {
+                const subarray = arr[i].snapshot;
 
-            // Recursion failsafe
-            if (depth > 20) {
-                throw new Error("Maximum recursion depth exceeded for the information messages.");
+                if (subarray.length === Math.min(...arr.map(cycle => cycle.snapshot.length))) {
+                    const idPair = subarray.map(obj => obj.id).sort().join('-');
+
+                    if (!seenPairs.has(idPair)) {
+                        seenPairs.add(idPair);
+                        const targetIds = subarray.map(obj => obj.id);
+                        const matchedSubarrays = [];
+
+                        for (let j = 1; j <= i; j++) {
+                            const currentSubarray = arr[j];
+                            const currentIds = currentSubarray.snapshot.map(obj => obj.id);
+
+                            if (targetIds.every(id => currentIds.includes(id))) {
+                                matchedSubarrays.push(currentSubarray);
+                            }
+                        }
+
+                        results.push(matchedSubarrays);
+                    }
+                }
             }
+
+            return results;
+        }
+
+        const grouped = groupAndFilterByPoints(this.timeline[this.timeline.length - 1]);
+        if (grouped.length === 0) return [];
+
+        const history = findAllMatchingSubarrays(this.cycles);
+
+        history.forEach(story => {
+            const first = story[0];
+            const last = story[story.length - 1];
 
             let information = {
-                group: group.map(team => team.id),
+                group: first.snapshot.map(team => team.id),
                 messages: []
             };
-
             this.information.push(information);
 
-            // Step (1) of the algorithm
-            if (depth == 1) {
-                information.messages.push(`${formatNames(group.map(team => team.id))} are tied on ${this.names.points} (${this.cycles[0].snapshot.filter(team => group.some(element => element.id == team.id))[0].points}).`);
+            story.forEach((step, index) => {
+                const previous = story[index - 1];
 
-                console.log("The cycles are...", this.cycles.map(cycle => cycle.type + "   " + cycle.criterion + "   " + cycle.snapshot.map(team => team.id + " points: " + team.points + " diff: " + team.diff).join(",   ")), ".");
-            }
+                if (index == 0) {
+                    information.messages.push(`${formatNames(step.snapshot.map(team => team.id).sort())} are tied on ${this.names.points} (${this.cycles[0].snapshot.filter(team => grouped.flat().map(team => team.id).some(element => element == team.id))[0].points}).`)
+                }
 
-            // Step (2) of the algorithm
-            const history = [];
-            const groupIds = group.map(team => team.id);
+                if (index > 0 && step.snapshot.length < previous.snapshot.length) {
+                    const snapshot = previous.snapshot;
+                    const criterion = previous.criterion;
+                    const pointsCount = snapshot.reduce((count, obj) => {
+                        count[obj[criterion]] = (count[obj[criterion]] || 0) + 1;
+                        return count;
+                    }, {});
 
-            groups.forEach(step => {
-                step.forEach(_group => {
-                    if (groupIds.every(id => _group.map(team => team.id).includes(id))) {
-                        history.push(step);
+                    const sorted = snapshot.filter(team => pointsCount[team[criterion]] === 1);
+
+                    if (sorted.length == 1) {
+                        information.messages.push(`The position of ${formatNames([sorted[0].id])} is decided on ${this.#longNames(criterion)} (${snapshot.sort((a, b) => { return b[criterion] - a[criterion] }).map(team => `${team.id}: ${team[criterion]}`).join('; ')}).`);
+                    } else if (sorted.length > 1) {
+                        information.messages.push(`${formatNames(sorted.map(team => team.id).sort())} are sorted on ${this.#longNames(criterion)} (${snapshot.sort((a, b) => { return b[criterion] - a[criterion] }).map(team => `${team.id}: ${team[criterion]}`).join('; ')}).`);
                     }
-                });
+                }
             });
 
-            const index = (groups.length - 1) - groups.slice().reverse().findIndex(step => JSON.stringify(step) === JSON.stringify(history[history.length - 1]));
-            const type = this.cycles[index + 1].type == "h2h" ?
-                this.names.h2h + " " :
-                this.names.overall + " ";
-            const criterion = this.cycles[index + 1].criterion;
-            const special = this.cycles[index + 1].special ?
-                `Reapplying criteria 1-${this.sorting.criteria.length}: ` :
-                "";
+            let type;
+            switch (last.type) {
+                case "h2h":
+                    type = `${this.names.h2h} `;
+                    break;
+                case "overall":
+                    type = `${this.names.overall} `;
+                    break;
+                case "additional":
+                    type = `${this.names.overall} `;
+                    break;
+            }
 
-            switch (this.cycles[index + 1].type) {
+            switch (last.type) {
                 case "shootout":
-                    switch (this.cycles[index + 1].criterion) {
+                    switch (last.criterion) {
                         case "provisional":
-                            information.messages.push(`${formatNames(group.map(team => team.id))} are provisionally sorted at random while waiting for the results of their penalty shootout.`);
+                            information.messages.push(`${formatNames(last.snapshot.map(team => team.id).sort())} are provisionally sorted at random while waiting for the results of their penalty shootout.`);
                             break;
                         case "shootout":
-                            information.messages.push(`Having met on their last matchday and after drawing their match, ${formatNames(group.map(team => team.id))} are sorted on the results of their penalty shootout (${this.cycles[index + 1].snapshot.map(team => {
+                            information.messages.push(`Having met on their last matchday and after drawing their match, ${formatNames(last.snapshot.map(team => team.id).sort())} are sorted on the results of their penalty shootout (${last.snapshot.map(team => {
 
                                 const shootout = this.shootouts.find(shootout => shootout[0] == team.id || shootout[1] == team.id);
                                 const teamIndex = shootout.findIndex(element => element == team.id);
@@ -737,98 +786,42 @@ export default class LeagueTable {
                     }
                     break;
                 case "flag":
-                    information.messages.push(`After running though all criteria, ${formatNames(group.map(team => team.id))} are sorted on ${this.cycles[index + 1].criterion} (${this.cycles[index + 1].snapshot.map(team => {
-                        const flagIndex = this.sorting.flags.findIndex(flag => flag.name == this.cycles[index + 1].criterion);
+                    information.messages.push(`After running though all criteria, ${formatNames(last.snapshot.map(team => team.id).sort())} are sorted on ${last.criterion} (${last.snapshot.map(team => {
+                        const flagIndex = this.sorting.flags.findIndex(flag => flag.name == last.criterion);
                         return `${team.id}: ${this.flags[this.teams.findIndex(element => element == team.id)][flagIndex]}`;
                     }).join('; ')}).`);
                     break;
                 case "lots":
-                    information.messages.push(`After running though all criteria, ${formatNames(group.map(team => team.id))} are sorted ${this.names.lots}.`);
+                    information.messages.push(`After running though all criteria, ${formatNames(last.snapshot.map(team => team.id).sort())} are sorted ${this.names.lots}.`);
                     break;
                 case "alphabetical":
-                    information.messages.push(`After running though all criteria, ${formatNames(group.map(team => team.id))} are sorted ${this.names.alphabetical}.`);
+                    information.messages.push(`After running though all criteria, ${formatNames(last.snapshot.map(team => team.id).sort())} are sorted ${this.names.alphabetical}.`);
                     break;
                 default:
-                    // If more than two teams were tied and are now being resolved, we remove from the message those that are still tied
-                    const snapshot = this.cycles[index + 1].snapshot;
-                    const pointsCount = snapshot.reduce((count, obj) => {
-                        count[obj[criterion]] = (count[obj[criterion]] || 0) + 1;
-                        return count;
-                    }, {});
-
-                    const sorted = snapshot.filter(team => pointsCount[team[criterion]] === 1);
-
-                    if (group.length > 2 && group.length != sorted.length) {
-                        if (sorted.length == 1) {
-                            information.messages.push(`${special}The position of ${formatNames([sorted[0].id])} is decided on ${type}${this.#longNames(criterion)} (${this.cycles[index + 1].snapshot.sort((a, b) => { b[criterion] - a[criterion] }).map(team => `${team.id}: ${team[criterion]}`).join('; ')}).`);
-                        } else {
-                            information.messages.push(`${special}${formatNames(sorted.map(team => team.id))} are sorted on ${type}${this.#longNames(criterion)} (${this.cycles[index + 1].snapshot.sort((a, b) => { b[criterion] - a[criterion] }).map(team => `${team.id}: ${team[criterion]}`).join('; ')}).`);
-                        }
-                    } else {
-                        information.messages.push(`${special}${formatNames(group.map(team => team.id))} are sorted on ${type}${this.#longNames(criterion)} (${this.cycles[index + 1].snapshot.sort((a, b) => { b[criterion] - a[criterion] }).map(team => `${team.id}: ${team[criterion]}`).join('; ')}).`);
-                    }
-                    break
-            }
-
-            const filterNonUnique = (array, property) => {
-                if (array.length == 2 && this.cycles[index + 1].snapshot[0][property] != this.cycles[index + 1].snapshot[1][property]) {
-                    array.length = 1;
-                    return array;
-                }
-
-                // If the next step will be a random one, we may as well cut here.
-                if (this.cycles[index + 1].type == "shootout" || this.cycles[index + 1].type == "lots" || this.cycles[index + 1].type == "alphabetical" || index == this.groups.length - 2) {
-                    console.log("So when the heck is this triiiiiiiiiiiiiiiiiiiiiiggered!?");
-                    array.length = 1;
-                    return array;
-                }
-
-                const propertyCounts = array.reduce((counts, obj) => {
-                    const key = obj[property];
-                    counts[key] = (counts[key] || 0) + 1;
-                    return counts;
-                }, {});
-
-                return array.filter(obj => propertyCounts[obj[property]] > 1);
-            }
-
-            // Step (3) of the algorithm
-            const newGroup = filterNonUnique(group, criterion);
-
-            // Step (4) of the algorithm
-            if (newGroup.length > 1) {
-                explainAndDivideGroup(newGroup, depth + 1);
-            }
-
-            // Utility function for English grammar
-            function formatNames(names) {
-                if (names.length === 0) return '';
-                if (names.length === 1) return names[0];
-                if (names.length === 2) return names.join(' and ');
-
-                const last = names[names.length - 1];
-                const others = names.slice(0, -1).join(', ');
-
-                return `${others} and ${last}`;
-            }
-        }
-
-        // We iterate over the groups of length greater than 1 in the first element of this.groups, are these are the teams that were tied in the first place and thus need explaining.
-        groups[0].forEach(group => {
-            if (group.length > 1) {
-                explainAndDivideGroup(JSON.parse(JSON.stringify(group)));
+                    information.messages.push(`${formatNames(last.snapshot.map(team => team.id).sort())} are sorted on ${type}${this.#longNames(last.criterion)} (${last.snapshot.sort((a, b) => { b[last.criterion] - a[last.criterion] }).map(team => `${team.id}: ${team[last.criterion]}`).join('; ')}).`);
+                    break;
             }
         });
+
+        console.log("The cycles are...", this.cycles.map(cycle => cycle.type + "   " + cycle.criterion + "   " + cycle.snapshot.map(team => team.id + " points: " + team.points + " diff: " + team.diff).join(",   ")), ".");
 
         switch (options) {
             case undefined:
                 return this.information;
-            case "sequential":
-                return this.information.map(group => group.messages).flat();
             case "raw":
                 return this.cycles;
-            default:
-                throw new Error(`The argument of .ties() can only be "sequential", "raw" or none.`);
+        }
+
+        // Utility function for English grammar
+        function formatNames(names) {
+            if (names.length === 0) return '';
+            if (names.length === 1) return names[0];
+            if (names.length === 2) return names.join(' and ');
+
+            const last = names[names.length - 1];
+            const others = names.slice(0, -1).join(', ');
+
+            return `${others} and ${last}`;
         }
     }
 
