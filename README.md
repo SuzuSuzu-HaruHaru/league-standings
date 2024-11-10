@@ -151,3 +151,25 @@ const table = new LeagueTable({
 });
 ```
 where for example wins would still be worth three points here, but draws would not contribute anything.
+
+#### properties of the sorting object
+
+The `sorting` key from the table above accepts either the string `"FIFA"`, the string `"UEFA"`, or the string `"pre-2021-UEFA"`; leaving out this key during instantiation will default it to the object
+
+```javascript
+{
+    criteria: ["diff", "for", "won"],
+    h2h: {
+        when: "before",
+        span: "all"
+        },
+        final: "lots"
+        }
+```
+In all other circumstances, `sorting` will accept an object with the following properties (see also the [Tiebreakers and sorting options](#tiebreakers-and-sorting-options) section above for the practical explanation of the phenomena some of these keys model).
+
+| Key            | Description                                                       | Expected input      | Compulsory | Default |
+|----------------|-------------------------------------------------------------------|---------------------|:----------:|-----|
+| `when`        | Whether head-to-head criteria are to be applied before or after the over all ones. | Either the string `"before"` or the string `"after"`. | **Yes** | *n/a* |
+| `span`        | Whether the head-to-head criteria have to wait until the end before restarting in case of an early break-away | Either the string `"all"` or the string `"single"`. | **Yes** | *n/a* |
+| `final`       | How to sort the teams after every other criterion has proven inconclusive. | Either the string `"lots"` or the string `"alphabetical"`. | **Yes** | *n/a* |
