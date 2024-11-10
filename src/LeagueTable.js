@@ -9,7 +9,6 @@ export default class LeagueTable {
 
         if (Array.isArray(data.teams)) {
             if (data.teams.every(item => typeof item === "string")) {
-                // data.teams is an array of strings
                 if (new Set(data.teams).size !== data.teams.length) {
                     throw new Error(`Team identifiers must be unique.`);
                 } else {
@@ -30,7 +29,6 @@ export default class LeagueTable {
                     this.flags = teamFlags;
                 }
 
-                // Check uniqueness of `team` identifiers
                 const teamIds = data.teams.map(item => item.team);
                 if (new Set(teamIds).size !== teamIds.length) {
                     throw new Error(`Team identifiers must be unique.`);
@@ -38,7 +36,7 @@ export default class LeagueTable {
                     this.teams = teamIds;
                 }
             } else {
-                throw new Error(`Invalid format: the value of the "teams" key must be an array of strings or an array of objects with a "team" and "flags" key.`);
+                throw new Error(`Invalid format: the value of the "teams" key must be either an array of strings or an array of objects with a "team" and "flags" key.`);
             }
         } else {
             throw new Error(`Invalid data type: the value of the "teams" key must be an array.`);
@@ -327,7 +325,7 @@ export default class LeagueTable {
 
         /* EXPLANATION
 
-        This method relies on the recursive function sortAndDivideTable. More on this in the appropriate method below.
+        This method relies on the recursive function sortAndDivideTable; more on this below.
 
         For now, we initialize the standings by pushing a row for each team and filling it in with the points, the goals scored and such as per the matches that have been given by the user.
         */
@@ -371,26 +369,24 @@ export default class LeagueTable {
             The algorithm is the following:
     
                 (1) at any given step, we have a table consisting of the teams to be sorted and their relative data; if this is the first iteration, the table consists of all teams;
-                (2) if the current sorting criterion is of type head-to-head, the table in question is rewritten so that the data is only relative to the matches that were played between the teams in question (if the span is set to "all", then this is only recomputed for the teams that are still even when a cycle is completed and we are back to points; otherwise, if it is set to "single", we do it every single time);
+                (2) if the current sorting criterion is of type head-to-head, the table in question is rewritten so that the data is only relative to the matches that were played between the teams in question (if the span is set to "all", then this is computed only once when entering the head-to-head series, and again for the teams that are still even only when a cycle of tiebrekers is completed; otherwise, if it is set to "single", we do it every single time);
                 (3) the table is divided according to the current criterion by pairing up teams that are still tied: for example, for Team A (pts 6), Team B (pts 3), Team C (pts 6), with the current criterion being points, we would end up with an array [[Team A, Team C], [Team C]] (where each entry in the subarrays is an object containing all the relevant information about the teams) which is then pushed into this.groups.
     
-                Now it is time to sort the teams: if this is the first iteration, an array that contains the initial standings is pushed into this.timeline; for all other iterations, the latest entry of this.timeline is retrieved, sorted and pushed as a new entry back into this.timeline; when the recursion eventually ends, the latest entry will be the output of the entire sorting process. As the entries in this.timeline are never rewritten even during sorting criteria of type head-to-head, the overall data for each team is conserved which is exactly what we want when we need to actually print the final table for viewing purposes.
+                Now it is time to sort the teams: if this is the first iteration, an array that contains the initial standings is pushed into this.timeline; for all other iterations, the latest entry of this.timeline is retrieved, sorted and re-pushed as a new entry back into this.timeline; when the recursion eventually ends, the latest entry will be the output of the entire sorting process (i.e. the full sorted table, ready for display). As the entries in this.timeline are never rewritten even during sorting criteria of type head-to-head (those go into this.groups at each step), the overall data for each team is conserved so that we can display it properly.
     
-                (4) As for the sorting itself:
-                    only teams that are part of the table that is being considered at this recursion level are taken into account, and they are sorted according to the values they have (by matching via team id)
-                        - in the latest entry of this.timeline, if the current sorting critetion is of type overall;
-                        - in the latest entry of this.groups, if the current sorting critetion is of type head-to-head.
-    
-                (5) And finally, the recursive step: for each of the groups obtained in (3), so long as their length is at least 2, we call this,#recursive again on them.
-                (6) When a new iteration starts, under general circumstances the next criterion in the list is applied this time.
-    
-            This process is guaranteed to end because, if a group contains teams that are sortable according to the current criterion, each of the subarrays will be of length strictly smaller; and if not, and some of the teams remain even for all the criteria, the function activates the "final" variable which sorts the teams though a set of criteria that eventually ends in either drawing of random lots or alphabetical order, and then artificially makes the group of length 1 to guarantee that the recursion ends for this specific group.
-    
+                (4) As for the sorting procedure itself:
+                    only teams that are part of the table that is being considered at this recursion level are taken into account, and they are sorted according to the values they have (by matching the other tables via team id)
+                        - in the latest entry of this.timeline, if the current sorting criterion is of type overall;
+                        - in the latest entry of this.groups, if the current sorting critetion is of type head-to-head;
+                    the sorting process goes through each tiebreaker and, once the "final" flag is raised, it goes through the final steps of (a) additional overall criteria, (b) penalty shootouts, (c) additional flags set by the user, and (d) drawing of random lots or alphabetical order.
+                
+                (5) And finally, the recursive step: for each of the groups obtained in (3), so long as their length is at least 2, we call sortAndDivideTable again on them with the next criterion in the list (if "final" has not yet been reached).
+        
             VARIABLES
                 run:
-                    the number of consecutive steps of the same type (overall or head-to-head) that we have taken so far, up to and including the latest one; when this reaches the length of the array, we trigger the checks for deciding what to do next (switching to head-to-head, or switching to overall, or reapplying head-to-head to a subset of the team concerned, or proceding to randomization).
+                    the number of consecutive steps of the same type (overall or head-to-head) that we have taken so far, up to and including the latest one; when this reaches the length of the array of tiebreakers, we trigger the checks for deciding what to do next (switching to head-to-head, or switching to overall, or reapplying head-to-head to a subset of the team concerned, or proceding to "final").
                 this.cycles:
-                    array whose each entry contains information about the current sorting step (head-to-head or overall, criterion used, teams being sorted which reflect those in the this.groups element of index one fewer).
+                    array whose each entry contains information about the current sorting step (head-to-head or overall, criterion used, the "special" flag explained below, teams being sorted which reflect those in the this.groups element of index one fewer).
                 special:
                     a boolean whose job is to keep track of `special` iterations, i.e. those that occur when h2h.span is set to "single" and we are making progress in breaking ties before a full check of all the criteria is completed, in which case the variable is set to true and survives to the next iteration to tell the function to restart the list of criteria from points; it is set back to false immediately after.
             */
@@ -669,6 +665,17 @@ export default class LeagueTable {
     }
 
     ties(options) {
+
+        /* EXPLANATION
+    
+            This is the main function that is called to explain how every instance of a tie in point has been resolved, which can then be printed to screen along with the table for extra clarity.
+
+            The way it works is that it looks at this.cycles (which is a collective history of the entire sorting process) and, starting from the bottom (i.e. from the more recent steps, where ties have been resolved) it filters out the list by splitting it into different arrays, each of which made of steps that directly involve the specific teams that will eventually end up being resolved at that endpoint. For example, if two sets of teams are tied at Team A: 6 pts, Team B: 6 pts, Team C: 6 pts, Team D: 6 pts, this.cycles will be split into two arrays that contain the steps that lead to the moment where each pair was definitely split up, each set ignoring the steps that were useful solely to sort the other set.
+
+            From this, it is just a matter of retrieving the specific information we want from the array and printing it to the screen.
+
+        */
+
         const groupAndFilterByPoints = (arr) => {
             const grouped = arr.reduce((acc, obj) => {
                 const key = obj.points;
