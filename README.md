@@ -157,7 +157,7 @@ new LeagueTable(<Object>);
         <th>Default value</th>
     </tr>
     <tr>
-        <td>`teams`</td>
+        <td><pre>teams</pre></td>
         <td>The list of the teams that are taking part in the league.</td>
         <td>An array of unique identifiers of any type.</td>
         <td>**Yes**</td>
