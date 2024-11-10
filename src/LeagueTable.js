@@ -508,7 +508,6 @@ export default class LeagueTable {
                             }
                         } else {
                             // Additional overall criteria after the standard h2h / overall routine
-                            console.log("Am I getting at this check at the very least?");
                             for (const tiebreaker of this.sorting.additional) {
                                 if (b[tiebreaker] != a[tiebreaker]) {
                                     groups.forEach(group => group.length = 1);
@@ -732,7 +731,7 @@ export default class LeagueTable {
             const last = story[story.length - 1];
 
             let information = {
-                group: first.snapshot.map(team => team.id),
+                group: first.snapshot.map(team => team.id).sort(),
                 messages: []
             };
             this.information.push(information);
@@ -810,7 +809,7 @@ export default class LeagueTable {
             }
         });
 
-        console.log("The cycles are...", this.cycles.map(cycle => cycle.type + "   " + cycle.criterion + "   " + cycle.snapshot.map(team => team.id + " points: " + team.points + " diff: " + team.diff).join(",   ")), ".");
+        //console.log("The cycles are:", this.cycles.map(cycle => cycle.type + "   " + cycle.criterion + "   " + cycle.snapshot.map(team => team.id + " points: " + team.points + " diff: " + team.diff).join(",   ")), ".");
 
         switch (options) {
             case undefined:
