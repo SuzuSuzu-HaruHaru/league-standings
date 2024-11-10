@@ -94,7 +94,7 @@ The `h2h` key, meaning *head-to-head*, deserves its own subsection to be explain
 
 #### when
 
-The first is `when`, which simply lets you choose whether you want the head-to-head comparisons to be done immediately (here signified by the `before` keyword, as per the example above), or only after the comparison using the overall results of the whole table has not been able to sort all the teams (here signified by the `after` keyword). Those of you who like soccer may already be familiar with this concept: FIFA uses overall criteria first in all of their competition, only resorting to head-to-head if this does not work fully, whereas UEFA famously uses head-to-head comparisons as their first row of criteria, with overall results being used only to solve any still-existing ties.
+The first is `when`, which simply lets you choose whether you want the head-to-head comparisons to be done immediately (here signified by the `before` keyword), or only after the comparison using the overall results of the whole table has not been able to sort all the teams (here signified by the `after` keyword). Those of you who like soccer may already be familiar with this concept: FIFA uses overall criteria first in all of their competition, only resorting to head-to-head if this does not work fully, whereas UEFA famously uses head-to-head comparisons as their first row of criteria, with overall results being used only to solve any still-existing ties.
 
 One such example comes from [Group E at the UEFA EURO 2016](https://en.wikipedia.org/wiki/UEFA_Euro_2016), where the final table ended up looking like this
 
@@ -178,5 +178,5 @@ With the `h2h` key accepting an object with the properties:
 
 | Key            | Description                                                       | Expected input      | Compulsory | Default |
 |----------------|-------------------------------------------------------------------|---------------------|:----------:|-----|
-| `when`        | Whether head-to-head criteria are to be applied before or after the over all ones. | Either the string `"before"` or the string `"after"`. | **Yes** | *n/a* |
+| `when`        | Whether head-to-head criteria are to be applied before or after the overall ones. | Either the string `"before"` or the string `"after"`. | **Yes** | *n/a* |
 | `span`        | Whether the head-to-head criteria have to wait until the end before restarting in case of an early break-away. | Either the string `"all"` or the string `"single"`. | **Yes** | *n/a* |
