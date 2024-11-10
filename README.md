@@ -167,6 +167,7 @@ messages: [
     'Italy and Spain are sorted at random.'
 ]
 ```
+If any of the keys in `names` are not specified, or if the whole key is absent, each term will default respectively to `"points"`, `"goal difference"`, `"number of goals scored"`, `"number of games won"`, `"poinumber of goals scored away from homents"`, `"number of games won away from home"`, `"on drawing of random lots"`, `"on the alphabetical order of their names"`, `"head-to-head"` and `"overall"`.
 
 #### Properties of the sorting object
 
