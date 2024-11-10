@@ -143,7 +143,6 @@ new LeagueTable(<Object>);
 A `"round-robin"` league is one where the teams face each other only once; a `"home-and-away"` league is one in which teams face each other exactly twice (once at home and once away). The `"standard"` points system corresponds to the current one used in football that awards three points for a win, one for a draw and none for a loss, whereas the `"old"` one is the one used by FIFA pre-1994 that awarded only two points for a win, one for a draw and none for a loss. A function can also be passed as a parameter, as in
 
 ```javascript
-const teams = ["San Marino", "Italy", "Spain", "France"];
 const table = new LeagueTable({
     teams: teams,
     points: (w, d, l) => 3*w
