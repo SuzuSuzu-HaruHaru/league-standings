@@ -133,7 +133,7 @@ new LeagueTable(<Object>);
 ```
 #### Properties of the input object
 
-| Key            | Description                                                       | Type/Expected value  | Compulsory | Default value |
+| Key            | Description                                                       | Type and/or expected value  | Compulsory | Default value |
 |----------------|-------------------------------------------------------------------|----------------------|------------|-----|
 | `teams`        | The list of the teams that are taking part in the league.         | An array of unique identifiers of any type. | **Yes** | *n/a* |
 | `format`       | Whether the league is played as round-robin or home-and-away.     | Either the string `"round-robin"` or the string `"home-and-away"`. | **No** | `"round-robin"` |
