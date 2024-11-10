@@ -129,7 +129,7 @@ The truth of the matter is that, according to the official regulations of the Eu
 ### Object instantiation
 
 ```javascript
-<Object of type LeagueTable> = new LeagueTable(<Object>);
+new LeagueTable(<Object>);
 ```
 #### Properties of the input object
 
@@ -148,39 +148,40 @@ The truth of the matter is that, according to the official regulations of the Eu
                 final: "lots"
             }
             ``` |
-
 <table>
-<tr>
-<th>
-Status
-</th>
-<th>
-Response
-</th>
-</tr>
-
-<tr>
-
-<td>
-<pre>
-<br/><br/><br/>200<br/><br/><br/><br/><br/>400<br/>
-</pre>
-</td>
-
-<td>
-<pre>
-json
-  {
-    "id": 10,
-    "username": "alanpartridge",
-    "email": "alan@alan.com",
-    "password_hash": "$2a$10$uhUIUmVWVnrBWx9rrDWhS.CPCWCZsyqqa8./whhfzBZydX7yvahHS",
-    "password_salt": "$2a$10$uhUIUmVWVnrBWx9rrDWhS.",
-    "created_at": "2015-02-14T20:45:26.433Z",
-    "updated_at": "2015-02-14T20:45:26.540Z"
-}
-</pre>
-</td>
-
-</tr>
+    <tr>
+        <th>Key</th>
+        <th>Description</th>
+        <th>Type/Expected value</th>
+        <th>Compulsory</th>
+        <th>Default value</th>
+    </tr>
+    <tr>
+        <td>`teams`</td>
+        <td>The list of the teams that are taking part in the league.</td>
+        <td>An array of unique identifiers of any type.</td>
+        <td>**Yes**</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>`format`</td>
+        <td>Whether the league is played as round-robin or home-and-away.</td>
+        <td>Either the string `"round-robin"` or the string `"home-and-away"`.</td>
+        <td>**No**</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>`points`</td>
+        <td>How to calculate the points that teams get after every match.</td>
+        <td>Either the string `"standard"` or the string `"old"`, or alternatively any function that accepts exactly three arguments and returns an integer.</td>
+        <td>**No**</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>`sorting`</td>
+        <td>How the teams are to be sorted if they are even on points.</td>
+        <td>*See below*</td>
+        <td>**No**</td>
+        <td></td>
+    </tr>
 </table>
