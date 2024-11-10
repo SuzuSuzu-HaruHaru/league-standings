@@ -171,7 +171,7 @@ In all other circumstances, `sorting` will accept an object with the following p
 | Key            | Description                                                       | Expected input      | Compulsory | Default |
 |----------------|-------------------------------------------------------------------|---------------------|:----------:|-----|
 | `criteria`        | The list of criteria that will be applied one after the other to sort teams that are equal on points. | An array containing any of the strings `"diff"`, `"for"`, `"won"`, `"away_for"`, `"away_won"`. | **Yes** | *n/a* |
-| `h2h`        | *See below** | Either the string `"all"` or the string `"single"`. | **Yes** | *n/a* |
+| `h2h`        | Handles the head-to-head section of the sorting procedure. | *See below* | **Yes** | *n/a* |
 | `final`       | How to sort the teams after every other criterion has proven inconclusive. | Either the string `"lots"` or the string `"alphabetical"`. | **Yes** | *n/a* |
 
 With the `h2h` key accepting an object with the properties:
