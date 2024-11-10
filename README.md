@@ -139,3 +139,14 @@ new LeagueTable(<Object>);
 | `format`       | Whether the league is played as round-robin or home-and-away.     | Either the string `"round-robin"` or the string `"home-and-away"`. | **No** | `"round-robin"` |
 | `points`       | How to calculate the points that teams get after every match.     | Either the string `"standard"` or the string `"old"`, or alternatively any function that accepts exactly three arguments and returns an integer. | **No** | `"standard"` |
 | `sorting`      | How the teams are to be sorted if they are even on points.        | *See below* | **No** | *See below* |
+
+A `"round-robin"` league is one where the teams face each other only once; a `"home-and-away"` league is one in which teams face each other exactly twice (once at home and once away). The `"standard"` points system corresponds to the current one used in football that awards three points for a win, one for a draw and none for a loss, whereas the `"old"` one is the one used by FIFA pre-1994 that awarded only two points for a win, one for a draw and none for a loss. A function can also be passed as a parameter, as in
+
+```javascript
+const teams = ["San Marino", "Italy", "Spain", "France"];
+const table = new LeagueTable({
+    teams: teams,
+    points: (w, d, l) => 3*w
+});
+```
+where for example draws do not award any points.
