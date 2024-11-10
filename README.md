@@ -131,8 +131,20 @@ The truth of the matter is that, according to the official regulations of the Eu
 ```javascript
 <Object of type LeagueTable> = new LeagueTable(<Object>);
 ```
-| Attribute      | Description                     |
-|----------------|---------------------------------|
-| **Expects**    | `/api/v1/getUserProfile`        |
-| **Returns**      | `GET`                           |
-| **Description** | Retrieves basic user profile data.|
+#### Properties of the input object
+
+| Key            | Description                                                       | Type/Expected value  | Compulsory | Default value |
+|----------------|-------------------------------------------------------------------|----------------------|------------|-----|
+| `teams`        | The list of the teams that are taking part in the league.         | An array of unique identifiers of any type. | **Yes** | *n/a* |
+| `format`       | Whether the league is played as round-robin or home-and-away.     | Either the string `"round-robin"` or the string `"home-and-away"`. | **No** | `"round-robin"` |
+| `points`       | How to calculate the points that teams get after every match.     | Either the string `"standard"` or the string `"old"`, or alternatively any function that accepts exactly three arguments and returns an integer. | **No** | `"standard"` |
+| `sorting`      | How the teams are to be sorted if they are even on points.        | *See below* | **No** | ```javascript
+{
+                criteria: ["diff", "for", "won"],
+                h2h: {
+                    when: "before",
+                    span: "all"
+                },
+                final: "lots"
+            }
+            ``` |
