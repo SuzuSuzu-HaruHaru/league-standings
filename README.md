@@ -163,8 +163,8 @@ The `sorting` key from the table above accepts either the string `"FIFA"`, the s
         when: "before",
         span: "all"
         },
-        final: "lots"
-        }
+    final: "lots"
+}
 ```
 In all other circumstances, `sorting` will accept an object with the following properties (see also the [Tiebreakers and sorting options](#tiebreakers-and-sorting-options) section above for the practical explanation of the phenomena some of these keys model).
 
