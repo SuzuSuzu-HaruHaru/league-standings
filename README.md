@@ -8,8 +8,7 @@ A Javascript package that computes league tables from an array of matches. Types
 2. [Installation](#installation)
 3. [Quick start](#quick-start)
 4. [Tiebreakers and sorting options](#tiebreakers-and-sorting-options)
-5. [Documentation](#documentation)
-6. [License](#license)
+5. [License](#license)
 
 ## Introduction
 
