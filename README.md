@@ -143,6 +143,7 @@ new LeagueTable(<Object>);
 | `format`       | Whether the league is played as round-robin or home-and-away.     | Either the string `"round-robin"` or the string `"home-and-away"`. | **No** | `"round-robin"` |
 | `points`       | How to calculate the points that teams get after every match.     | Either the string `"standard"` or the string `"old"`, or alternatively any function that accepts exactly three arguments and returns an integer. | **No** | `"standard"` |
 | `sorting`      | How the teams are to be sorted if they are even on points.        | *See below* | **No** | *See below* |
+| `names`      | Specifies what terms are to be used when requiring a description of the ties.        | An object with either of the properties `points`, `diff`, `for`, `won`, `away_for`, `away_won`, `lots`, `alphabetical`, `h2h`, `overall`, each of which accepting a string as a value. | **No** | *See below* |
 
 A `"round-robin"` league is one where the teams face each other only once; a `"home-and-away"` league is one in which teams face each other exactly twice (once at home and once away). The `"standard"` points system corresponds to the current one used in football that awards three points for a win, one for a draw and none for a loss, whereas the `"old"` one is the one used by FIFA pre-1994 that awarded only two points for a win, one for a draw and none for a loss.
 
@@ -155,6 +156,17 @@ const table = new LeagueTable({
 });
 ```
 where for example wins would still be worth three points here, but draws would not contribute anything.
+
+In `names`, the first keys correspond to the acceptable criteria for sorting teams so feel free to check [Properties of the sorting object](#### Properties of the sorting object) down below to see a description of what they represent; `lots` and `alphabetical` are used respectively when describing that all criteria have been unhelpful and teams are being sorted either by random drawing or lots or by the alphabetical order of their names; `h2h` means the criterion is being applied as part of the head-to-head process only between the teams concerned, whereas `overall` means the criterion is a global one and is comparing values from across all of the matches.
+
+For example, `names: { points: "points earned", lots: "at random" }` will have this effect when `.ties()` is called
+
+```javascript
+messages: [
+    'Italy and Spain are tied on points earned (4).',
+    'Italy and Spain are sorted at random.'
+]
+```
 
 #### Properties of the sorting object
 

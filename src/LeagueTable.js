@@ -106,6 +106,82 @@ export default class LeagueTable {
             this.sorting = data.sorting;
         }
 
+        this.names = {};
+        if (!("names" in data)) {
+            this.names.points = "points";
+            this.names.diff = "goal difference";
+            this.names.for = "number of goals scored";
+            this.names.won = "number of games won";
+            this.names.away_for = "number of goals scored away from home";
+            this.names.away_won = "number of games won away from home";
+            this.names.lots = "on drawing of random lots";
+            this.names.alphabetical = "on the alphabetical order of their names";
+            this.names.h2h = "head-to-head";
+            this.names.overall = "overall";
+        } else if (typeof data.names !== "object") {
+            throw new Error(`An explicitly specified "names" must be an object.`);
+        } else {
+            if (!("points" in data.names)) {
+                this.names.points = "points";
+            } else {
+                this.names.points = data.names.points;
+            }
+
+            if (!("diff" in data.names)) {
+                this.names.diff = "goal difference";
+            } else {
+                this.names.diff = data.names.diff;
+            }
+
+            if (!("for" in data.names)) {
+                this.names.for = "number of goals scored";
+            } else {
+                this.names.for = data.names.for;
+            }
+
+            if (!("won" in data.names)) {
+                this.names.won = "number of games won";
+            } else {
+                this.names.won = data.names.won;
+            }
+
+            if (!("away_for" in data.names)) {
+                this.names.away_for = "number of goals scored away from home";
+            } else {
+                this.names.away_for = data.names.away_for;
+            }
+
+            if (!("away_won" in data.names)) {
+                this.names.away_won = "number of games won away from home";
+            } else {
+                this.names.away_won = data.names.away_won;
+            }
+
+            if (!("lots" in data.names)) {
+                this.names.lots = "drawing of random lots";
+            } else {
+                this.names.lots = data.names.lots;
+            }
+
+            if (!("alphabetical" in data.names)) {
+                this.names.alphabetical = "the alphabetical order of their names";
+            } else {
+                this.names.alphabetical = data.names.alphabetical;
+            }
+
+            if (!("h2h" in data.names)) {
+                this.names.h2h = "head-to-head";
+            } else {
+                this.names.h2h = data.names.h2h;
+            }
+
+            if (!("overall" in data.names)) {
+                this.names.overall = "overall";
+            } else {
+                this.names.overall = data.names.overall;
+            }
+        }
+
         this.matches = new Map();
 
         this.cycles = [];
@@ -216,7 +292,7 @@ export default class LeagueTable {
 
             // Step (1) of the algorithm
             if (depth == 1) {
-                information.messages.push(`${formatNames(group.map(team => team.id))} are tied on points (${this.cycles[0].snapshot.filter(team => group.some(element => element.id == team.id))[0].points}).`);
+                information.messages.push(`${formatNames(group.map(team => team.id))} are tied on ${this.names.points} (${this.cycles[0].snapshot.filter(team => group.some(element => element.id == team.id))[0].points}).`);
             }
 
             // Step (2) of the algorithm
@@ -233,8 +309,8 @@ export default class LeagueTable {
 
             const index = (groups.length - 1) - groups.slice().reverse().findIndex(step => JSON.stringify(step) === JSON.stringify(history[history.length - 1]));
             const type = this.cycles[index + 1].type == "h2h" ?
-                "head-to-head " :
-                "overall ";
+                this.names.h2h + " " :
+                this.names.overall + " ";
             const criterion = this.cycles[index + 1].criterion;
             const special = this.cycles[index + 1].special ?
                 `Reapplying criteria 1-${this.sorting.criteria.length}: ` :
@@ -242,10 +318,10 @@ export default class LeagueTable {
 
             switch (this.cycles[index + 1].type) {
                 case "lots":
-                    information.messages.push(`${formatNames(group.map(team => team.id))} are sorted on drawing of random lots.`);
+                    information.messages.push(`${formatNames(group.map(team => team.id))} are sorted ${this.names.lots}.`);
                     break;
                 case "alphabetical":
-                    information.messages.push(`${formatNames(group.map(team => team.id))} are sorted on the alphabetical order of their names.`);
+                    information.messages.push(`${formatNames(group.map(team => team.id))} are sorted ${this.names.alphabetical}.`);
                     break;
                 default:
                     // If more than two teams were tied and are now being resolved, we esclude from the message those that are still tied
@@ -664,29 +740,25 @@ export default class LeagueTable {
                 awayTeamRow.points = 2 * awayTeamRow.won + awayTeamRow.drawn;
                 break;
             default:
-                homeTeamRow.points = this.points(homeTeamRow.won, homeTeamRow.drawn, homeTeamRow.lost);
-                awayTeamRow.points = this.points(awayTeamRow.won, awayTeamRow.drawn, awayTeamRow.lost);
+                homeTeamRow.points = parseInt(this.points(homeTeamRow.won, homeTeamRow.drawn, homeTeamRow.lost));
+                awayTeamRow.points = parseInt(this.points(awayTeamRow.won, awayTeamRow.drawn, awayTeamRow.lost));
         }
     }
 
     #longNames(shorthand) {
         switch (shorthand) {
             case "points":
-                return "points";
+                return this.names.points;
             case "diff":
-                return "goal difference";
+                return this.names.diff;
             case "for":
-                return "goals scored";
+                return this.names.for;
             case "won":
-                return "number of games won";
+                return this.names.won;
             case "away_for":
-                return "number of goals scored away from home";
+                return this.names.away_for;
             case "away_won":
-                return "number of games won away from home";
-            case "lots":
-                return "drawing of random lots";
-            case "alphabetical":
-                return "the alphabetical order of their names";
+                return this.names.away_won;
         }
     }
 }
