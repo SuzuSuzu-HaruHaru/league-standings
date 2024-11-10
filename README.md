@@ -152,7 +152,7 @@ const table = new LeagueTable({
 ```
 where for example wins would still be worth three points here, but draws would not contribute anything.
 
-#### properties of the sorting object
+#### Properties of the sorting object
 
 The `sorting` key from the table above accepts either the string `"FIFA"`, the string `"UEFA"`, or the string `"pre-2021-UEFA"`; leaving out this key during instantiation will default it to the object
 
