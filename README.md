@@ -2,6 +2,54 @@
 
 A Javascript package that computes league tables from an array of matches. Types and order of tiebreakers are fully customizable, and it is possible to access the full description of which tiebreakers were used at what point in both textual and raw data form.
 
+```javascript
+import { LeagueTable } from 'LeagueTable.js';
+
+const teams = ["San Marino", "Italy", "Spain", "France"];
+const matches = [
+    [1, 1, "France", "San Marino", 20, 0],
+    [2, 1, "Italy", "Spain", 3, 1],
+    [3, 2, "Italy", "France", 0, 1],
+    [5, 2, "Spain", "San Marino", 2, 0],
+    [4, 3, "Spain", "France", 3, 0],
+    [6, 3, "Italy", "San Marino", 1, 0],
+];
+
+const table = new LeagueTable({
+    teams: teams,
+    sorting: "UEFA Euro"
+});
+table.addMatches(matches);
+
+console.table(table.standings());
+console.log(table.ties());
+
+/*
+
+Output to the console will look like:
+
+id         | points | for | against | diff | won | drawn | lost | played
+-----------|--------|-----|---------|------|-----|-------|------|-------
+Spain      | 6      | 6   | 3       | 3    | 2   | 0     | 1    | 3
+Italy      | 6      | 6   | 3       | 3    | 2   | 0     | 1    | 3
+France     | 6      | 6   | 3       | 3    | 2   | 0     | 1    | 3
+San Marino | 6      | 6   | 3       | 3    | 2   | 0     | 1    | 3
+
+[
+  {
+    group: [ 'France', 'Italy', 'Spain' ],
+    messages: [
+      France, Italy and Spain are tied on points (6).',
+      'The position of France is decided on goal difference (Italy: 1; Spain: 1; France: -2).',
+      'Italy and Spain are sorted on head-to-head number of goals scored (Spain: 4; Italy: 3).'
+    ],
+    requests: null
+  }
+]
+
+*/
+```
+
 ## Table of Contents
 
 1. [Introduction](#introduction)
