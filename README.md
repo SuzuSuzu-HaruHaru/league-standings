@@ -18,8 +18,6 @@ const matches = [
 
 const table = new LeagueTable({
     teams: teams,
-    format: "round-robin",
-    points: "standard",
     sorting: {
         criteria: ["diff", "for", "away_for"],
         h2h: { when: "before", span: "all" },
