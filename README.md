@@ -1,6 +1,6 @@
 # league-standings
 
-As a football (soccer) fan myself, I can confidently say that there is nothing that sounds easier, *and* nothing that sounds harder, than putting teams in a table. It is easy, in that the logic is apparently easy to follow: track the results, compute the points, sort by points; if there are any ties, apply tiebreakers. Little nuances aside, that would be the end of the story. But, as they say, the devil is in the details.
+As a football (soccer) fan myself, I can confidently say that there is nothing that sounds easier, ***and*** nothing that sounds harder, than putting teams in a table. It is *easy*, in that the logic is apparently elementary enough: track the results, compute the points, sort by points; if there are any ties, apply tiebreakers. Little nuances aside, that would be the end of the story. But, as they say, the devil is in the details.
 
 The away goals rule is a famous one that made the news back in 2021, when UEFA did away with it; but is it *really* gone from the list of criteria? [Group E at the UEFA Euro 2024](https://en.wikipedia.org/wiki/UEFA_Euro_2024) caused quite a panic when all teams finished the group on equal footing, with 4 points each: how were the final standings determined, and what would the table have looked like under different sorting rules—like those used by FIFA, for example?
 
