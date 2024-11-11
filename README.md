@@ -6,13 +6,6 @@ The away goals rule is a famous one that made the news back in 2021, when UEFA d
 
 This `league-standing` package **offers complete flexibility in choosing all of these details:** from the quantity of tiebreakers to their order, to whether head-to-head criteria should be applied before or after the overall ones, to the little oddities that I alluded to in the previous paragraphs and much more.
 
-## Table of Contents
-
-1. [Installation](#installation)
-2. [Quick start](#quick-start)
-3. [Tiebreakers and sorting options](#tiebreakers-and-sorting-options)
-4. [License](#license)
-
 ```javascript
 import { LeagueTable } from 'LeagueTable.js';
 
@@ -42,6 +35,13 @@ table.addMatches(matches);
 console.table(table.standings());
 console.log(table.ties());
 ```
+
+## Table of Contents
+
+1. [Installation](#installation)
+2. [Quick start](#quick-start)
+3. [Tiebreakers and sorting options](#tiebreakers-and-sorting-options)
+4. [License](#license)
 
 ## Installation
 
