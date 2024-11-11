@@ -6,6 +6,23 @@ The away goals rule is a famous one that made the news back in 2021, when UEFA d
 
 This `league-standing` package **offers complete flexibility in choosing all of these details:** from the quantity of tiebreakers to their order, to whether head-to-head criteria should be applied before or after the overall ones, to the little oddities that I alluded to in the previous paragraphs and much more.
 
+## Table of Contents
+
+1. [Installation](#installation)
+2. [Quick start](#quick-start)
+3. [Tiebreakers and sorting options](#tiebreakers-and-sorting-options)
+4. [License](#license)
+
+## Installation
+
+Just run this on any terminal within your project folder
+
+```bash
+$ npm install league-standings
+```
+
+## Quick start
+
 ```javascript
 import { LeagueTable } from 'league-standings';
 
@@ -28,84 +45,6 @@ table.addMatches(matches);
 
 console.table(table.standings());
 console.log(table.ties());
-```
-
-## Table of Contents
-
-1. [Installation](#installation)
-2. [Quick start](#quick-start)
-3. [Tiebreakers and sorting options](#tiebreakers-and-sorting-options)
-4. [License](#license)
-
-## Installation
-
-Just run this on any terminal within your project folder
-
-```bash
-$ npm install league-standings
-```
-
-## Quick start
-
-To use the package, simply require the package and instantiate a new `LeagueTable` object via
-
-```javascript
-import { LeagueTable } from 'LeagueTable.js';
-
-const teams = ["San Marino", "Italy", "Spain", "France"];
-const table = new LeagueTable({
-    teams: teams
-});
-```
-where `team` is here an array of ***unique*** identifiers of any type (ideally strings containing the names of the teams, as per the example above). Matches can be added via the `addMatches()` method
-
-```javascript
-const matches = [
-    [1, 1, "Spain", "San Marino", 2, 0],
-    [2, 1, "Italy", "Spain", 9, 4],
-    [3, 2, "France", "San Marino", 20, 0],
-    [4, 2, "Italy", "France", 6, 7],
-    [5, 3, "Italy", "San Marino", 1, 0],
-    [6, 3, "Spain", "France", 3, 0]
-];
-table.addMatches(matches);
-```
-where `matches` is here an array of arrays, each representing one match. As per the example above, any match array must have entries that are respectively: a ***unique*** identifier for each match; the matchday; the unique identifier of the home team; the unique identifier of the away team; the number of points scored by the home team; and finally the number of points scored by the away team.
-
-Finally, the standings can be retrieved via
-
-```javascript
-table.standings();
-```
-For example, printing the line above to the console as `console.table(table.standings())` will yield
-
-```
-id         | points | for | against | diff | won | drawn | lost | played
------------|--------|-----|---------|------|-----|-------|------|-------
-Spain      | 6      | 6   | 3       | 3    | 2   | 0     | 1    | 3
-Italy      | 6      | 6   | 3       | 3    | 2   | 0     | 1    | 3
-France     | 6      | 6   | 3       | 3    | 2   | 0     | 1    | 3
-San Marino | 6      | 6   | 3       | 3    | 2   | 0     | 1    | 3
-```
-The result will be an array of objects containing all the properties of the various teams. Any ties can be found as
-
-```javascript
-table.ties()
-```
-where once again printing directly to the console will yield
-
-```
-[
-  {
-    group: [ 'France', 'Italy', 'Spain' ],
-    messages: [
-      France, Italy and Spain are tied on points (6).',
-      'The position of France is decided on goal difference (Italy: 1; Spain: 1; France: -2).',
-      'Italy and Spain are sorted on head-to-head number of goals scored (Spain: 4; Italy: 3).'
-    ],
-    requests: null
-  }
-]
 ```
 
 ## Tiebreakers and sorting options
