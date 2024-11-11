@@ -616,13 +616,12 @@ export default class LeagueTable {
 
                             // If two teams that are still tied meet on the last matchday and their match is drawn, and sorting.shootout is set to true, then trigger a request for a shootout result
                             if (this.sorting.shootout) {
-                                const numberOfMatches = this.format == "round-robin" ?
-                                    this.teams.length - 1 :
-                                    2 * (this.teams.length - 1);
+                                const numberOfMatches = this.teams.length - 1;
                                 const check = a.played == numberOfMatches && b.played == numberOfMatches;
                                 const lastMatch = Array.from(this.matches.values()).filter(match => match.matchday == numberOfMatches).find(match => (match.home == a.id && match.away == b.id) || (match.home == b.id && match.away == a.id));
 
                                 if (table.length == 2 &&
+                                    this.format == "round-robin" &&
                                     check &&
                                     lastMatch &&
                                     lastMatch.home_for == lastMatch.away_for
