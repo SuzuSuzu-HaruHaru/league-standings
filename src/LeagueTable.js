@@ -846,7 +846,8 @@ export default class LeagueTable {
 
             let information = {
                 group: first.snapshot.map(team => team.id).sort(),
-                messages: []
+                messages: [],
+                requests: null
             };
             this.information.push(information);
 
@@ -855,7 +856,7 @@ export default class LeagueTable {
 
                 // For each of the separated histories that we got in (1), the first thing to display is the mere fact that these teams were tied on points
                 if (index == 0) {
-                    information.messages.push(`${formatNames(step.snapshot.map(team => team.id).sort())} are tied on ${this.names.points} (${this.cycles[0].snapshot.filter(team => step.snapshot.map(team => team.id).some(element => element == team.id))[0].points}).`)
+                    information.messages.push(`${formatNames(step.snapshot.map(team => team.id).sort())} are tied on ${this.names.points} (${this.cycles[0].snapshot.filter(team => step.snapshot.map(team => team.id).some(element => element == team.id))[0].points}).`);
                 }
 
                 if (index > 0 && step.snapshot.length < previous.snapshot.length) {
@@ -895,6 +896,7 @@ export default class LeagueTable {
                     switch (last.criterion) {
                         case "provisional":
                             information.messages.push(`${formatNames(last.snapshot.map(team => team.id).sort())} are provisionally sorted at random while waiting for the results of their penalty shootout.`);
+                            information.requests = "shootout";
                             break;
                         case "shootout":
                             information.messages.push(`Having met on their last matchday and after drawing their match, ${formatNames(last.snapshot.map(team => team.id).sort())} are sorted on the results of their penalty shootout (${last.snapshot.map(team => {
