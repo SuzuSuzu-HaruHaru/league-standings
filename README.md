@@ -97,12 +97,12 @@ The first is `when`, which simply lets you choose whether you want the head-to-h
 
 One example of such a difference can be seen in [Group E at the UEFA EURO 2016](https://en.wikipedia.org/wiki/UEFA_Euro_2016), where the final table ended up looking like this
 
-| Position | Team       | Won | Drawn | Lost | GF | GA | GD  | Points |
-|----------|------------|:---:|:-----:|:----:|:--:|:--:|:---:|:------:|
-| 1        | Italy      | 2   | 0     | 1    | 3  | 1  | +2  | **6**  |
-| 2        | Belgium    | 2   | 0     | 1    | 4  | 2  | +2  | **6**  |
-| 3        | Republic of Ireland | 1 | 1 | 1 | 2  | 4  | -2  | **4**  |
-| 4        | Sweden     | 0   | 1     | 2    | 1  | 3  | -2  | **1**  |
+| Position | Team       | Won | Drawn | Lost | Goals for | Goals against | Goal difference  | Points |
+|----------|------------|:---:|:-----:|:----:|:---------:|:-------------:|:----------------:|:------:|
+| 1        | Italy      | 2   | 0     | 1    | 3         | 1             | +2               | **6**  |
+| 2        | Belgium    | 2   | 0     | 1    | 4         | 2             | +2               | **6**  |
+| 3        | Republic of Ireland | 1 | 1 | 1 | 2         | 4             | -2               | **4**  |
+| 4        | Sweden     | 0   | 1     | 2    | 1         | 3             | -2               | **1**  |
 
 Normally one would expect to see Belgium come out on top, as the list of tiebreakers used at the European Championship runs through goal difference (Italy 2, Begium 2) and then goals scored (Italy 3, Belgium 4): however, since UEFA uses the head-to-head score first, the criteria are to be applied only to the matches between the teams concerned in the tie—which in this case was just one match, that Italy had won 2-0 in the very first matchday of the group stage; Italy therefore ranks first on head-to-head points (Italy 2, Belgium 0).
 
@@ -110,12 +110,12 @@ Normally one would expect to see Belgium come out on top, as the list of tiebrea
 
 For what concerns the `span` key, once again an example will illustrate the concept much better. We will be looking at the European Championship once more, and specifically at the famous [Group E at the UEFA EURO 2024](https://en.wikipedia.org/wiki/UEFA_Euro_2024) where every single team finished their group with 4 points.
 
-| Position | Team       | Won | Drawn | Lost | GF | GA | GD  | Points |
-|----------|------------|:---:|:-----:|:----:|:--:|:--:|:---:|:------:|
-| 1        | Romania    | 1   | 1     | 1    | 4  | 3  | +1  | **4**  |
-| 2        | Belgium    | 1   | 1     | 1    | 2  | 1  | +1  | **4**  |
-| 3        | Slovakia   | 1   | 1     | 1    | 3  | 3  | 0   | **4**  |
-| 4        | Ukraine    | 1   | 1     | 1    | 2  | 4  | -2  | **4**  |
+| Position | Team       | Won | Drawn | Lost | Goals for | Goals against | Goal difference  | Points |
+|----------|------------|:---:|:-----:|:----:|:---------:|:-------------:|:----------------:|:------:|
+| 1        | Romania    | 1   | 1     | 1    | 4         | 3             | +1               | **4**  |
+| 2        | Belgium    | 1   | 1     | 1    | 2         | 1             | +1               | **4**  |
+| 3        | Slovakia   | 1   | 1     | 1    | 3         | 3             | 0                | **4**  |
+| 4        | Ukraine    | 1   | 1     | 1    | 2         | 4             | -2               | **4**  |
 
 In this remarkable group, each team won, drew, and lost exactly one match, leading to these final standings. What left many perplexed was Belgium’s position, as—just like eight year earlier, as per the previous example—their first-place spot was curiously taken away through a technicality in the rules. The confusion stems from the fact that, with all teams tied on points (and thus requiring head-to-head comparisons across the entire table), goal difference comes into play to decide the outcome leaving only Romania and Belgium tied: and yet Romania ended up in first place, even though Belgium had won their head-to-head match 2-0 against them in the second matchday.
 
