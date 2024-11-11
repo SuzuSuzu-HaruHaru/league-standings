@@ -786,8 +786,6 @@ export default class LeagueTable {
                 (2) from this, it is just a matter of examining each of these branches and retrieving the specific information we want to display.
         */
 
-        console.log(this.cycles.map(cycle => cycle.type + "   " + cycle.criterion + "   " + cycle.special + "   " + cycle.snapshot.map(team => team.id + " away_for: " + team.away_for)));
-
         const groupAndFilterByPoints = (arr) => {
             const grouped = arr.reduce((acc, obj) => {
                 const key = obj.points;
@@ -863,7 +861,7 @@ export default class LeagueTable {
                 if (index > 0 && step.snapshot.length < previous.snapshot.length) {
                     const snapshot = previous.snapshot;
                     const criterion = previous.criterion;
-                    const pointsCount = snapshot.reduce((count, obj) => {
+                    const pointsCount = JSON.parse(JSON.stringify(snapshot)).reduce((count, obj) => {
                         count[obj[criterion]] = (count[obj[criterion]] || 0) + 1;
                         return count;
                     }, {});
@@ -923,7 +921,7 @@ export default class LeagueTable {
                     break;
                 default:
                     // However, in general, this is the step that describes any *normal* sorting of two teams, if we are not in any of the other special cases illustrated above or in the other cases of this switch statement
-                    information.messages.push(`${formatNames(last.snapshot.map(team => team.id).sort())} are sorted on ${type}${this.names[last.criterion]} (${last.snapshot.sort((a, b) => { b[last.criterion] - a[last.criterion] }).map(team => `${team.id}: ${team[last.criterion]}`).join('; ')}).`);
+                    information.messages.push(`${formatNames(last.snapshot.map(team => team.id).sort())} are sorted on ${type}${this.names[last.criterion]} (${last.snapshot.sort((a, b) => { return b[last.criterion] - a[last.criterion] }).map(team => `${team.id}: ${team[last.criterion]}`).join('; ')}).`);
                     break;
             }
         });
