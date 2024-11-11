@@ -1,6 +1,8 @@
 # league-standings
 
-A Javascript package that computes league tables from an array of matches. Types and order of tiebreakers are fully customizable, and it is possible to access the full description of which tiebreakers were used at what point in both textual and raw data form.
+As a football (soccer) fan myself, I can confidently say that there is nothing that sounds easier, *and* nothing that sounds harder, than putting teams in a table. It is easy, in that the logic is apparently easy to follow: track the results, compute the points, sort by points; if there are any ties, apply tiebreakers. Little nuances aside, that would be the end of the story. But, as they say, the devil is in the details.
+
+The away goals rule is a famous one that made the news back in 2021, when UEFA did away with it; but is it *really* gone from the list of criteria? [Group E at the UEFA Euro 2024](https://en.wikipedia.org/wiki/UEFA_Euro_2024) caused quite a panic when all teams finished the group on equal footing, with 4 points each: how were the final standings determined, and what would the table have looked like under different sorting rules—like those used by FIFA, for example?
 
 ```javascript
 import { LeagueTable } from 'LeagueTable.js';
@@ -17,37 +19,19 @@ const matches = [
 
 const table = new LeagueTable({
     teams: teams,
-    sorting: "UEFA Euro"
+    sorting: {
+        criteria: ["diff", "for"],
+        h2h: {
+            when: "before",
+            span: "all"
+        },
+        final: "lots"
+    }
 });
 table.addMatches(matches);
 
 console.table(table.standings());
 console.log(table.ties());
-
-/*
-
-Output to the console will look like:
-
-id         | points | for | against | diff | won | drawn | lost | played
------------|--------|-----|---------|------|-----|-------|------|-------
-Spain      | 6      | 6   | 3       | 3    | 2   | 0     | 1    | 3
-Italy      | 6      | 6   | 3       | 3    | 2   | 0     | 1    | 3
-France     | 6      | 6   | 3       | 3    | 2   | 0     | 1    | 3
-San Marino | 6      | 6   | 3       | 3    | 2   | 0     | 1    | 3
-
-[
-  {
-    group: [ 'France', 'Italy', 'Spain' ],
-    messages: [
-      France, Italy and Spain are tied on points (6).',
-      'The position of France is decided on goal difference (Italy: 1; Spain: 1; France: -2).',
-      'Italy and Spain are sorted on head-to-head number of goals scored (Spain: 4; Italy: 3).'
-    ],
-    requests: null
-  }
-]
-
-*/
 ```
 
 ## Table of Contents
@@ -100,7 +84,36 @@ Finally, the standings can be retrieved via
 ```javascript
 table.standings();
 ```
-The result will be an array of objects containing all the properties of the various teams.
+For example, printing the line above to the console as `console.table(table.standings())` will yield
+
+```
+id         | points | for | against | diff | won | drawn | lost | played
+-----------|--------|-----|---------|------|-----|-------|------|-------
+Spain      | 6      | 6   | 3       | 3    | 2   | 0     | 1    | 3
+Italy      | 6      | 6   | 3       | 3    | 2   | 0     | 1    | 3
+France     | 6      | 6   | 3       | 3    | 2   | 0     | 1    | 3
+San Marino | 6      | 6   | 3       | 3    | 2   | 0     | 1    | 3
+```
+The result will be an array of objects containing all the properties of the various teams. Any ties can be found as
+
+```javascript
+table.ties()
+```
+where once again printing directly to the console will yield
+
+```
+[
+  {
+    group: [ 'France', 'Italy', 'Spain' ],
+    messages: [
+      France, Italy and Spain are tied on points (6).',
+      'The position of France is decided on goal difference (Italy: 1; Spain: 1; France: -2).',
+      'Italy and Spain are sorted on head-to-head number of goals scored (Spain: 4; Italy: 3).'
+    ],
+    requests: null
+  }
+]
+```
 
 ## Tiebreakers and sorting options
 
