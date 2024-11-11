@@ -855,7 +855,7 @@ export default class LeagueTable {
 
                 // For each of the separated histories that we got in (1), the first thing to display is the mere fact that these teams were tied on points
                 if (index == 0) {
-                    information.messages.push(`${formatNames(step.snapshot.map(team => team.id).sort())} are tied on ${this.names.points} (${this.cycles[0].snapshot.filter(team => grouped.flat().map(team => team.id).some(element => element == team.id))[0].points}).`)
+                    information.messages.push(`${formatNames(step.snapshot.map(team => team.id).sort())} are tied on ${this.names.points} (${this.cycles[0].snapshot.filter(team => step.snapshot.map(team => team.id).some(element => element == team.id))[0].points}).`)
                 }
 
                 if (index > 0 && step.snapshot.length < previous.snapshot.length) {
