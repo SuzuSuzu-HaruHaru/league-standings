@@ -2,9 +2,9 @@ export default class LeagueTable {
 
     constructor(data) {
         if (data === null || typeof data !== "object") {
-            throw new Error(`Invalid constructor argument (expected an object).`);
+            throw new TypeError(`Invalid constructor argument (expected an object).`);
         } else if (!("teams" in data)) {
-            throw new Error(`Invalid constructor argument (object must at least contain a key named "teams").`);
+            throw new RangeError(`Invalid constructor argument (object must at least contain a key named "teams").`);
         }
 
         if (Array.isArray(data.teams)) {
@@ -23,7 +23,7 @@ export default class LeagueTable {
                 const flagsLength = data.teams[0].flags.length;
 
                 if (!data.teams.every(item => item.flags.length === flagsLength)) {
-                    throw new Error(`All "flags" arrays must have the same length.`);
+                    throw new Error(`All "flags" arrays must be the same length.`);
                 } else {
                     const teamFlags = data.teams.map(item => item.flags);
                     this.flags = teamFlags;
@@ -36,10 +36,10 @@ export default class LeagueTable {
                     this.teams = teamIds;
                 }
             } else {
-                throw new Error(`Invalid format: the value of the "teams" key must be either an array of strings or an array of objects with a "team" and "flags" key.`);
+                throw new TypeError(`Invalid format: the value of the "teams" key must be either an array of strings or an array of objects with a "team" and "flags" key.`);
             }
         } else {
-            throw new Error(`Invalid data type: the value of the "teams" key must be an array.`);
+            throw new TypeError(`Invalid data type: the value of the "teams" key must be an array.`);
         }
 
         // Checks whether the inputs for the optional fields are correct, and fills them in if they are not present
@@ -54,9 +54,9 @@ export default class LeagueTable {
         if (!("points" in data)) {
             this.points = "standard";
         } else if (data.points !== "standard" && data.points !== "old" && typeof data.points !== "function") {
-            throw new Error(`An explicitly specified "points" must be either "standard", "old" or a function.`);
+            throw new RangeError(`An explicitly specified "points" must be either "standard", "old" or a function.`);
         } else if (typeof data.points === "function" && data.points.length != 3) {
-            throw new Error(`An explicitly specified "points" that is a function must accept exactly three parameters (matches won, drawn, lost).`);
+            throw new RangeError(`An explicitly specified "points" that is a function must accept exactly three arguments (matches won, drawn, lost).`);
         } else {
             this.points = data.points;
         }
@@ -68,100 +68,150 @@ export default class LeagueTable {
                     when: "before",
                     span: "all"
                 },
+                additional: [],
+                shootout: false,
+                flags: [],
                 final: "lots"
             };
-        } else if (data.sorting == "FIFA") {
+        } else if (data.sorting == "FIFA World Cup") {
             this.sorting = {
                 criteria: ["diff", "for"],
                 h2h: {
                     when: "after",
                     span: "all"
                 },
+                additional: [],
+                shootout: false,
+                flags: [{
+                    name: "fair play points",
+                    order: "desc"
+                }],
                 final: "lots"
             };
-        } else if (data.sorting == "UEFA") {
+        } else if (data.sorting == "UEFA Euro") {
             this.sorting = {
                 criteria: ["diff", "for"],
                 h2h: {
                     when: "before",
-                    span: "single"
+                    span: "all"
                 },
+                additional: [],
+                shootout: true,
+                flags: [{
+                    name: "disciplinary points",
+                    order: "asc"
+                }, {
+                    name: "European Qualifiers overall ranking",
+                    order: "asc"
+                }],
                 final: "lots"
             };
-        } else if (data.sorting == "pre-2021-UEFA") {
+        } else if (data.sorting == "pre-2021 UEFA Champions League") {
             this.sorting = {
                 criteria: ["diff", "for", "away_for"],
                 h2h: {
                     when: "before",
                     span: "all"
                 },
+                additional: ["won", "away_won"],
+                shootout: false,
+                flags: [{
+                    name: "disciplinary points",
+                    order: "asc"
+                }, {
+                    name: "UEFA club coefficient",
+                    order: "asc"
+                }],
+                final: "lots"
+            };
+        } else if (data.sorting == "2021-2024 UEFA Champions League") {
+            this.sorting = {
+                criteria: ["diff", "for"],
+                h2h: {
+                    when: "before",
+                    span: "all"
+                },
+                additional: ["away_for", "won", "away_won"],
+                shootout: false,
+                flags: [{
+                    name: "disciplinary points",
+                    order: "asc"
+                }, {
+                    name: "UEFA club coefficient",
+                    order: "asc"
+                }],
                 final: "lots"
             };
         } else {
             if (typeof data.sorting !== "object") {
-                throw new Error(`An explicitly specified "sorting" must be an object.`);
+                throw new TypeError(`An explicitly specified "sorting" must be either an object or a default keyword.`);
             }
 
             const { criteria, h2h, additional, shootout, flags, final } = data.sorting;
             if (criteria === undefined ||
                 h2h === undefined ||
-                additional === undefined ||
-                shootout === undefined ||
-                flags === undefined ||
                 final === undefined) {
-                throw new Error(`An explicitly specified "sorting" must contain keys named "criteria", "h2h", "additional", "shootout", "flags" and "final".`);
+                throw new RangeError(`An explicitly specified "sorting" must contain keys named "criteria", "h2h" and "final".`);
             }
 
             const allowed = ["diff", "for", "won", "away_for", "away_won"];
             if (!Array.isArray(criteria)) {
-                throw new Error(`An explicitly specified "sorting.criteria" must be an array.`);
+                throw new TypeError(`An explicitly specified "sorting.criteria" must be an array.`);
             }
             for (const criterion of criteria) {
                 if (!allowed.includes(criterion)) {
-                    throw new Error(`An explicitly specified "sorting.criteria" can only contain the strings "diff", "for", "won", "away_for", or "away_won". Found invalid criterion: "${criterion}".`);
+                    throw new RangeError(`An explicitly specified "sorting.criteria" can only contain the strings "diff", "for", "won", "away_for", or "away_won". Found invalid criterion: "${criterion}".`);
                 }
             }
 
             if (typeof h2h !== "object" || !("when" in h2h) || !("span" in h2h)) {
-                throw new Error(`An explicitly specified "sorting.h2h" must be an object containing keys named "when" and "span".`);
+                throw new RangeError(`An explicitly specified "sorting.h2h" must be an object containing keys named "when" and "span".`);
             }
             if (h2h.when !== "before" && h2h.when !== "after") {
-                throw new Error(`An explicitly specified "sorting.h2h.when" must be either "before" or "after". Found: "${h2h.when}".`);
+                throw new RangeError(`An explicitly specified "sorting.h2h.when" must be either "before" or "after". Found: "${h2h.when}".`);
             }
             if (h2h.span !== "all" && h2h.span !== "single") {
-                throw new Error(`An explicitly specified "sorting.h2h.span" must be either "all" or "single". Found: "${h2h.span}".`);
+                throw new RangeError(`An explicitly specified "sorting.h2h.span" must be either "all" or "single". Found: "${h2h.span}".`);
             }
 
-            if (!Array.isArray(additional)) {
-                throw new Error(`An explicitly specified "sorting.additional" must be an array.`);
-            }
-            for (const criterion of additional) {
-                if (!allowed.includes(criterion)) {
-                    throw new Error(`An explicitly specified "sorting.additional" can only contain the strings "diff", "for", "won", "away_for", or "away_won". Found invalid criterion: "${criterion}".`);
+            if (additional === undefined) {
+                data.sorting.additional = [];
+            } else if (!Array.isArray(additional)) {
+                throw new TypeError(`An explicitly specified "sorting.additional" must be an array.`);
+            } else {
+                for (const criterion of additional) {
+                    if (!allowed.includes(criterion)) {
+                        throw new RangeError(`An explicitly specified "sorting.additional" can only contain the strings "diff", "for", "won", "away_for", or "away_won". Found invalid criterion: "${criterion}".`);
+                    }
                 }
             }
 
-            if (typeof shootout !== "boolean") {
-                throw new Error(`An explicitly specified "sorting.shootout" must be a boolean. Found: "${shootout}".`);
+            if (shootout === undefined) {
+                data.sorting.shootout = false;
+            } else if (typeof shootout !== "boolean") {
+                throw new TypeError(`An explicitly specified "sorting.shootout" must be a boolean. Found: "${shootout}".`);
             }
 
-            if (!Array.isArray(flags)) {
-                throw new Error(`An explicitly specified "sorting.flags" must be an array.`);
-            }
-            for (const flag of flags) {
-                if (typeof flag !== "object" || !("name" in flag) || !("order" in flag)) {
-                    throw new Error(`Each element in "sorting.flags" must be an object containing keys "name" and "order". Found: ${JSON.stringify(flag)}.`);
-                }
-                if (typeof flag.name !== "string") {
-                    throw new Error(`The "name" in each "sorting.flags" element must be a string. Found: "${flag.name}".`);
-                }
-                if (flag.order !== "asc" && flag.order !== "desc") {
-                    throw new Error(`The "order" in each "sorting.flags" element must be either "asc" or "desc". Found: "${flag.order}".`);
+            if (flags === undefined) {
+                data.sorting.flags = [];
+            } else if (!Array.isArray(flags)) {
+                throw new TypeError(`An explicitly specified "sorting.flags" must be an array.`);
+            } else {
+                for (const flag of flags) {
+                    if (typeof flag !== "object" || !("name" in flag) || !("order" in flag)) {
+                        throw new RangeError(`Each element in "sorting.flags" must be an object containing keys "name" and "order". Found: ${JSON.stringify(flag)}.`);
+                    }
+                    if (typeof flag.name !== "string") {
+                        throw new TypeError(`The "name" in each "sorting.flags" element must be a string. Found: "${flag.name}".`);
+                    }
+                    if (flag.order !== "asc" && flag.order !== "desc") {
+                        throw new RangeError(`The "order" in each "sorting.flags" element must be either "asc" or "desc". Found: "${flag.order}".`);
+                    }
                 }
             }
 
             if (typeof final !== "string" || (final !== "lots" && final !== "alphabetical")) {
-                throw new Error(`An explicitly specified "sorting.final" must be either "lots" or "alphabetical". Found: "${final}".`);
+                throw new RangeError(`An explicitly specified "sorting.final" must be either "lots" or "alphabetical". Found: "${final}".`);
             }
 
             this.sorting = data.sorting;
@@ -175,12 +225,12 @@ export default class LeagueTable {
             this.names.won = "number of games won";
             this.names.away_for = "number of goals scored away from home";
             this.names.away_won = "number of games won away from home";
-            this.names.lots = "on drawing of random lots";
-            this.names.alphabetical = "on the alphabetical order of their names";
+            this.names.lots = "drawing of random lots";
+            this.names.alphabetical = "the alphabetical order of their names";
             this.names.h2h = "head-to-head";
             this.names.overall = "overall";
         } else if (typeof data.names !== "object") {
-            throw new Error(`An explicitly specified "names" must be an object.`);
+            throw new TypeError(`An explicitly specified "names" must be an object.`);
         } else {
             if (!("points" in data.names)) {
                 this.names.points = "points";
@@ -246,7 +296,6 @@ export default class LeagueTable {
         this.matches = new Map();
 
         this.cycles = [];
-        this.groups = [];
         this.timeline = [];
         this.shootouts = [];
 
@@ -274,25 +323,48 @@ export default class LeagueTable {
         switch (this.format) {
             case "round-robin":
                 for (const team of this.teams) {
-                    const matchCount = Array.from(this.matches.values()).filter(
+                    const matches = Array.from(this.matches.values()).filter(
                         match => match.home === team || match.away === team
-                    ).length;
+                    );
 
-                    if (matchCount > this.teams.length - 1) {
-                        console.warn(`Round-robin format should allow for only one match between given teams.`);
+                    if (matches.length > this.teams.length - 1) {
+                        console.warn(`The total number of games played by a team in a round-robin format cannot be more than the number of teams minus one (first thrown at team ${team}).`);
                         break;
+                    } else {
+                        for (const opponent of this.teams) {
+                            if (opponent !== team) {
+                                const directMatches = matches.filter(match => match.home === opponent || match.away === opponent);
+                                if (directMatches.length != 1) {
+                                    console.warn(`In a round-robin format, teams must face each other exactly once (first thrown at teams ${team} and ${opponent}, found ${directMatches.length} matches).`);
+                                    break;
+                                }
+                            }
+                        }
                     }
                 }
                 break;
             case "home-and-away":
                 for (const team of this.teams) {
-                    const matchCount = Array.from(this.matches.values()).filter(
+                    const matches = Array.from(this.matches.values()).filter(
                         match => match.home === team || match.away === team
-                    ).length;
+                    );
 
-                    if (matchCount > (2 * this.teams.length) - 1) {
-                        console.warn(`Round-robin format should allow for only one match between given teams.`);
+                    if (matches.length > (2 * this.teams.length) - 1) {
+                        console.warn(`The total number of games played by a team in a home-and-away format cannot be more than twice the number of teams minus one (first thrown at team ${team}).`);
                         break;
+                    } else {
+                        for (const opponent of this.teams) {
+                            if (opponent !== team) {
+                                const directMatches = matches.filter(match => match.home === opponent || match.away === opponent);
+                                if (directMatches.length != 2) {
+                                    console.warn(`In a home-and-away format, teams must face each other exactly twice (first thrown at teams ${team} and ${opponent}, found ${directMatches.length} ${directMatches.length == 1 ? `match` : `matches`}).`);
+                                    break;
+                                } else if (directMatches[0].home == directMatches[1].home) {
+                                    console.warn(`In a home-and-away format, teams must face each other once at home and once away (first thrown at teams ${team} and ${opponent}).`);
+                                    break;
+                                }
+                            }
+                        }
                     }
                 }
                 break;
@@ -313,12 +385,13 @@ export default class LeagueTable {
                 uniqueTeams.add(match.away);
             });
 
-            if (uniqueTeams.size !== this.teams.length) {
-                console.warn(`Each team may only appear once per matchday.`);
+            if (uniqueTeams.size !== this.teams.length && !this.sorting.shootout) {
+                console.warn(`Each team may only appear exactly once per matchday.`);
                 break;
+            } else if (uniqueTeams.size !== this.teams.length && this.sorting.shootout) {
+                throw new Error(`Each team may only appear exactly once per matchday. Since sorting.shootout was set to true and that depends on matchdays, continuing may impact the final results; either switch to a sorting method that does not employ a shootout or fix the matchdays.`);
             }
         }
-
     }
 
     standings(options) {
@@ -327,7 +400,7 @@ export default class LeagueTable {
 
         This method relies on the recursive function sortAndDivideTable; more on this below.
 
-        For now, we initialize the standings by pushing a row for each team and filling it in with the points, the goals scored and such as per the matches that have been given by the user.
+        For now, we initialize the standings by pushing a row for each team and filling it in with the points, the goals scored and all the other match data, as per the matches that have been provided by the user.
         */
 
         const standings = [];
@@ -359,7 +432,7 @@ export default class LeagueTable {
             this.sorting.criteria.unshift("points");
         }
 
-        const sortAndDivideTable = (table, iteration, depth = 1, final = false, special = false) => {
+        const sortAndDivideTable = (table, iteration, special = false, final = false) => {
 
             /* EXPLANATION
     
@@ -368,32 +441,41 @@ export default class LeagueTable {
             ALGORITHM     
             The algorithm is the following:
     
-                (1) at any given step, we have a table consisting of the teams to be sorted and their relative data; if this is the first iteration, the table consists of all teams;
-                (2) if the current sorting criterion is of type head-to-head, the table in question is rewritten so that the data is only relative to the matches that were played between the teams in question (if the span is set to "all", then this is computed only once when entering the head-to-head series, and again for the teams that are still even only when a cycle of tiebrekers is completed; otherwise, if it is set to "single", we do it every single time);
-                (3) the table is divided according to the current criterion by pairing up teams that are still tied: for example, for Team A (pts 6), Team B (pts 3), Team C (pts 6), with the current criterion being points, we would end up with an array [[Team A, Team C], [Team C]] (where each entry in the subarrays is an object containing all the relevant information about the teams) which is then pushed into this.groups.
+                (1) at any given step, we have a table consisting of the teams to be sorted and their relative data; if this is the first iteration, the table consists of all teams with the goals scored in all matches;
+
+                (2) if the current sorting criterion is of type head-to-head, the table in question is rewritten so that the data is only relative to the matches that were played between the teams in question, as opposed to global data that take the whole league into account:
+                    2a. if the span is set to "all", then this is computed only once at the start when entering the head-to-head series, and then again (for the teams that are still tied) only when a full cycle of tiebrekers is completed;
+                    2b. otherwise, if it is set to "single", we do it every single time);
+
+                (3) the table is divided according to the current criterion by pairing up teams that are still tied: for example, for Team A (pts 6), Team B (pts 3), Team C (pts 6), with the current criterion being "points", we would end up with an array [[Team A, Team C], [Team B]] (where each entry in the subarrays is an object containing all the relevant information about the teams).
     
-                Now it is time to sort the teams: if this is the first iteration, an array that contains the initial standings is pushed into this.timeline; for all other iterations, the latest entry of this.timeline is retrieved, sorted and re-pushed as a new entry back into this.timeline; when the recursion eventually ends, the latest entry will be the output of the entire sorting process (i.e. the full sorted table, ready for display). As the entries in this.timeline are never rewritten even during sorting criteria of type head-to-head (those go into this.groups at each step), the overall data for each team is conserved so that we can display it properly.
-    
-                (4) As for the sorting procedure itself:
-                    only teams that are part of the table that is being considered at this recursion level are taken into account, and they are sorted according to the values they have (by matching the other tables via team id)
-                        - in the latest entry of this.timeline, if the current sorting criterion is of type overall;
-                        - in the latest entry of this.groups, if the current sorting critetion is of type head-to-head;
-                    the sorting process goes through each tiebreaker and, once the "final" flag is raised, it goes through the final steps of (a) additional overall criteria, (b) penalty shootouts, (c) additional flags set by the user, and (d) drawing of random lots or alphabetical order.
+                (4) Now it is time to sort the teams:
+
+                    - if this is the first iteration, an array that contains the initial standings (i.e. one with the data computed over all the matches, and tentatively sorted by points) is pushed into this.timeline;
+                    - for all other iterations, the latest entry of this.timeline is retrieved, sorted through the current criterion only with respect to the teams in the current table (remember that this is a recursive function, so ideally it gets called over and over again over smaller subsets of the table as ties get broken), and re-pushed as a new entry into this.timeline.
+
+                When the recursion eventually ends, the latest entry will be the completely sorted lague table as well as the basis for the output of the entire sorting process.
                 
-                (5) And finally, the recursive step: for each of the groups obtained in (3), so long as their length is at least 2, we call sortAndDivideTable again on them with the next criterion in the list (if "final" has not yet been reached).
+                (Note 1) Indeed, as this.timeline conserves the league with the full original overall data (at each step it's merely copied and re-sorted), it is also used as a reference whenever the current tiebreaker is of type overall, since we can match teams by their names to check what their original overall data were; while if it is of type head-to-head we compare the teams directly from within the table that the function currently holds in memory at that iteration, as step (2) has already rewritten it to be only relative to the teams in question (and this is why we need to take a peek at this.timeline instead for overall comparisons, when needed).
+                
+                (5) And finally, the recursive step: for each of the groups obtained in (3), so long as their length is at least 2, we call sortAndDivideTable again on them with the next criterion in the list.
         
             VARIABLES
+                iteration:
+                    an object made of two keys, "type" and "index"; the type describes what kind of check we are doing (whether overall or head-to-head, but also "additional" the additional ones once those are completed, "shootout" for the penalty shootout step, and so on); meanwhile the index is an integer that is incremented at each depth level of the recursion: since step (3) divides the table and step (5) applies the recursion to each of the subtables, the index increments one by one if you follow the history of a specific team through the sorting process (for example, if at iteration.index equal to 7 a table containing "Italy", "Spain", "France" and "San Marino" is divided into "Italy", "Spain" and "France", "San Marino", each of the two next calls of the function on either subtable will begin at iteration.index equal to 8, as opposed to assigning 8 to one and 9 to the other).
                 run:
-                    the number of consecutive steps of the same type (overall or head-to-head) that we have taken so far, up to and including the latest one; when this reaches the length of the array of tiebreakers, we trigger the checks for deciding what to do next (switching to head-to-head, or switching to overall, or reapplying head-to-head to a subset of the team concerned, or proceding to "final").
+                    the (integer) number of consecutive steps of the same type (overall or head-to-head) that we have taken so far, up to and including the latest one; when this reaches the length of the array of tiebreakers, we trigger the checks for deciding what to do next (switching to head-to-head, or switching to overall, or reapplying head-to-head from the start to a subset of the team concerned, or proceding to "final").
                 this.cycles:
-                    array whose each entry contains information about the current sorting step (head-to-head or overall, criterion used, the "special" flag explained below, teams being sorted which reflect those in the this.groups element of index one fewer).
+                    an array of objects whose each entry contains information about the current sorting step (whether it's head-to-head or overall, what criterion was used, if the "special" flag explained below is set, as well as the snapshot of the table that this function was analyzing at that step).
                 special:
-                    a boolean whose job is to keep track of `special` iterations, i.e. those that occur when h2h.span is set to "single" and we are making progress in breaking ties before a full check of all the criteria is completed, in which case the variable is set to true and survives to the next iteration to tell the function to restart the list of criteria from points; it is set back to false immediately after.
+                    a boolean whose job it is to keep track of *special* iterations, i.e. those that occur when h2h.span is set to "single" and we are making progress in breaking ties before a full check of all the criteria is completed, in which case the variable is set to true and survives to the next iteration to tell the function to restart the list of criteria from points even if we are not done checking all the criteria yet; it is set back to false immediately after doing this.
+                final:
+                    a boolean whose job it is to check whether or not we have exhausted all *standard* sorting options, i.e. the ones defined in this.sorting.criteria as well as the head-to-head run (either before or after); once this is detected, "final" is set to true and this will trigger the final list of criteria: the so-called additional ones, the penalty shootout, the flags set directly by the user (e.g. disciplinary points), and lastly, at the choice of the user, either a drawing of random lots or alphabetical order.
             */
 
             // Recursion failsafe
-            if (depth > 50) {
-                throw new Error(`Maximum recursion depth exceeded while trying to sort the teams.`);
+            if (iteration.index > 50) {
+                throw new RangeError(`Maximum recursion depth exceeded while sorting the teams.`);
             }
 
             // The new this.cycle entry for this iteration
@@ -413,11 +495,11 @@ export default class LeagueTable {
                 this.cycles[this.cycles.length - 1].special = true;
                 special = false;
             } else {
-                run = this.#run(this.cycles, table) % this.sorting.criteria.length;
+                run = computeRun(this.cycles, table) % this.sorting.criteria.length;
                 tiebreaker = this.sorting.criteria[run];
             }
 
-            const criteriaLimitReached = run > this.sorting.criteria.length - 2;
+            // Records the tiebreaker being used into the current this.cycle entry
             this.cycles[this.cycles.length - 1].criterion = tiebreaker;
 
             // Step (2) of the algorithm
@@ -450,7 +532,7 @@ export default class LeagueTable {
             // Step (3) of the algorithm
             const groupByTiebreaker = (array, key) => {
 
-                // If this is an overall round, any info from the team from which to create the subarrays has to be based on the original standings as per the timeline, and not from the groups themselves which are susceptible to rewriting
+                // (Note 1) of the algorithm
                 if (iteration.type == "overall" && iteration.index != 0) {
                     array = JSON.parse(JSON.stringify(this.timeline[this.timeline.length - 1].filter(team => table.some(element => team.id == element.id))));
                 }
@@ -470,11 +552,22 @@ export default class LeagueTable {
             };
 
             const groups = groupByTiebreaker(table, tiebreaker);
-            this.groups.push(groups);
+
+            /*  SPECIAL
+                
+                Happens whenever the sorting type is head-to-head and the span is set to "single", and we are doing progress (i.e. one or more teams have broken away from the tie, indicated by the fact that groups, as the array of subtables, is of length greater then two): if it is so, then even before the run has completed we set it back to zero so to reapply the criteria from the beginning (points)
+            */
+            const isProgress = () => groups.length > 1;
+
+            if (iteration.index >= 2 && this.sorting.h2h.span == "single" && iteration.type === "h2h" && isProgress()) {
+                run = 0;
+                tiebreaker = this.sorting.criteria[0];
+                special = true;
+            }
 
             // Step (4) of the algorithm
             if (this.timeline.length == 0) {
-                // First iteration (order based on points)
+                // If it is the first iteration, then the order is based on points
                 this.timeline.push(JSON.parse(JSON.stringify(table)).sort((a, b) => {
                     return b[tiebreaker] - a[tiebreaker];
                 }));
@@ -483,7 +576,7 @@ export default class LeagueTable {
                     if (table.some(team => team.id === a.id) &&
                         table.some(team => team.id === b.id)) {
                         if (!final) {
-                            // Standard ordering (based on the tiebreaker that is currently being employed)
+                            // Standard ordering (i.e. the one based on the tiebreaker that is currently being employed)
                             let aTeam;
                             let bTeam;
 
@@ -507,7 +600,7 @@ export default class LeagueTable {
                                     return bTeam[tiebreaker] - aTeam[tiebreaker];
                             }
                         } else {
-                            // Additional overall criteria after the standard h2h / overall routine
+                            // Additional overall criteria after the standard head-to-head / overall routine
                             for (const tiebreaker of this.sorting.additional) {
                                 if (b[tiebreaker] != a[tiebreaker]) {
                                     groups.forEach(group => group.length = 1);
@@ -517,7 +610,7 @@ export default class LeagueTable {
                                 }
                             }
 
-                            // If two teams that are still tied meet on the last matchday and their match is drawn, and the shootout key is set to true, then trigger a request for a shootout result
+                            // If two teams that are still tied meet on the last matchday and their match is drawn, and sorting.shootout is set to true, then trigger a request for a shootout result
                             if (this.sorting.shootout) {
                                 const numberOfMatches = this.format == "round-robin" ?
                                     this.teams.length - 1 :
@@ -592,74 +685,86 @@ export default class LeagueTable {
                 }));
             }
 
-            // If the sorting type is head-to-head and the span is set to "single", and we are doing progress (i.e. one or more teams have broken away from the tie), then even before the run has completed we set it back to zero so to reapply the criteria from the beginning (points)
-            const isProgress = () => groups.length > 1;
-
-            if (iteration.index >= 2 && this.sorting.h2h.span == "single" && iteration.type === "h2h" && isProgress()) {
-                run = 0;
-                tiebreaker = this.sorting.criteria[0];
-                special = true;
-            }
-
             // Step (5) of the algorithm
             Object.entries(groups).forEach(([key, group]) => {
 
                 /* EXPLANATION
                 
-                Reminder that, at the end of a run, we change the type of iteration (from head-to-head to overall or vice versa) only when:
-                    (a) h2h.when is set to "before", and thus right after the first iteration we automatically switch from the default overall to head-to-head;
+                At the end of a run (see VARIABLES at the start for a refresher on what "run" is), we change the type of iteration (from head-to-head to overall or vice versa) only when:
+                    (a) h2h.when is set to "before", and thus right after the first iteration which tentatively sort by points we automatically go to head-to-head (the recursion is initialized by default at overall);
                     (b) an overall list of criteria has run its course and h2h.when is set to "after", so head-to-head criteria are coming next;
                     (c) an head-to-head list of criteria has run its course, even including any reruns for teams that have broken away from the ties, and h2h.when is set to "before", so overall criteria are coming next.
     
-                This also includes the triggering of final = true in case there is nothing coming up next (e.g. an overall run of criteria reaching its limit while h2h.when was set to "before", and so those are already gone too).
+                This step also includes the triggering of "final" (see VARIABLES again) in case there is nothing coming up next (e.g. if a run of overall-type criteria reaches its limit while h2h.when was set to "before", and so those are already gone too).
                 */
 
-                let change;
+                let nextType;
+                const criteriaLimitReached = run > this.sorting.criteria.length - 2;
                 const finalize = () => final = true;
 
                 if (iteration.index === 0 && this.sorting.h2h.when === "before") {
                     // Point (a)
-                    change = "h2h";
+                    nextType = "h2h";
                 } else if (iteration.type === "overall" && criteriaLimitReached) {
-                    // Point (b)
                     if (this.sorting.h2h.when === "after") {
-                        change = "h2h";
+                        // Point (b)
+                        nextType = "h2h";
                     } else if (this.sorting.h2h.when === "before" && !isProgress()) {
                         finalize();
                     }
                 } else if (iteration.type === "h2h" && criteriaLimitReached) {
-                    // Point (c)
                     if (isProgress()) {
-                        change = iteration.type;
+                        nextType = iteration.type;
                     } else if (this.sorting.h2h.when === "before") {
-                        change = "overall";
+                        // Point (c)
+                        nextType = "overall";
                     } else {
                         finalize();
                     }
                 } else {
-                    change = iteration.type;
+                    // Otherwise we continue the run with the same type, as it has not ended yet
+                    nextType = iteration.type;
                 }
 
-                // The recursive step, where we call the function again if the length of the group is greater than one
+                // Step (5) of the algorithm
                 if (group.length > 1) {
-                    sortAndDivideTable(group, { index: iteration.index + 1, type: change }, depth + 1, final, special);
+                    sortAndDivideTable(group, { index: iteration.index + 1, type: nextType }, special, final);
                 }
             });
+
+            // Utility function that computes the "run" variable that we use in sortAndDivideTable
+            function computeRun(array, table) {
+                if (array.length === 0) return NaN;
+
+                let lastType = array[array.length - 1].type;
+                let count = 0;
+                for (let i = array.length - 1; i >= 0; i--) {
+                    if (array[i].type === lastType &&
+                        table.map(team => team.id).every(table_id => array[i].snapshot.map(team => team.id).includes(table_id))) {
+                        count++;
+                    } else {
+                        break;
+                    }
+                }
+                return count - 1;
+            }
 
             return table;
         }
 
-        // The initial step, where we provide the initial standings to initiate the recursive sorting algorithm
+        // The starting step of the recursion, where we provide the initial standings to initiate the sorting algorithm
         sortAndDivideTable(standings, {
             index: 0,
             type: "overall"
-        })
+        });
 
         switch (options) {
             case undefined:
                 return this.timeline[this.timeline.length - 1].map(({ away_for, away_won, ...rest }) => rest);
             case "all":
                 return this.timeline[this.timeline.length - 1];
+            default:
+                throw new RangeError(`The .standings() method only accepts "all" or nothing as its argument.`);
         }
     }
 
@@ -669,10 +774,12 @@ export default class LeagueTable {
     
             This is the main function that is called to explain how every instance of a tie in point has been resolved, which can then be printed to screen along with the table for extra clarity.
 
-            The way it works is that it looks at this.cycles (which is a collective history of the entire sorting process) and, starting from the bottom (i.e. from the more recent steps, where ties have been resolved) it filters out the list by splitting it into different arrays, each of which made of steps that directly involve the specific teams that will eventually end up being resolved at that endpoint. For example, if two sets of teams are tied at Team A: 6 pts, Team B: 6 pts, Team C: 6 pts, Team D: 6 pts, this.cycles will be split into two arrays that contain the steps that lead to the moment where each pair was definitely split up, each set ignoring the steps that were useful solely to sort the other set.
+            ALGORITHM     
+            The algorithm is the following:
+    
+                (1) it looks at this.cycles (which is a collective history of the entire sorting process) and, starting from the bottom (i.e. from the more recent steps, where ties have been resolved), whenever it encounters a set of team whose tie has been broken it crawls up the list to retrieve all entries connected to them, basically building their sorting history; and this is done for each independent set of teams that were sorted via tiebreakers, so that each of them can receive its own explanation;
 
-            From this, it is just a matter of retrieving the specific information we want from the array and printing it to the screen.
-
+                (2) from this, it is just a matter of examining each of these branches and retrieving the specific information we want to display.
         */
 
         const groupAndFilterByPoints = (arr) => {
@@ -721,11 +828,14 @@ export default class LeagueTable {
             return results;
         }
 
+        // Step (1) of the algorithm
         const grouped = groupAndFilterByPoints(this.timeline[this.timeline.length - 1]);
-        if (grouped.length === 0) return [];
-
         const history = findAllMatchingSubarrays(this.cycles);
 
+        // If there are no ties in points, then .ties() has nothing to do and thus we exit the method altogether
+        if (grouped.length === 0) return [];
+
+        // Step (2) of the algorithm
         history.forEach(story => {
             const first = story[0];
             const last = story[story.length - 1];
@@ -739,6 +849,7 @@ export default class LeagueTable {
             story.forEach((step, index) => {
                 const previous = story[index - 1];
 
+                // For each of the separated histories that we got in (1), the first thing to display is the mere fact that these teams were tied on points
                 if (index == 0) {
                     information.messages.push(`${formatNames(step.snapshot.map(team => team.id).sort())} are tied on ${this.names.points} (${this.cycles[0].snapshot.filter(team => grouped.flat().map(team => team.id).some(element => element == team.id))[0].points}).`)
                 }
@@ -753,10 +864,11 @@ export default class LeagueTable {
 
                     const sorted = snapshot.filter(team => pointsCount[team[criterion]] === 1);
 
+                    // Whenever, while going through the history of the steps that eventually separated two teams, there were more than just two teams at the start, and then from a certain step to the next they became fewer, this means that some of the teams broke away and were sorted at that step, and so we stop to describe this fact
                     if (sorted.length == 1) {
-                        information.messages.push(`The position of ${formatNames([sorted[0].id])} is decided on ${this.#longNames(criterion)} (${snapshot.sort((a, b) => { return b[criterion] - a[criterion] }).map(team => `${team.id}: ${team[criterion]}`).join('; ')}).`);
+                        information.messages.push(`The position of ${formatNames([sorted[0].id])} is decided on ${this.names[criterion]} (${snapshot.sort((a, b) => { return b[criterion] - a[criterion] }).map(team => `${team.id}: ${team[criterion]}`).join('; ')}).`);
                     } else if (sorted.length > 1) {
-                        information.messages.push(`${formatNames(sorted.map(team => team.id).sort())} are sorted on ${this.#longNames(criterion)} (${snapshot.sort((a, b) => { return b[criterion] - a[criterion] }).map(team => `${team.id}: ${team[criterion]}`).join('; ')}).`);
+                        information.messages.push(`${formatNames(sorted.map(team => team.id).sort())} are sorted on ${this.names[criterion]} (${snapshot.sort((a, b) => { return b[criterion] - a[criterion] }).map(team => `${team.id}: ${team[criterion]}`).join('; ')}).`);
                     }
                 }
             });
@@ -804,18 +916,19 @@ export default class LeagueTable {
                     information.messages.push(`After running though all criteria, ${formatNames(last.snapshot.map(team => team.id).sort())} are sorted ${this.names.alphabetical}.`);
                     break;
                 default:
-                    information.messages.push(`${formatNames(last.snapshot.map(team => team.id).sort())} are sorted on ${type}${this.#longNames(last.criterion)} (${last.snapshot.sort((a, b) => { b[last.criterion] - a[last.criterion] }).map(team => `${team.id}: ${team[last.criterion]}`).join('; ')}).`);
+                    // However, in general, this is the step that describes any *normal* sorting of two teams, if we are not in any of the other special cases illustrated above or in the other cases of this switch statement
+                    information.messages.push(`${formatNames(last.snapshot.map(team => team.id).sort())} are sorted on ${type}${this.names[last.criterion]} (${last.snapshot.sort((a, b) => { b[last.criterion] - a[last.criterion] }).map(team => `${team.id}: ${team[last.criterion]}`).join('; ')}).`);
                     break;
             }
         });
-
-        //console.log("The cycles are:", this.cycles.map(cycle => cycle.type + "   " + cycle.criterion + "   " + cycle.snapshot.map(team => team.id + " points: " + team.points + " diff: " + team.diff).join(",   ")), ".");
 
         switch (options) {
             case undefined:
                 return this.information;
             case "raw":
                 return this.cycles;
+            default:
+                throw new RangeError(`The .ties() method only accepts "raw" or nothing as its argument.`);
         }
 
         // Utility function for English grammar
@@ -831,6 +944,7 @@ export default class LeagueTable {
         }
     }
 
+    // Method that lets the user update the flags associated to each team, if they are not immutable (e.g. the number of total yellow and red cards can change as they add up as the competition goes on)
     updateFlags(team, flag, value) {
         const teamIndex = this.teams.findIndex(element => element == team);
         const flagIndex = this.sorting.flags.findIndex(element => element.name == flag);
@@ -838,26 +952,12 @@ export default class LeagueTable {
         this.flags[teamIndex][flagIndex] = value;
     }
 
+    // Method that lets the user add the results of a penalty shootout whenever sortAndDivideTable requests one
     addShootout(home, away, home_for, away_for) {
         this.shootouts.push([home, away, home_for, away_for]);
     }
 
-    #run(array, table) {
-        if (array.length === 0) return NaN;
-
-        let lastType = array[array.length - 1].type;
-        let count = 0;
-        for (let i = array.length - 1; i >= 0; i--) {
-            if (array[i].type === lastType &&
-                table.map(team => team.id).every(table_id => array[i].snapshot.map(team => team.id).includes(table_id))) {
-                count++;
-            } else {
-                break;
-            }
-        }
-        return count - 1;
-    }
-
+    // Private method that computes table rows whenever it is called (either at the start, or whenever a subtable has to be rewritten with only the results between the teams concerned for a head-to-head check)
     #computeTableRows(match, index, teams) {
         const homeTeamRow = teams.find(team => team.id == match.home);
         if (homeTeamRow === undefined) {
@@ -890,39 +990,23 @@ export default class LeagueTable {
             awayTeamRow.away_won++;
         }
 
-        this.#computePoints(homeTeamRow, awayTeamRow);
-    }
-
-    #computePoints(homeTeamRow, awayTeamRow) {
-        switch (this.points) {
-            case "standard":
-                homeTeamRow.points = 3 * homeTeamRow.won + homeTeamRow.drawn;
-                awayTeamRow.points = 3 * awayTeamRow.won + awayTeamRow.drawn;
-                break;
-            case "old":
-                homeTeamRow.points = 2 * homeTeamRow.won + homeTeamRow.drawn;
-                awayTeamRow.points = 2 * awayTeamRow.won + awayTeamRow.drawn;
-                break;
-            default:
-                homeTeamRow.points = parseInt(this.points(homeTeamRow.won, homeTeamRow.drawn, homeTeamRow.lost));
-                awayTeamRow.points = parseInt(this.points(awayTeamRow.won, awayTeamRow.drawn, awayTeamRow.lost));
+        // Function that computes the points that a team has earned via a match
+        const computePoints = (homeTeamRow, awayTeamRow) => {
+            switch (this.points) {
+                case "standard":
+                    homeTeamRow.points = 3 * homeTeamRow.won + homeTeamRow.drawn;
+                    awayTeamRow.points = 3 * awayTeamRow.won + awayTeamRow.drawn;
+                    break;
+                case "old":
+                    homeTeamRow.points = 2 * homeTeamRow.won + homeTeamRow.drawn;
+                    awayTeamRow.points = 2 * awayTeamRow.won + awayTeamRow.drawn;
+                    break;
+                default:
+                    homeTeamRow.points = parseInt(this.points(homeTeamRow.won, homeTeamRow.drawn, homeTeamRow.lost));
+                    awayTeamRow.points = parseInt(this.points(awayTeamRow.won, awayTeamRow.drawn, awayTeamRow.lost));
+            }
         }
-    }
 
-    #longNames(shorthand) {
-        switch (shorthand) {
-            case "points":
-                return this.names.points;
-            case "diff":
-                return this.names.diff;
-            case "for":
-                return this.names.for;
-            case "won":
-                return this.names.won;
-            case "away_for":
-                return this.names.away_for;
-            case "away_won":
-                return this.names.away_won;
-        }
+        computePoints(homeTeamRow, awayTeamRow);
     }
 }
