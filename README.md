@@ -7,7 +7,7 @@ The away goals rule is a famous one that made the news back in 2021, when UEFA d
 This `league-standing` package **offers complete flexibility in choosing all of these details:** from the quantity of tiebreakers to their order, to whether head-to-head criteria should be applied before or after the overall ones, to the little oddities that I alluded to in the previous paragraphs and much more.
 
 ```javascript
-import { LeagueTable } from 'LeagueTable.js';
+import { LeagueTable } from 'league-standings';
 
 const teams = ["Juventus", "AC Milan", "Inter Milan"];
 const matches = [
@@ -39,7 +39,11 @@ console.log(table.ties());
 
 ## Installation
 
-...
+Just run this on any terminal within your project folder
+
+```bash
+$ npm install league-standings
+```
 
 ## Quick start
 
