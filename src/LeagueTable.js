@@ -869,15 +869,30 @@ export default class LeagueTable {
                     const sorted = snapshot.filter(team => pointsCount[team[criterion]] === 1);
 
                     // Whenever, while going through the history of the steps that eventually separated two teams, there were more than just two teams at the start, and then from a certain step to the next they became fewer, this means that some of the teams broke away and were sorted at that step, and so we stop to describe this fact
+                    let type;
+
+                    switch (story[story.length - 1].type) {
+                        case "h2h":
+                            type = `${this.names.h2h} `;
+                            break;
+                        case "overall":
+                            type = `${this.names.overall} `;
+                            break;
+                        case "additional":
+                            type = `${this.names.overall} `;
+                            break;
+                    }
+
                     if (sorted.length == 1) {
-                        information.messages.push(`The position of ${formatNames([sorted[0].id])} is decided on ${this.names[criterion]} (${snapshot.sort((a, b) => { return b[criterion] - a[criterion] }).map(team => `${team.id}: ${team[criterion]}`).join('; ')}).`);
+                        information.messages.push(`The position of ${formatNames([sorted[0].id])} is decided on ${type}${this.names[criterion]} (${snapshot.sort((a, b) => { return b[criterion] - a[criterion] }).map(team => `${team.id}: ${team[criterion]}`).join('; ')}).`);
                     } else if (sorted.length > 1) {
-                        information.messages.push(`${formatNames(sorted.map(team => team.id).sort())} are sorted on ${this.names[criterion]} (${snapshot.sort((a, b) => { return b[criterion] - a[criterion] }).map(team => `${team.id}: ${team[criterion]}`).join('; ')}).`);
+                        information.messages.push(`${formatNames(sorted.map(team => team.id).sort())} are sorted on ${type}${this.names[criterion]} (${snapshot.sort((a, b) => { return b[criterion] - a[criterion] }).map(team => `${team.id}: ${team[criterion]}`).join('; ')}).`);
                     }
                 }
             });
 
             let type;
+
             switch (last.type) {
                 case "h2h":
                     type = `${this.names.h2h} `;

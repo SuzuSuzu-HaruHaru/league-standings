@@ -9,24 +9,20 @@ This `league-standing` package **offers complete flexibility in choosing all of 
 ```javascript
 import { LeagueTable } from 'LeagueTable.js';
 
-const teams = ["San Marino", "Italy", "Spain", "France"];
+const teams = ["Juventus", "AC Milan", "Inter Milan"];
 const matches = [
-    [1, 1, "France", "San Marino", 20, 0],
-    [2, 1, "Italy", "Spain", 3, 1],
-    [3, 2, "Italy", "France", 0, 1],
-    [5, 2, "Spain", "San Marino", 2, 0],
-    [4, 3, "Spain", "France", 3, 0],
-    [6, 3, "Italy", "San Marino", 1, 0],
+    [1, 1, "AC Milan", "Juventus", 1, 2],
+    [2, 1, "Juventus", "Inter Milan", 2, 3],
+    [3, 1, "Inter Milan", "AC Milan", 1, 2],
 ];
 
 const table = new LeagueTable({
     teams: teams,
+    format: "round-robin",
+    points: "standard",
     sorting: {
-        criteria: ["diff", "for"],
-        h2h: {
-            when: "before",
-            span: "all"
-        },
+        criteria: ["diff", "for", "away_for"],
+        h2h: { when: "before", span: "all" },
         final: "lots"
     }
 });
