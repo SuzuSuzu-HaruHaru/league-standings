@@ -600,6 +600,10 @@ export default class LeagueTable {
                                     return bTeam[tiebreaker] - aTeam[tiebreaker];
                             }
                         } else {
+                            // If we move onto additional criteria, in any case the snapshot has to be set back to the overall criteria
+                            this.cycles[this.cycles.length - 1].snapshot = JSON.parse(JSON.stringify(this.timeline[this.timeline.length - 1]))
+                                .filter(team => table.some(element => element.id === team.id));
+
                             // Additional overall criteria after the standard head-to-head / overall routine
                             for (const tiebreaker of this.sorting.additional) {
                                 if (b[tiebreaker] != a[tiebreaker]) {
@@ -781,6 +785,8 @@ export default class LeagueTable {
 
                 (2) from this, it is just a matter of examining each of these branches and retrieving the specific information we want to display.
         */
+
+        console.log(this.cycles.map(cycle => cycle.type + "   " + cycle.criterion + "   " + cycle.special + "   " + cycle.snapshot.map(team => team.id + " away_for: " + team.away_for)));
 
         const groupAndFilterByPoints = (arr) => {
             const grouped = arr.reduce((acc, obj) => {
