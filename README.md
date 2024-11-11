@@ -4,7 +4,7 @@ As a football (soccer) fan myself, I can confidently say that there is nothing t
 
 The away goals rule is a famous one that made the news back in 2021, when UEFA did away with it; but is it *really* gone from the list of criteria? or again, [Group H at the 2018 FIFA World Cup](https://en.wikipedia.org/wiki/2018_FIFA_World_Cup) ended in a breathtaking way when Japan and Senegal finished their group with four points each, only to be separated by the amount of yellow and red cards of all things; and who can say what happens at the EUROs should two teams finish their group with exactly the same points, goal difference and goals scored, *and* they meet on the last matchday *and* their game ends in a draw? At the cost of sounding cliché, the answer might not be what you expect.
 
-This `league-standing` package **offers complete flexibility in choosing all of these details:** from the quantity of tiebreakers to their order, to whether or not head-to-head criteria should be applied before or after the overall ones, to the little oddities that I alluded to in the previous paragraphs and much more.
+This `league-standing` package **offers complete flexibility in choosing all of these details:** from the quantity of tiebreakers to their order, to whether head-to-head criteria should be applied before or after the overall ones, to the little oddities that I alluded to in the previous paragraphs and much more.
 
 ```javascript
 import { LeagueTable } from 'LeagueTable.js';
@@ -38,19 +38,10 @@ console.log(table.ties());
 
 ## Table of Contents
 
-1. [Introduction](#introduction)
-2. [Installation](#installation)
-3. [Quick start](#quick-start)
-4. [Tiebreakers and sorting options](#tiebreakers-and-sorting-options)
-5. [License](#license)
-
-## Introduction
-
-The main purpose of this package is to accept a list of matches for a given set of teams and compute their standings based on the number of *points* they have earned. While it was heavily inspired by football (soccer), it can be applied to any sport—real or fictional. Due to this versatility, I will use a few naming conventions: I will refer to any competing party as a **team**, any encounter between two teams as a **match**, any act of scoring during a match as a **goal**, and any primary variable used to sort teams in the standings as **points**.
-
-Although these terms are borrowed from soccer for simplicity, the underlying principles apply to other sports as well, with only minor changes to the terminology (e.g., a team may consist of just one person in single-player sports).
-
-Standings are easy to compute when all teams have earned a different number of points, as these are by definition the primary criterion for determining the final position in the table, and thus sorting is trivial in this case. **Tiebreakers,** however, will come into play when teams finish with an equal number of points: these are what truly gives life to the package, so feel free to check the [Tiebreakers and sorting options](#tiebreakers-and-sorting-options) section below to explore the customization options available for selecting tiebreakers, determining their application order, and handling other nuances associated with them.
+1. [Installation](#installation)
+2. [Quick start](#quick-start)
+3. [Tiebreakers and sorting options](#tiebreakers-and-sorting-options)
+4. [License](#license)
 
 ## Installation
 
