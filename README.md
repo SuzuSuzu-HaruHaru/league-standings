@@ -241,7 +241,7 @@ with `.ties()` now saying
 
 ### Computing and retrieving the standings via `.standings()`
 
-*No issues known at this point.*
+*Nothing known at this point.*
 
 ### Displaying a description of how ties were broken via `.ties()`
 
