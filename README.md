@@ -239,7 +239,7 @@ with `.ties()` now saying
 
 ## Known issues and future directions
 
-### Retrieving the standings via `.standings()`
+### Computing and retrieving the standings via `.standings()`
 
 *No issues known at this point.*
 
