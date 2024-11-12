@@ -239,11 +239,11 @@ with `.ties()` now saying
 
 ## Known issues and future directions
 
-### `.standings()`
+### Retrieving the standings via `.standings()`
 
 *No issues known at this point.*
 
-### `.ties()`
+### Displaying a description of how ties were broken via `.ties()`
 
 There is currently one point of improvement that I would like to focus on next: the `additional`, `shootout`, `flag` and `final` steps all count as one step, meaning that if more than two teams are involved and some of them are separated by one of these steps while the others are separated by another, only one message will be displayed. ***The teams will be sorted correctly in any case,*** but it is the text description that is insufficient in this scenario.
 
