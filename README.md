@@ -28,7 +28,7 @@ import { LeagueTable } from 'league-standings';
 
 const teams = ["Juventus", "AC Milan", "Inter Milan"];
 const matches = [
-    [1, 1, "AC Milan", "Juventus", 1, 2], // Match id, matchday, Team A, Team B, goals A, goals B
+    [1, 1, "AC Milan", "Juventus", 1, 2], // match id, matchday, team A, team B, goals A, goals B
     [2, 1, "Juventus", "Inter Milan", 2, 3],
     [3, 1, "Inter Milan", "AC Milan", 1, 2],
 ];
@@ -49,18 +49,18 @@ console.log(table.ties());
 
 ## Tiebreakers and sorting options
 
-A sorting method can be implemented via the `sorting` key in the starting object, where the simplest value it can take is a default keyword; for example, in
+As we mentioned above, the core of this package is handles the toughest part of the sorting process: that is, the resolution of ties. All control over this element happens via the `sorting` key in the starting object. As different competitions employ different ways of breaking ties, the simplest value that can be given to this key is a default keyword identifying a competition, which loads a replica of the rules that are applied there; for example, writing
 
 ```javascript
 const teams = ["San Marino", "Italy", "Spain", "France"];
 const table = new LeagueTable({
     teams: teams,
-    sorting: "FIFA"
+    sorting: "FIFA World Cup"
 });
 ```
-any ties between teams that finished level on points will be resolved using the standard procedure employed by FIFA during the FIFA World Cup group stage and qualification rounds (the full list of such keywords is available in the [Documentation](#documentation) section below).
+means that any ties between teams that finished level on points will be resolved using the standard procedure employed by FIFA during the FIFA World Cup group stage and qualification rounds (the full list of such keywords, as well as which list of tiebreaker each competition exactly employs, is available in the [gocumentation on github.io](#documentation)).
 
-In general, `sorting` will accept an object in the form of
+In its most general form, `sorting` will accept an object with keys
 
 ```javascript
 const teams = ["San Marino", "Italy", "Spain", "France"];
@@ -68,17 +68,17 @@ const table = new LeagueTable({
     teams: teams,
     sorting: {
         criteria: ["diff", "for"],
-        final: "lots",
-        h2h: {
-            when: "before",
-            span: "all"
-        }
+        h2h: { when: "before", span: "all" },
+        additional: ["away_for"],
+        shootout: false,
+        flags: [ { name: "disciplinary points", order: "asc" } ],
+        final: "lots"
     }
 });
 ```
-where `criteria` is the list of tiebreakers that will be applied one after the other to break any ties, and `final` tells the code what to do when all criteria have been used and the standings are still inconclusive: in this case, the criteria to apply would be *goal difference* and *goal scored*, while the final criterion in case of absolute tie on all records will be a drawing of random lots.
+where only `criteria`, `h2h` and `final` are compulsory whenever `sorting` is given explicitly as an object like this.
 
-Again, the full list of `criteria` and `final` keywords (as well as their meaning) is available in the documentation below.
+The first of these is, in fact, the list of criteria that will be followed under normal circumstances: here `"diff"` and `"for"` stand for goal difference and number of goals scored respectively, meaning these tiebreakers will be applied one after another to break a tie should any teams finish level on points.
 
 ### Head-to-head
 
