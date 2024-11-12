@@ -123,7 +123,11 @@ Notice, however, how some competitions do not have this provision at all: the FI
 
 ### Optional sorting keys
 
-In addition to the subkeys seen above, that are required whenever the `sorting` key is stated explicitly as an object, there are some more that may or may not be provided when initializing the object. The first of these is the `additional` key, which behaves like `criteria` in that it also accepts an array of strings, each symbolizing a different tiebreaker; as the name suggests, these are *additional* criteria because they escape the head-to-head run: any tiebreaker in `criteria` will, depending on the circumstance, be applied either in an overall fashion or in a head-to-head check—whichever comes first depends on `sorting.h2h.when`, but in principle they can do both. **However, an additional criteria is one that comes *after* this entire procedure,** and is always checked in an overall fashion only.
+In addition to the subkeys seen above, that are required whenever the `sorting` key is stated explicitly as an object, there are some more that may or may not be provided when initializing the object.
+
+#### `additional`
+
+The first of these is the `additional` key, which behaves like `criteria` in that it also accepts an array of strings, each symbolizing a different tiebreaker; as the name suggests, these are *additional* criteria because they escape the head-to-head run: any tiebreaker in `criteria` will, depending on the circumstance, be applied either in an overall fashion or in a head-to-head check—whichever comes first depends on `sorting.h2h.when`, but in principle they can do both. **However, an additional criteria is one that comes *after* this entire procedure,** and is always checked in an overall fashion only.
 
 One such example comes from the regulations of the UEFA Champions League between years 2021 and 2024 (e.g. the [Group stage at the 2023-24 UEFA Champions League](https://en.wikipedia.org/wiki/2023%E2%80%9324_UEFA_Champions_League_group_stage)), where you can see that goal difference and number of goals scored count as *regular* criteria, in that they are first applied in head-to-head fashion and, should the teams still be tied, they are applied in an overall style; this is what is normally modeled by `sorting.h2h.when = "before"`. However, you can see that the list does not end there: the tiebreakers go on with the number of goals scored away from home, the number of wins and the number of wins away from home, all of which are applied in an overall style (*in all group matches* being the keyword here on Wikipedia). This makes them *special* criteria that only ever exist as final overall comparisons, and this is why, within the code of the package, this particular format (callable via `sorting: "2021-2024 UEFA Champions League"`) exists as
 
@@ -135,3 +139,7 @@ sorting: {
     // ...more options
 }
 ```
+
+#### `shootout`
+
+Next up is `shootout`, which models a very peculiar rule that exists primarily in the UEFA Euros, but also in some other confederation-level competitions (e.g. the AFC Asian Cup). It is a rule stating that, if two teams are completely equal on all criteria up to right after the head-to-head/overall checks, and they happen to meet on the last matchday of the group and their encounter ends in a draw, then their position in the table is decided via a penalty shoot-out that takes place right there and then, just after the final whistle of that last match. It accepts the values `true` or `false` depending on whether this special rule applies or not, 
