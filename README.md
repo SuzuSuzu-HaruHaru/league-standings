@@ -253,4 +253,4 @@ As I am essentially an amateur developer, this is my first Javascript package ev
 
 ## Documentation
 
-The documentation is currently a work in progress, but a [tentative version of it](#documentation) is currently hosted on Github Pages. Feel free to check it out, mainly to know what type of sorting criteria you have available, or which competitions already have their default rules labeled under a keyword, or generally how every method and the object initialization exactly work!
+The documentation is currently a work in progress, but a [tentative version of it](https://suzusuzu-haruharu.github.io/league-standings/) is currently hosted on Github Pages. Feel free to check it out, mainly to know what type of sorting criteria you have available, or which competitions already have their default rules labeled under a keyword, or generally how every method and the object initialization exactly work!
