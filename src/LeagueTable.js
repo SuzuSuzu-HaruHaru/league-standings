@@ -306,7 +306,7 @@ export default class LeagueTable {
         const identifiers = new Set();
         data.forEach(item => {
             if (identifiers.has(item[0])) {
-                throw new Error(`Match identifiers must be unique (first thrown at a match with match identifier ${item[0]}).`);
+                throw new Error(`Match identifiers must be unique.`);
             } else {
                 identifiers.add(item[0]);
             }

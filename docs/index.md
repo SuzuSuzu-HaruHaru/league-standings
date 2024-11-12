@@ -1,11 +1,11 @@
-# Object creation
+# Instantiation
 
 A new league table can be created via
 
 ```javascript
 new LeagueTable(<Object>);
 ```
-where the object must have the following compulsory key.
+where the input object must have the following compulsory key.
 
 ## Key `teams`
 
@@ -15,10 +15,10 @@ where the object must have the following compulsory key.
 | **Expected value**     | An array of unique identifiers of any type.                    |
 | **Compulsory**         | **Yes.**                                                       |
 
-It is best if `teams` is an array of strings comprising of the (unique) names of the teams involved, but any other type of unique identifier works; repeated entries **will throw an error** of type:
+It is best if `teams` is an array of strings comprising of the (unique) names of the teams involved, but any other type of unique identifier works; repeated entries **will throw an error** of type
 
-```javascript
-`Team identifiers must be unique.`
+```
+Team identifiers must be unique.
 ```
 Additionally, the starting object may have any of the following optional keys.
 
@@ -38,7 +38,7 @@ A `"round-robin"` league is one where the teams face each other only once; a `"h
 |                        |                                                                    |
 |------------------------|--------------------------------------------------------------------|
 | **Description**        | How to calculate the points that teams get after every match.      |
-| **Expected value**     | Either the string `"standard"` or the string `"old"`, or alternatively any function that accepts exactly three arguments. |
+| **Expected value**     | Either the string `"standard"` or the string `"old"`, or alternatively any function that accepts exactly three arguments (number of games won, number of games drawn, number of games lost). |
 | **Compulsory**         | No.                                                                |
 | **Default**            | `"standard"`                                                       |
 
@@ -48,7 +48,7 @@ A function can also be passed as a value for `points`
 
 ```javascript
 const table = new LeagueTable({
-    teams: teams,
+    // ...
     points: (w, d, l) => 3*w
 });
 ```
@@ -65,7 +65,7 @@ where for example wins would still be worth three points here, but draws would n
 
 If any of the keys in `names` are not specified, or if the whole key is absent, each unspecified term will default respectively to `"points"`, `"goal difference"`, `"number of goals scored"`, `"number of games won"`, `"number of goals scored away from home"`, `"number of games won away from home"`, `"drawing of random lots"`, `"the alphabetical order of their names"`, `"head-to-head"` and `"overall"`.
 
-For example, `names: { points: "the amount of points earned", lots: "at random" }` will have this effect when `.ties()` is called
+For example, writing `names: { points: "the amount of points earned", lots: "at random" }` will have this effect when `.ties()` is called
 
 ```javascript
 messages: [
@@ -108,6 +108,8 @@ In all other circumstances, `sorting` will accept an object with the following c
 | **Expected value**     | An array containing any of the strings `"diff"`, `"for"`, `"won"`, `"away_for"`, `"away_won"`. |
 | **Compulsory**         | **Yes** if `sorting` is specified explicitly as an object.         |
 
+The criteria correspond respectively to the goal difference, the number of goals scored, the number of games won, the number of goals scored away from home and the number of games won away from home.
+
 ### Subkey `h2h`
 
 |                        |                                                                    |
@@ -115,6 +117,8 @@ In all other circumstances, `sorting` will accept an object with the following c
 | **Description**        | Handles the head-to-head section of the sorting procedure.         |
 | **Expected value**     | An object with keys `when` (accepting only either the string `"before"` or the string `"after"`) and `span` (accepting only either the string `"all"` or the string `"single"`). |
 | **Compulsory**         | **Yes** if `sorting` is specified explicitly as an object.         |
+
+See [**Head-to-head v. overall**](https://github.com/SuzuSuzu-HaruHaru/league-standings?tab=readme-ov-file#head-to-head-v-overall) and [**Head-to-head reapplication**](https://github.com/SuzuSuzu-HaruHaru/league-standings?tab=readme-ov-file#head-to-head-reapplication) on Github for a pratical explanation of the real-world effects that these parameters have.
 
 ### Subkey `final`
 
@@ -124,7 +128,9 @@ In all other circumstances, `sorting` will accept an object with the following c
 | **Expected value**     | Either the string `"lots"` or the string `"alphabetical"`.         |
 | **Compulsory**         | **Yes** if `sorting` is specified explicitly as an object.         |
 
-Additionally, the sorting key object may have any of the following optional keys.
+The value `"lots"` indicates that the last criterion of all has to be a drawing of random lots, whereas `"alphabetical"` indicates that it should simply be the alphabetical order of their names.
+
+Additionally, the `sorting` key object may have any of the following optional subkeys.
 
 ### Optional subkey `additional`
 
@@ -135,6 +141,8 @@ Additionally, the sorting key object may have any of the following optional keys
 | **Compulsory**         | No.                                                                |
 | **Default**            | [] *(the empty array)*                                             |
 
+See also [**`additional`**](https://github.com/SuzuSuzu-HaruHaru/league-standings?tab=readme-ov-file#additional) on Github.
+
 ### Optional subkey `shootout`
 
 |                        |                                                                    |
@@ -144,6 +152,8 @@ Additionally, the sorting key object may have any of the following optional keys
 | **Compulsory**         | No.                                                                |
 | **Default**            | `false`                                                            |
 
+See also [**`shootout`**](https://github.com/SuzuSuzu-HaruHaru/league-standings?tab=readme-ov-file#shootout) on Github.
+
 ### Optional subkey `flags`
 
 |                        |                                                                    |
@@ -152,3 +162,5 @@ Additionally, the sorting key object may have any of the following optional keys
 | **Expected value**     | An array of obects with keys `name` (accepting a string) and `order` (accepting only either the string `"asc"` or the string `"desc"`).                                                   |
 | **Compulsory**         | No.                                                                |
 | **Default**            | [] *(the empty array)*                                             |
+
+See also [**`flags`**](https://github.com/SuzuSuzu-HaruHaru/league-standings?tab=readme-ov-file#flags) on Github.

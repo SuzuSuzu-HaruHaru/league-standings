@@ -1,15 +1,21 @@
 {
     "name": "league-standings",
-    "version": "1.0.0",
+    "version": "0.0.0-development",
     "main": "dist/index.js",
     "scripts": {
         "test": "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js",
-        "build": "babel src --out-dir dist"
+        "build": "babel src --out-dir dist",
+        "semantic-release": "semantic-release"
     },
     "type": "module",
     "keywords": ["soccer", "football", "generator", "league-table", "front-end", "web", "lightweight"],
     "author": "SuzuSuzu-HaruHaru",
     "license": "MIT",
+    "files": [
+        "dist",
+        "LICENSE",
+        "README.md"
+    ],
     "description": "A Javascript package that computes league tables from an array of matches. Types and order of tiebreakers are fully customizable, and it is possible to access the full description of which tiebreakers were used at what point in both textual and raw data form.",
     "devDependencies": {
         "@babel/cli": "^7.25.9",
