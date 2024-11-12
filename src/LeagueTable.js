@@ -606,8 +606,8 @@ export default class LeagueTable {
 
                             // Additional overall criteria after the standard head-to-head / overall routine
                             for (const tiebreaker of this.sorting.additional) {
+                                groups.forEach(group => group.length = 1);
                                 if (b[tiebreaker] != a[tiebreaker]) {
-                                    groups.forEach(group => group.length = 1);
                                     this.cycles[this.cycles.length - 1].type = "additional";
                                     this.cycles[this.cycles.length - 1].criterion = tiebreaker;
                                     return b[tiebreaker] - a[tiebreaker];
@@ -677,6 +677,7 @@ export default class LeagueTable {
                             groups.forEach(group => group.length = 1);
                             switch (this.sorting.final) {
                                 case "lots":
+                                    console.log("I bet that I am getting here for teams...", a.id, b.id);
                                     this.cycles[this.cycles.length - 1].type = "lots";
                                     return Math.random() > 0.5 ? -1 : 1;
                                 case "alphabetical":
@@ -784,6 +785,8 @@ export default class LeagueTable {
 
                 (2) from this, it is just a matter of examining each of these branches and retrieving the specific information we want to display.
         */
+
+        console.log(this.cycles.map(cycle => cycle.type + "   " + cycle.criterion + "   " + cycle.special + "   " + cycle.snapshot.map(team => team.id + " points: " + team.points + " diff: " + team.diff + " away_for: " + team.away_for)));
 
         const groupAndFilterByPoints = (arr) => {
             const grouped = arr.reduce((acc, obj) => {

@@ -11,8 +11,9 @@ This `league-standing` package **offers complete flexibility in choosing all of 
 1. [Installation](#installation)
 2. [Quick start](#quick-start)
 3. [Tiebreakers and sorting options](#tiebreakers-and-sorting-options)
-4. [Documentation](#documentation)
-5. [License](#license)
+4. [Showing tie descriptions](#showing-tie-descriptions)
+5. [Documentation](#documentation)
+6. [License](#license)
 
 ## Installation
 
@@ -176,4 +177,61 @@ where the first value in each `flags` array represents the disciplinary points (
 ```javascript
 table.updateFlags("Team A", "disciplinary points", 4);
 table.standings(); // The new flag will now be taken into account, if needed.
+```
+
+## Showing tie descriptions
+
+Calling the `.ties()` method after `.standings()` will give you access to an array objects, whose each entry corresponds to a group of teams that were tied on points together with a concise explanation of how the relevant tie between them was resolved. Whenever `.standings()` is called for the purposes of *visual* presentation (like in an HTML page that shows the league table of a competition, or within the screens of a game), the output of `.ties()` should also be printed to screen for reasons of clarity.
+
+If we take the example from [Quick start](#quick-start) above, the raw output of `.ties()` will be the array
+
+```javascript
+[
+  {
+    group: [ 'AC Milan', 'Inter Milan', 'Juventus' ],
+    messages: [
+      'AC Milan, Inter Milan and Juventus are tied on points (3).',
+      'The position of AC Milan is decided on head-to-head number of goals scored (Juventus: 4; Inter Milan: 4; AC Milan: 3).',
+      'Inter Milan and Juventus are sorted on head-to-head number of goals scored away from home (Inter Milan: 3; Juventus: 2).'
+    ],
+    requests: null
+  }
+]
+```
+In this case, the array contains only one entry because there was only one group of teams that were tied on a certain number of points (here being all of them, at three points each): the teams involved in the tie are collected within the `group` key as an array of their identifiers. The `messages` key is an array of text descriptions intended for visual presentations, describing each relevant step in how the tie was broken: here we have that AC Milan was the first to go on the number of head-to-head goals scored, whereas the still-remaining tie between Juventus and Inter Milan is decided on the third criterion, the number of goals scored away from home.
+
+The `request` key is null here, meaning that the matches that have been submitted via the appropriate method were sufficient to compute the table; this may not be the case if, for example, the results of a penalty shootout is required (see [`shootout`](#shootout) above): in that case, submitting the matches alone and calling `.standings()` will temporarily sort the two teams involved randomly, with `.ties()` specifying it as follows
+
+```javascript
+[
+  {
+    group: [ 'Japan', 'Senegal' ],
+    messages: [
+      'Japan and Senegal are tied on points (4).',
+      'Japan and Senegal are provisionally sorted at random while waiting for the results of their penalty shootout.'
+    ],
+    requests: 'shootout'
+  }
+]
+```
+The presence of `"shootout"` in the `requests` key signals that the results of the penalty shootout (here between Japan and Senegal) needs to be submitted as well, which can be done via `addShootout(`*home team*`,` *away team*`,` *pen. shoot. results home*`, ` *pen. shoot. results away*`)` as such
+
+```javascript
+table.addShootout("Japan", "Senegal", 5, 4);
+table.standings(); // The result of the penalty shootout will now be taken into account.
+table.ties();
+```
+with `.ties()` now saying
+
+```javascript
+[
+  {
+    group: [ 'Japan', 'Senegal' ],
+    messages: [
+      'Japan and Senegal are tied on points (4).',
+      'Having met on their last matchday and after drawing their match, Japan and Senegal are sorted on the results of their penalty shootout (Japan: 5; Senegal: 4).'
+    ],
+    requests: null
+  }
+]
 ```
