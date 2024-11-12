@@ -4,7 +4,7 @@ As a big fan of football (soccer), I can confidently say that there is nothing e
 
 The away goals rule is a famous one that made the news back in 2021, when UEFA did away with it; but is it *really* gone from the list of tiebreakers? or again, [Group F at the 2022-23 UEFA Europa League](https://en.wikipedia.org/wiki/2022%E2%80%9323_UEFA_Europa_League_group_stage) saw all teams finish their group with eight points each: how were these ties resolved? and who can say what happens at the Euros should two teams be equal on points, goal difference and goals scored, *and* they meet on the last matchday *and* their game ends in a draw? As cliché as it may sound, the answer might not be what you expect.
 
-This `league-standing` package **offers complete flexibility in choosing all of these details:** from the quantity of tiebreakers to their order; to whether head-to-head comparisons should be applied before or after the overall ones; to all the little oddities that I alluded to in the previous paragraph, and much more.
+This `league-standings` package **offers complete flexibility in choosing all of these details:** from the quantity of tiebreakers to their order; to whether head-to-head comparisons should be applied before or after the overall ones; to all the little oddities that I alluded to in the previous paragraph, and much more.
 
 ## Table of Contents
 
@@ -60,9 +60,9 @@ const table = new LeagueTable({
     sorting: "FIFA World Cup"
 });
 ```
-means that any ties between teams that finished level on points will be resolved using the standard procedure employed by FIFA during the FIFA World Cup group stage and qualification rounds. The full list of such keywords, as well as which list of tiebreaker each competition exactly employs, is available in the [documentation on github.io](#documentation).
+means that any ties between teams that finished level on points will be resolved using the standard procedure employed by FIFA during the FIFA World Cup group stage and qualification rounds. The full list of such keywords, as well as which list of tiebreakers each competition exactly employs, is available in the [documentation on github.io](#documentation).
 
-In its most general form, `sorting` will accept an object with keys
+In its most general form, `sorting` will accept an object with six subkeys as in the following example
 
 ```javascript
 const teams = ["San Marino", "Italy", "Spain", "France"];
@@ -78,7 +78,7 @@ const table = new LeagueTable({
     }
 });
 ```
-where only `criteria`, `h2h` and `final` are compulsory whenever `sorting` is given explicitly as an object like this.
+where only `criteria`, `h2h` and `final` are compulsory whenever `sorting` is given explicitly as an object.
 
 The first of these is, in fact, the list of criteria that will be followed under normal circumstances: here `"diff"` and `"for"` stand for goal difference and number of goals scored respectively, meaning these tiebreakers will be applied one after another to break a tie whenever two or more teams end up with the same amount of points. The `final` subkey establishes a method for sorting teams for good should any of the previous ones prove inconclusive (in this case, `"lots"` stands for a drawing of random lots), while the `h2h` subkey deserves a more careful explanation.
 
