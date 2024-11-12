@@ -58,7 +58,7 @@ const table = new LeagueTable({
     sorting: "FIFA World Cup"
 });
 ```
-means that any ties between teams that finished level on points will be resolved using the standard procedure employed by FIFA during the FIFA World Cup group stage and qualification rounds (the full list of such keywords, as well as which list of tiebreaker each competition exactly employs, is available in the [gocumentation on github.io](#documentation)).
+means that any ties between teams that finished level on points will be resolved using the standard procedure employed by FIFA during the FIFA World Cup group stage and qualification rounds. The full list of such keywords, as well as which list of tiebreaker each competition exactly employs, is available in the [documentation on github.io](#documentation).
 
 In its most general form, `sorting` will accept an object with keys
 
@@ -78,9 +78,9 @@ const table = new LeagueTable({
 ```
 where only `criteria`, `h2h` and `final` are compulsory whenever `sorting` is given explicitly as an object like this.
 
-The first of these is, in fact, the list of criteria that will be followed under normal circumstances: here `"diff"` and `"for"` stand for goal difference and number of goals scored respectively, meaning these tiebreakers will be applied one after another to break a tie should any teams finish level on points.
+The first of these is, in fact, the list of criteria that will be followed under normal circumstances: here `"diff"` and `"for"` stand for goal difference and number of goals scored respectively, meaning these tiebreakers will be applied one after another to break a tie whenever two or more teams end up with the same amount of points. The `final` subkey establishes a method for sorting teams for good should any of the previous ones prove inconclusive (in this case, `"lots"` stands for a drawing of random lots), while the `h2h` subkey deserves a more careful explanation.
 
-### Head-to-head
+### Head-to-head comparisons
 
 The `h2h` key, meaning *head-to-head*, deserves its own subsection to be explained properly. As you may know, it is often the case that when a list of criteria does not return a useful result for two or more teams, then one way of breaking the tie is to reapply all the criteria from the start, but restricting ourselves only to the matches played between those teams. The `h2h` key gives you full control over this process via two parameters.
 
