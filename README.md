@@ -102,7 +102,7 @@ But UEFA uses the head-to-head method *first*, meaning that any tiebreakers are 
 
 ### Head-to-head reapplication
 
-To explan the next subkey, `sorting.h2h.span`, we will look instead at the famous [Group E at the UEFA EURO 2024](https://en.wikipedia.org/wiki/UEFA_Euro_2024) where every single team finished their group with 4 points
+To explan the next subkey, `sorting.h2h.span`, we will look instead at the famous [Group E at the UEFA Euro 2024](https://en.wikipedia.org/wiki/UEFA_Euro_2024) where every single team finished their group with 4 points
 
 | Position | Team       | Won | Drawn | Lost | GF        | GA            | GD               | Points |
 |----------|------------|:---:|:-----:|:----:|:---------:|:-------------:|:----------------:|:------:|
@@ -120,3 +120,18 @@ But here is the catch: according to official European Championship regulations, 
 **Whether the full list of criteria is expected to run out before resetting the head-to-head procedure is decided by the `sorting.h2h.span` key,** which can take the string value `"all"` to signify the style that we have just seen (the one where we must wait until all criteria are applied before rewriting any head-to-head sub-tables) or the string value `"single"` to mean the opposite, i.e. the case when head-to-head restarts from the beginning every single time some teams separate from the rest (the same line of reasoning that, in our fictional example, had made Belgium the winner of the group).
 
 Notice, however, how some competitions do not have this provision at all: the FIFA World Cup is one prime example, where head-to-head criteria apply after the overall one but there is no requirement to restart them at any point should they only help to separate some teams, but not others. This behavior can be replicated via the third and last accepted value, `"none"`.
+
+### Optional sorting keys
+
+In addition to the ones seen above, that are required whenever the `sorting` key is stated explicitly as an object, there are some more that may or may not be provided when initializing the object. The first of these is the `additional` key, which behaves like `criteria` in that it also accepts an array of strings, each symbolizing a different tiebreaker; as the name suggests, these are *additional* criteria because they escape the head-to-head run: any tiebreaker in `criteria` will, depending on the circumstance, be applied either in an overall fashion or in a head-to-head check—whichever comes first depends on `sorting.h2h.when`, but in principle they can do both. However, an additional criteria is one that comes *after* this entire procedure, and is always checked in an overall fashion only.
+
+One such example comes from the regulations of the UEFA Champions League between years 2021 and 2024 (e.g. the [Group stage at the 2023-24 UEFA Champions League](https://en.wikipedia.org/wiki/2023%E2%80%9324_UEFA_Champions_League_group_stage)), where you can see that goal difference and number of goals scored count as *regular* criteria, in that they are first applied in head-to-head fashion and, should the teams still be tied, they are applied in an overall style; this is what is normally modeled by `sorting.h2h.when = "before"`. However, you can see that the list does not end there: the tiebreakers than go on with the number of goals scored away from home, the number of wins and the number of wins away from home, all of which are applied in an overall style (*in all group matches* being the keyword here on Wikipedia). These makes them *special* criteria that only ever exist in final overall comparisons, and this is why, within the code of the package, this particular format (callable via `sorting: "2021-2024 UEFA Champions League"`) exists as
+
+```javascript
+sorting: {
+    criteria: ["diff", "for"],
+    h2h: { when: "before", span: "all" },
+    additional: ["away_for", "won", "away_won"],
+    // ...more options
+}
+```
