@@ -83,9 +83,9 @@ The first of these is, in fact, the list of criteria that will be followed under
 
 ### Head-to-head comparisons
 
-As you may know, football competitions roughly divide in two categories when it comes to sorting methods: those like FIFA, where any tie in points is resolved by looking up tiebreakers (e.g. goal difference) in the *full* table, as it results from all the matches played by all the teams in the league/group; and those like UEFA, where if two or more teams are tied, then we first have to compute a sub-table from the matches that were played only between the teams concerned in the tie, and it is in *this* sub-table that we look up any tiebreakers to decide the final standings.
+As you may know, football competitions roughly divide in two categories when it comes to sorting methods: those like FIFA, where any tie in points is resolved by looking up tiebreakers (e.g. goal difference) in the *full* table, as it results from all the matches played by all the teams in the league/group; and those like UEFA, where if two or more teams are tied then we first have to compute a sub-table from the matches that were played only between the teams concerned in the tie, and it is in *this* sub-table that we look up any tiebreakers to decide the final standings.
 
-An example that shows this difference can be seen in [Group E at the UEFA Euro 2016](https://en.wikipedia.org/wiki/UEFA_Euro_2016), where the final table ended up looking like this
+An example will make this difference clear. Take [Group E at the UEFA Euro 2016](https://en.wikipedia.org/wiki/UEFA_Euro_2016), where the final table ended up looking like this
 
 | Position | Team       | Won | Drawn | Lost | GF        | GA            | GD               | Points |
 |----------|------------|:---:|:-----:|:----:|:---------:|:-------------:|:----------------:|:------:|
