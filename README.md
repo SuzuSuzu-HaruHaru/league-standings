@@ -11,7 +11,8 @@ This `league-standing` package **offers complete flexibility in choosing all of 
 1. [Installation](#installation)
 2. [Quick start](#quick-start)
 3. [Tiebreakers and sorting options](#tiebreakers-and-sorting-options)
-4. [License](#license)
+4. [Documentation](#documentation)
+5. [License](#license)
 
 ## Installation
 
@@ -82,13 +83,9 @@ The first of these is, in fact, the list of criteria that will be followed under
 
 ### Head-to-head comparisons
 
-The `h2h` key, meaning *head-to-head*, deserves its own subsection to be explained properly. As you may know, it is often the case that when a list of criteria does not return a useful result for two or more teams, then one way of breaking the tie is to reapply all the criteria from the start, but restricting ourselves only to the matches played between those teams. The `h2h` key gives you full control over this process via two parameters.
+As you may know, football competitions roughly divide in two categories when it comes to sorting methods: those like FIFA, where any tie in points is resolved by looking up tiebreakers (e.g. goal difference) in the *full* table, as it results from all the matches played by all the teams; and those like UEFA, where if two or more teams are tied, then we first have to compute a sub-table from the matches that were played only between the teams concerned in the tie, and it is in *this* sub-table that we look up any tiebreakers to decide the final standings.
 
-#### when
-
-The first is `when`, which simply lets you choose whether you want the head-to-head comparisons to be done immediately (here signified by the `before` keyword), or only after the comparison using the overall results of the whole table has not been able to sort all the teams (here signified by the `after` keyword). Those of you who like soccer may already be familiar with this concept: FIFA uses overall criteria first in all of their competitions, only resorting to head-to-head if this does not work fully, whereas UEFA famously uses head-to-head comparisons as their first row of criteria, with overall results being used only to solve any still-remaining ties.
-
-One example of such a difference can be seen in [Group E at the UEFA EURO 2016](https://en.wikipedia.org/wiki/UEFA_Euro_2016), where the final table ended up looking like this
+An example that shows this difference can be seen in [Group E at the UEFA Euro 2016](https://en.wikipedia.org/wiki/UEFA_Euro_2016), where the final table ended up looking like this
 
 | Position | Team       | Won | Drawn | Lost | GF        | GA            | GD               | Points |
 |----------|------------|:---:|:-----:|:----:|:---------:|:-------------:|:----------------:|:------:|
@@ -97,7 +94,9 @@ One example of such a difference can be seen in [Group E at the UEFA EURO 2016](
 | 3        | Republic of Ireland | 1 | 1 | 1 | 2         | 4             | -2               | **4**  |
 | 4        | Sweden     | 0   | 1     | 2    | 1         | 3             | -2               | **1**  |
 
-Normally one would expect to see Belgium come out on top, as the list of tiebreakers used at the European Championship runs through goal difference (Italy 2, Begium 2) and then goals scored (Italy 3, Belgium 4): however, since UEFA uses the head-to-head score first, the criteria are to be applied only to the matches between the teams concerned in the tie—which in this case was just one match, that Italy had won 2-0 in the very first matchday of the group stage; Italy therefore ranks first on head-to-head points (Italy 2, Belgium 0).
+Both FIFA and UEFA agree that the next tiebreaker after points should be goal difference, and the one after that to be the number of goals scored. And if this had been a FIFA tournament, then we would have seen that Italy and Belgium, being tied on points, are also tied on goal difference (Italy 2, Begium 2), at which point the tie would be broken in favor of Belgium by looking at how many goals the two teams scored across all matches (Italy 3, Belgium 4).
+
+But UEFA uses the head-to-head method *first*, meaning that any tiebreakers are to be applied only to the matches between the teams concerned in the tie: which in this case was just one match, that Italy had won 2-0 in the very first matchday of the group stage; Italy therefore ranks first on head-to-head points—three to zero, due to Italy winning and Belgium losing.
 
 #### span
 
