@@ -94,7 +94,7 @@ An example will make this difference clear. Take [Group E at the UEFA Euro 2016]
 | 3        | Republic of Ireland | 1 | 1 | 1 | 2         | 4             | -2               | **4**  |
 | 4        | Sweden     | 0   | 1     | 2    | 1         | 3             | -2               | **1**  |
 
-Both FIFA and UEFA agree that the next tiebreaker after points should be goal difference, and the one after that to be the number of goals scored. Now, had this been a FIFA tournament, then we would have seen that Italy and Belgium, being tied on points, are also tied on goal difference (Italy 2, Begium 2), at which point the tie would be broken in favor of Belgium by looking at how many goals the two teams scored across all matches (Italy 3, Belgium 4).
+Both FIFA and UEFA agree that the next tiebreaker after points should be goal difference, and the one after that to be the number of goals scored; this is relevant since Italy and Belgium are tied on points at the top og the group. Now, had this been a FIFA tournament, we would have seen that Italy and Belgium are also tied on goal difference (Italy 2, Begium 2), at which point the tie would be broken in favor of Belgium by looking at how many goals the two teams scored across all matches (Italy 3, Belgium 4).
 
 But UEFA uses the head-to-head method *first*, meaning that any tiebreakers are to be applied only to the matches between the teams concerned in the tie: which in this case was just one match, that Italy had won 2-0 in the very first matchday of the group stage; Italy therefore ranks first on head-to-head points—three to zero, due to Italy winning and Belgium losing.
 
