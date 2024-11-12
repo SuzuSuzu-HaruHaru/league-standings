@@ -28,7 +28,7 @@ import { LeagueTable } from 'league-standings';
 
 const teams = ["Juventus", "AC Milan", "Inter Milan"];
 const matches = [
-    [1, 1, "AC Milan", "Juventus", 1, 2], // Match id, matchday, Team A, Team B, goals for Team A, goals for Team B
+    [1, 1, "AC Milan", "Juventus", 1, 2], // Match id, matchday, Team A, Team B, goals A, goals B
     [2, 1, "Juventus", "Inter Milan", 2, 3],
     [3, 1, "Inter Milan", "AC Milan", 1, 2],
 ];
