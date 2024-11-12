@@ -4,7 +4,7 @@ As a big fan of football (soccer), I can confidently say that there is nothing e
 
 The away goals rule is a famous one that made the news back in 2021, when UEFA did away with it; but is it *really* gone from the list of tiebreakers? or again, [Group F at the 2022-23 UEFA Europa League](https://en.wikipedia.org/wiki/2022%E2%80%9323_UEFA_Europa_League_group_stage) saw all teams finish their group with eight points each: how were these ties resolved? and who can say what happens at the Euros should two teams be equal on points, goal difference and goals scored, *and* they meet on the last matchday *and* their game ends in a draw? As cliché as it may sound, the answer might not be what you expect.
 
-This `league-standing` package **offers complete flexibility in choosing all of these details:** from the quantity of tiebreakers to their order; to whether head-to-head criteria should be applied before or after the overall ones; to all the little oddities that I alluded to in the previous paragraphs, and much more.
+This `league-standing` package **offers complete flexibility in choosing all of these details:** from the quantity of tiebreakers to their order; to whether head-to-head comparisons should be applied before or after the overall ones; to all the little oddities that I alluded to in the previous paragraph, and much more.
 
 ## Table of Contents
 
@@ -28,7 +28,7 @@ import { LeagueTable } from 'league-standings';
 
 const teams = ["Juventus", "AC Milan", "Inter Milan"];
 const matches = [
-    [1, 1, "AC Milan", "Juventus", 1, 2],
+    [1, 1, "AC Milan", "Juventus", 1, 2], // Match id, matchday, Team A, Team B, goals for Team A, goals for Team B
     [2, 1, "Juventus", "Inter Milan", 2, 3],
     [3, 1, "Inter Milan", "AC Milan", 1, 2],
 ];
