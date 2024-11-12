@@ -27,7 +27,6 @@ $ npm install league-standings
 ```javascript
 import { LeagueTable } from 'league-standings';
 
-const teams = ["Juventus", "AC Milan", "Inter Milan"];
 const matches = [
     [1, 1, "AC Milan", "Juventus", 1, 2], // match id, matchday, team A, team B, goals A, goals B
     [2, 1, "Juventus", "Inter Milan", 2, 3],
@@ -35,7 +34,7 @@ const matches = [
 ];
 
 const table = new LeagueTable({
-    teams: teams,
+    teams: ["Juventus", "AC Milan", "Inter Milan"],
     sorting: {
         criteria: ["diff", "for", "away_for"],
         h2h: { when: "before", span: "all" },
@@ -142,4 +141,39 @@ sorting: {
 
 #### `shootout`
 
-Next up is `shootout`, which models a very peculiar rule that exists primarily in the UEFA Euros, but also in some other confederation-level competitions (e.g. the AFC Asian Cup). It is a rule stating that, if two teams are completely equal on all criteria up to right after the head-to-head/overall checks, and they happen to meet on the last matchday of the group and their encounter ends in a draw, then their position in the table is decided via a penalty shoot-out that takes place right there and then, just after the final whistle of that last match. It accepts the values `true` or `false` depending on whether this special rule applies or not, 
+Next up is `shootout`, which models a very peculiar rule that exists primarily in the UEFA Euros, but also in some other confederation-level competitions (e.g. the AFC Asian Cup). It is a rule stating that, if two teams are completely equal on all criteria up to right after the head-to-head/overall checks, and they happen to meet on the last matchday of the group and their encounter ends in a draw, then their position in the table is decided via a penalty shoot-out that takes place right there and then, just after the final whistle of that last match.
+
+It accepts the boolean values `true` or `false` depending on whether this special rule applies or not; we will see later how to interact with it, especially when it comes to submitting the results of the penalty shoot-out and what happens before and after this is done.ù
+
+#### `flags`
+
+The last of these is `flags`, which allows the user to set *any* criteria they want right before the final step in the entire process (which is always the value of the `final` key; see the [documentation on github.io](#documentation) for its allowed values). It is an array of objects (each representing one such custom-made criterion) with keys `name`, being the name of the criterion, and `order`, accepting the string value `"desc"` to indicate that the criterion works like the standard ones, and so a team is ranked *above* the other if the value of the criterion is *higher* (like with points) or the string value `"asc"` to indicate the opposite (one such example would be the amount of yellow and red cards collected, where a team is ranked *above* the other if their disciplinary count is *lower*).
+
+When such flags are setted, the value of the `teams` key should not be a simple array of strings consisting of the identifiers of the teams, but rather an array of objects with keys `team` which, as before, holds the string-valued unique identifier, and `flags`, which is an array of integer that expresses the values of each flag associated with that team, in the same order as the flags have been defined in `sorting.flags`.
+
+To make it clear, let us look at how the European Championship (callable via `sorting: "UEFA Euro"`) is defined within the code. This is
+
+```javascript
+sorting: {
+    // ...more options
+    flags: [{
+        name: "disciplinary points",
+        order: "asc"
+    }, {
+        name: "European Qualifiers overall ranking",
+        order: "asc"
+    }],
+    // ...more options
+}
+```
+where `"disciplinary points"` and `"European Qualifiers overall ranking"` are the last checks that are done before proceeding to `final`; this means that teams would have to be initialized as
+
+```javascript
+[{ team: "Team A", flags: [0, 15] }, { team: "Team B", flags: [0, 21] }, { team: "Team B", flags: [0, 6] }]
+```
+where the first value in each `flags` array represents the disciplinary points (which are initially zero for all teams, as no cards have been issued yet), and the second value represents the European Qualifiers overall ranking of the teams. Clearly the latter of the two is immutable, while the first will definitely change as the group unfolds and the cards start piling up. The `updateFlags(`*team*`,` *flag*`,` *value*`)` method exists for this purpose, and you should call it whenever you want to update a flag before calling the standings.
+
+```javascript
+table.updateFlags("Team A", "disciplinary points", 4);
+table.standings(); // The new flag will now be taken into account, if needed.
+```
