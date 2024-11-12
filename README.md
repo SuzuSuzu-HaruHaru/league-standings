@@ -169,7 +169,7 @@ sorting: {
 where `"disciplinary points"` and `"European Qualifiers overall ranking"` are the last checks that are done before proceeding to `final`; this means that teams would have to be initialized as
 
 ```javascript
-[{ team: "Team A", flags: [0, 15] }, { team: "Team B", flags: [0, 21] }, { team: "Team B", flags: [0, 6] }]
+teams: [{ team: "Team A", flags: [0, 15] }, { team: "Team B", flags: [0, 21] }]
 ```
 where the first value in each `flags` array represents the disciplinary points (which are initially zero for all teams, as no cards have been issued yet), and the second value represents the European Qualifiers overall ranking of the teams. Clearly the latter of the two is immutable, while the first will definitely change as the group unfolds and the cards start piling up. The `updateFlags(`*team*`,` *flag*`,` *value*`)` method exists for this purpose, and you should call it whenever you want to update a flag before calling the standings.
 
