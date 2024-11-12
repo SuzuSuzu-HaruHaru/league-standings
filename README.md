@@ -12,8 +12,9 @@ This `league-standing` package **offers complete flexibility in choosing all of 
 2. [Quick start](#quick-start)
 3. [Tiebreakers and sorting options](#tiebreakers-and-sorting-options)
 4. [Showing tie descriptions](#showing-tie-descriptions)
-5. [Documentation](#documentation)
-6. [License](#license)
+5. [Known issues and future directions](#known-issues-and-future-directions)
+6. [Helping with the package](#helping-with-the-package)
+7. [Documentation](#documentation)
 
 ## Installation
 
@@ -235,3 +236,21 @@ with `.ties()` now saying
   }
 ]
 ```
+
+## Known issues and future directions
+
+### `.standings()`
+
+*No issues known at this point.*
+
+### `.ties()`
+
+There is currently one point of improvement that I would like to focus on next: the `additional`, `shootout`, `flag` and `final` steps all count as one step, meaning that if more than two teams are involved and some of them are separated by one of these steps while the others are separated by another, only one message will be displayed. ***The teams will be sorted correctly in any case,*** but it is the text description that is insufficient in this scenario.
+
+## Helping with the package
+
+As I am essentially an amateur developer, this is my first Javascript package ever. Whether I have the ability to keep up with it, let alone deliver something good, remains to be seen: but you can feel free to signal any bugs that you find, or request a feature that you think might be cool to implement, or generally help with the code however you see fit. There is certainly *a lot* of room for improvement!
+
+## Documentation
+
+The documentation is currently a work in progress, but a [tentative version of it](#documentation) is currently hosted on Github Pages. Feel free to check it out, mainly to know what type of sorting criteria you have available, or which competitions already have their default rules labeled under a keyword, or generally how every method and the object initialization exactly work!
