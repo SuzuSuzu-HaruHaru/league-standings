@@ -49,7 +49,7 @@ console.log(table.ties());
 
 ## Tiebreakers and sorting options
 
-As we mentioned above, the core of this package is handles the toughest part of the sorting process: that is, the resolution of ties. All control over this element happens via the `sorting` key in the starting object. As different competitions employ different ways of breaking ties, the simplest value that can be given to this key is a default keyword identifying a competition, which loads a replica of the rules that are applied there; for example, writing
+As we mentioned above, the core of this package is how it handles the toughest part of the sorting process: that is, the resolution of ties. All control over this element happens via the `sorting` key in the starting object. As different competitions employ different ways of breaking ties, the simplest value that can be given to this key is a default keyword identifying a competition, which loads a replica of the rules that are applied there; for example, writing
 
 ```javascript
 const teams = ["San Marino", "Italy", "Spain", "France"];
