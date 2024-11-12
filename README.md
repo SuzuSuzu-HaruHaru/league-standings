@@ -81,7 +81,7 @@ where only `criteria`, `h2h` and `final` are compulsory whenever `sorting` is gi
 
 The first of these is, in fact, the list of criteria that will be followed under normal circumstances: here `"diff"` and `"for"` stand for goal difference and number of goals scored respectively, meaning these tiebreakers will be applied one after another to break a tie whenever two or more teams end up with the same amount of points. The `final` subkey establishes a method for sorting teams for good should any of the previous ones prove inconclusive (in this case, `"lots"` stands for a drawing of random lots), while the `h2h` subkey deserves a more careful explanation.
 
-### Head-to-head comparisons
+### Head-to-head v. overall
 
 As you may know, football competitions roughly divide in two categories when it comes to sorting methods: those like FIFA, where any tie in points is resolved by looking up tiebreakers (e.g. goal difference) in the *full* table, as it results from all the matches played by all the teams in the league/group; and those like UEFA, where if two or more teams are tied then we first have to compute a sub-table from the matches that were played only between the teams concerned in the tie, and it is in *this* sub-table that we look up any tiebreakers to decide the final standings.
 
@@ -99,6 +99,8 @@ Both FIFA and UEFA agree that the next tiebreaker after points should be goal di
 But UEFA uses the head-to-head method *first*, meaning that any tiebreakers are to be applied only to the matches between the teams concerned in the tie: which in this case was just one match, that Italy had won 2-0 in the very first matchday of the group stage; Italy therefore ranks first on account of head-to-head points—three to zero, due to Italy winning and Belgium losing.
 
 **Whether the tournament is FIFA-style or UEFA-style is decided by the `sorting.h2h.when` key,** which can take the string value `"before"` to signify that head-to-head checks are to come first (like UEFA does) or the string value `"after"` to indicate that we must look at the whole table first (the so-called *overall* check, like FIFA does). Notice that the names of these values suggest that the two methods are not mutually exclusive, and in fact both happen in all cases: FIFA will switch to head-to-head when overall comparisons are iconclusive, and likewise UEFA switches to overall when head-to-head checks do not provide an answer. What changes is merely which type of check comes first.
+
+### Head-to-head reapplication
 
 To explan the next subkey, `sorting.h2h.span`, we will look instead at the famous [Group E at the UEFA EURO 2024](https://en.wikipedia.org/wiki/UEFA_Euro_2024) where every single team finished their group with 4 points
 
