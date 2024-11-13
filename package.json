@@ -18,6 +18,11 @@
         "lightweight"
     ],
     "author": "SuzuSuzu-HaruHaru",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/SuzuSuzu-HaruHaru/league-standings"
+    },
+    "homepage": "https://suzusuzu-haruharu.github.io/league-standings/",
     "license": "MIT",
     "files": [
         "dist",
