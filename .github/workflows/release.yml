@@ -24,6 +24,9 @@ jobs:
       - run: npm run build
       - run: npm audit signatures
 
+      - name: check dist content
+        run: ls dist
+
       - name: release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

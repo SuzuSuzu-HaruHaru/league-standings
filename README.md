@@ -60,7 +60,7 @@ const table = new LeagueTable({
     sorting: "FIFA World Cup"
 });
 ```
-means that any ties between teams that finished level on points will be resolved using the standard procedure employed by FIFA during the FIFA World Cup group stage and qualification rounds. The full list of such keywords, as well as which list of tiebreakers each competition exactly employs, is available in the [documentation on github.io](#documentation).
+means that any ties between teams that finished level on points will be resolved using the standard procedure employed by FIFA during the FIFA World Cup group stage and qualification rounds. The full list of such keywords, as well as which list of tiebreakers each competition exactly employs, is available in the [documentation on github.io](https://suzusuzu-haruharu.github.io/league-standings/).
 
 In its most general form, `sorting` will accept an object with six subkeys as in the following example
 
@@ -99,7 +99,7 @@ Both FIFA and UEFA agree that the next tiebreaker after points should be goal di
 
 But UEFA uses the head-to-head method *first*, meaning that any tiebreakers are to be applied only to the matches between the teams concerned in the tie: which in this case was just one match, that Italy had won 2-0 in the very first matchday of the group stage; Italy therefore ranks first on account of head-to-head points—three to zero, due to Italy winning and Belgium losing.
 
-**Whether the tournament is FIFA-style or UEFA-style is decided by the `sorting.h2h.when` key,** which can take the string value `"before"` to signify that head-to-head checks are to come first (like UEFA does) or the string value `"after"` to indicate that we must look at the whole table first (the so-called *overall* check, like FIFA does). Notice that the names of these values suggest that the two methods are not mutually exclusive, and in fact both happen in all cases: FIFA will switch to head-to-head when overall comparisons are iconclusive, and likewise UEFA switches to overall when head-to-head checks do not provide an answer. What changes is merely which type of check comes first.
+**Whether the tournament is FIFA-style or UEFA-style is decided by the `sorting.h2h.when` key,** which can take the string value `"before"` to signify that head-to-head checks are to come first (like UEFA does) or the string value `"after"` to indicate that we must look at the whole table first (the so-called *overall* check, like FIFA does). Notice that the names of these values suggest that the two methods are not mutually exclusive, and in fact both happen in all cases: FIFA will switch to head-to-head when overall comparisons are inconclusive, and likewise UEFA switches to overall when head-to-head checks do not provide an answer. What changes is merely which type of check comes first.
 
 ### Head-to-head reapplication
 
@@ -112,15 +112,13 @@ To explan the next subkey, `sorting.h2h.span`, we will look instead at the famou
 | 3        | Slovakia   | 1   | 1     | 1    | 3         | 3             | 0                | **4**  |
 | 4        | Ukraine    | 1   | 1     | 1    | 2         | 4             | -2               | **4**  |
 
-You must know that one peculiar thing about UEFA's tiebreaker regulations is that it contains a special provision: whenever more than two teams are tied on points and head-to-head criteria are applied between them, and these manage to separate only some of them while leaving the rest still tied, then the head-to-head criteria are to be reapplied from the beginning *only between the teams that are still tied.*
+You must know that one peculiar thing about UEFA's tiebreaker regulations is that it contains a special provision: whenever more than two teams are tied on points and head-to-head criteria are applied between them, and these manage to separate only some of the teams while leaving the rest still tied, then the head-to-head criteria are to be reapplied from the beginning *only between the teams that are still tied.*
 
-However, the way I just worded it might leave some ambiguity. If we try it on the above example, where all teams are equal on points (and so the head-to-head sub-table ends up coinciding with the whole table anyway), we see that goal difference manages to separate Slovakia and Ukraine from the rest, leaving them at the bottom with 0 and -2 respectively; thus, given what we just said, one might expect that, in order to resolve the still-remaining tie between Romania and Belgium, on would reapply the head-to-head criteria from the beginning to the matches that concern only these two teams—which in this case was just one single match that Belgium won 2-0 in the second matchday. It looks like Belgium should have come first.
+However, the way I just worded it might leave some ambiguity. If we try it on the above example, where all teams are equal on points (and so the head-to-head sub-table ends up coinciding with the whole table anyway), we see that goal difference manages to separate Slovakia and Ukraine from the rest, leaving them at the bottom with 0 and -2 respectively; thus, given what we just said, one might expect that, in order to resolve the still-remaining tie between Romania and Belgium, we would reapply the head-to-head criteria from the beginning to the matches that concern only these two teams—which in this case was just one single match that Belgium won 2-0 in the second matchday. Seeing it this way, it looks like Belgium should have come first.
 
-But here is the catch: according to official European Championship regulations, once certain teams separate from others in a head-to-head comparison, **the tiebreaking will not reset until they have run out.** Only when the list of tiebreakers is exhausted, and if some teams still remain tied, are head-to-head results recalculated based solely on the matches played among the still-tied teams. In this case, the list of tiebreakers is the number of points, the goal difference and the number of goals scored: after Slovakia and Ukraine are sorted on goal difference, the head-to-head procedure will not reset until at least the number of goals scored is examined—and this is what ultimately ends up putting Romania (Romania 4, Belgium 2).
+But here is the catch: according to official European Championship regulations, once certain teams separate from others in a head-to-head comparison, ***the tiebreaking will not reset until they have run out.*** Only when the list of tiebreakers is exhausted, and if some teams still remain tied, are head-to-head results recalculated based solely on the matches played among the still-tied teams. In this case, the list of tiebreakers is the number of points, the goal difference and the number of goals scored: after Slovakia and Ukraine are sorted on goal difference, the head-to-head procedure will not reset until at least the number of goals scored is examined—and this is what ultimately ends up putting Romania on top (Romania 4, Belgium 2).
 
-**Whether the full list of criteria is expected to run out before resetting the head-to-head procedure is decided by the `sorting.h2h.span` key,** which can take the string value `"all"` to signify the style that we have just seen (the one where we must wait until all criteria are applied before rewriting any head-to-head sub-tables) or the string value `"single"` to mean the opposite, i.e. the case when head-to-head restarts from the beginning every single time some teams separate from the rest (the same line of reasoning that, in our fictional example, had made Belgium the winner of the group).
-
-Notice, however, how some competitions do not have this provision at all: the FIFA World Cup is one prime example, where head-to-head criteria apply after the overall one but there is no requirement to restart them at any point should they only help to separate some teams, but not others. This behavior can be replicated via the third and last accepted value, `"none"`.
+**Whether the full list of criteria is expected to run out before resetting the head-to-head procedure is decided by the `sorting.h2h.span` key,** which can take the string value `"all"` to signify the style that we have just seen (the one where we must wait until all criteria are applied before re-evaluating any head-to-head sub-tables) or the string value `"single"` to mean the opposite, i.e. the case when head-to-head restarts from the beginning every single time some teams separate from others (basically the same line of reasoning that, in our fictional example, had made Belgium the winner of the group).
 
 ### Optional sorting keys
 
@@ -128,9 +126,9 @@ In addition to the subkeys seen above, that are required whenever the `sorting` 
 
 #### `additional`
 
-The first of these is the `additional` key, which behaves like `criteria` in that it also accepts an array of strings, each symbolizing a different tiebreaker; as the name suggests, these are *additional* criteria because they escape the head-to-head run: any tiebreaker in `criteria` will, depending on the circumstance, be applied either in an overall fashion or in a head-to-head check—whichever comes first depends on `sorting.h2h.when`, but in principle they can do both. **However, an additional criteria is one that comes *after* this entire procedure,** and is always checked in an overall fashion only.
+The first of these is the `additional` key, which behaves like `criteria` in that it also accepts an array of strings, each symbolizing a different tiebreaker. As the name suggests, these are *additional* criteria because they escape the head-to-head run; any tiebreaker in `criteria` will, depending on the circumstance, be applied either in an overall fashion or in a head-to-head check (whichever comes first depends on `sorting.h2h.when`, but in principle they can do both): **however, an additional criteria is one that comes *after* this entire procedure,** and is always checked in an overall fashion only.
 
-One such example comes from the regulations of the UEFA Champions League between years 2021 and 2024 (e.g. the [Group stage at the 2023-24 UEFA Champions League](https://en.wikipedia.org/wiki/2023%E2%80%9324_UEFA_Champions_League_group_stage)), where you can see that goal difference and number of goals scored count as *regular* criteria, in that they are first applied in head-to-head fashion and, should the teams still be tied, they are applied in an overall style; this is what is normally modeled by `sorting.h2h.when = "before"`. However, you can see that the list does not end there: the tiebreakers go on with the number of goals scored away from home, the number of wins and the number of wins away from home, all of which are applied in an overall style (*in all group matches* being the keyword here on Wikipedia). This makes them *special* criteria that only ever exist as final overall comparisons, and this is why, within the code of the package, this particular format (callable via `sorting: "2021-2024 UEFA Champions League"`) exists as
+One such example comes from the regulations of the UEFA Champions League between years 2021 and 2024 (e.g. the [Group stage at the 2023-24 UEFA Champions League](https://en.wikipedia.org/wiki/2023%E2%80%9324_UEFA_Champions_League_group_stage)), where you can see that goal difference and number of goals scored count as *regular* criteria, in that they are first applied in head-to-head fashion and, should the teams still be tied, they are re-applied in an overall style; and this is what is normally modeled by `sorting.h2h.when = "before"`. However, you can see that the list does not end there: the tiebreakers go on with the number of goals scored away from home, the number of wins and the number of wins away from home, all of which are applied in an overall style (*‘in all group matches’* being the keywords here on Wikipedia). This makes them *special* criteria that only ever exist as final overall comparisons, and this is why, within the code of the package, this particular format (callable via `sorting: "2021-2024 UEFA Champions League"`) exists as
 
 ```javascript
 sorting: {
@@ -145,13 +143,13 @@ sorting: {
 
 Next up is `shootout`, which models a very peculiar rule that exists primarily in the UEFA Euros, but also in some other confederation-level competitions (e.g. the AFC Asian Cup). It is a rule stating that, if two teams are completely equal on all criteria up to right after the head-to-head/overall checks, and they happen to meet on the last matchday of the group and their encounter ends in a draw, then their position in the table is decided via a penalty shoot-out that takes place right there and then, just after the final whistle of that last match.
 
-It accepts the boolean values `true` or `false` depending on whether this special rule applies or not; we will see later how to interact with it, especially when it comes to submitting the results of the penalty shoot-out and what happens before and after this is done.
+It accepts the boolean values `true` or `false` depending on whether this special rule applies or not; [we will see later how to interact with it](#showing-tie-descriptions), especially when it comes to submitting the results of the penalty shoot-out and what happens before and after this is done.
 
 #### `flags`
 
-The last of these is `flags`, which allows the user to set *any* criteria they want right before the final step in the entire process (which is always the value of the `final` key; see the [documentation on github.io](#documentation) for its allowed values). It is an array of objects (each representing one such custom-made criterion) with keys `name`, being the name of the criterion, and `order`, accepting the string value `"desc"` to indicate that the criterion works like the standard ones, and so a team is ranked *above* the other if the value of the criterion is *higher* (like with points) or the string value `"asc"` to indicate the opposite (one such example would be the amount of yellow and red cards collected, where a team is ranked *above* the other if their disciplinary count is *lower*).
+The last of these is `flags`, which allows the user to set *any* criteria they want right before the final step in the entire process (which is always decided by the value of the `final` key). It is an array of objects (each representing one such custom-made criterion) with keys `name`, being the name of the criterion, and `order`, accepting the string value `"desc"` to indicate that the criterion works like the standard ones, and so a team is ranked *above* the other if the value of the criterion is *higher* (like with points), or the string value `"asc"` to indicate the opposite (one such example would be the amount of yellow and red cards collected, where a team is ranked *above* the other if their disciplinary count is *lower*).
 
-When such flags are setted, the value of the `teams` key should not be a simple array of strings consisting of the identifiers of the teams, but rather an array of objects with keys `team` which, as before, holds the string-valued unique identifier, and `flags`, which is an array of integer that expresses the values of each flag associated with that team, in the same order as the flags have been defined in `sorting.flags`.
+When such flags are setted, the value of the `teams` key should not be a simple array of strings consisting of the identifiers of the teams, but rather an array of objects with keys `team` which, as before, holds the string-valued unique identifier for that specific team, and `flags`, which is an array of integers that expresses the values of each flag associated with that team, in the same order as the flags have been defined in `sorting.flags`.
 
 To make it clear, let us look at how the European Championship (callable via `sorting: "UEFA Euro"`) is defined within the code. This is
 
@@ -182,9 +180,9 @@ table.standings(); // The new flag will now be taken into account, if needed.
 
 ## Showing tie descriptions
 
-Calling the `.ties()` method after `.standings()` will give you access to an array objects, whose each entry corresponds to a group of teams that were tied on points together with a concise explanation of how the relevant tie between them was resolved. Whenever `.standings()` is called for the purposes of *visual* presentation (like in an HTML page that shows the league table of a competition, or within the screens of a game), the output of `.ties()` should also be printed to screen for reasons of clarity.
+Calling the `.ties()` method after `.standings()` will give you access to an array of objects, whose each entry corresponds to a group of teams that were tied on points together with a concise explanation of how the relevant tie between them was resolved. Whenever `.standings()` is called for the purposes of *visual* presentation (like in an HTML page that shows the league table of a competition, or within the screen of a game), the output of `.ties()` should also be printed to screen for reasons of clarity.
 
-If we take the example from [Quick start](#quick-start) above, the raw output of `.ties()` will be the array
+If we take the example from [Quick start](#quick-start) above, the output of `.ties()` will be the array
 
 ```javascript
 [
@@ -199,9 +197,9 @@ If we take the example from [Quick start](#quick-start) above, the raw output of
   }
 ]
 ```
-In this case, the array contains only one entry because there was only one group of teams that were tied on a certain number of points (here being all of them, at three points each): the teams involved in the tie are collected within the `group` key as an array of their identifiers. The `messages` key is an array of text descriptions intended for visual presentations, describing each relevant step in how the tie was broken: here we have that AC Milan was the first to go on the number of head-to-head goals scored, whereas the still-remaining tie between Juventus and Inter Milan is decided on the third criterion, the number of goals scored away from home.
+In this case, the array contains only one entry because there was only one group of teams that were tied on a certain number of points (here being all of them, at three points each): the teams involved in the tie are collected within the `group` key as an array of their identifiers. The `messages` key is an array of sentences, describing each relevant step in how the tie was broken: here we have that AC Milan was the first to go on the number of head-to-head goals scored, whereas the still-remaining tie between Juventus and Inter Milan is decided on the third criterion, the number of goals scored away from home.
 
-The `request` key is null here, meaning that the matches that have been submitted via the appropriate method were sufficient to compute the table; this may not be the case if, for example, the results of a penalty shootout is required (see [`shootout`](#shootout) above): in that case, submitting the matches alone and calling `.standings()` will temporarily sort the two teams involved randomly, with `.ties()` specifying it as follows
+The `request` key is null here, meaning that the matches that have been submitted via the appropriate method were sufficient to compute the table; this may not be the case if, for example, the result of a penalty shoot-out is required (see [`shootout`](#shootout) above): in that case, submitting the matches alone and calling `.standings()` will temporarily sort the two teams involved at random, with `.ties()` specifying it as follows
 
 ```javascript
 [
@@ -215,7 +213,7 @@ The `request` key is null here, meaning that the matches that have been submitte
   }
 ]
 ```
-The presence of `"shootout"` in the `requests` key signals that the results of the penalty shootout (here between Japan and Senegal) needs to be submitted as well, which can be done via `addShootout(`*home team*`,` *away team*`,` *pen. shoot. results home*`, ` *pen. shoot. results away*`)` as such
+The presence of `"shootout"` in the `requests` key signals that the results of the penalty shoot-out (here between Japan and Senegal) needs to be submitted as well, which can be done via `addShootout(`*home team*`,` *away team*`,` *pen. shoot. results home*`, ` *pen. shoot. results away*`)` as such
 
 ```javascript
 table.addShootout("Japan", "Senegal", 5, 4);
@@ -249,8 +247,8 @@ with `.ties()` now saying
 
 ## Helping with the package
 
-As I am essentially an amateur developer, this is my first Javascript package ever. Whether I have the ability to keep up with it, let alone deliver something good, remains to be seen: but you can feel free to signal any bugs that you find, or request a feature that you think might be cool to implement, or generally help with the code however you see fit. There is certainly *a lot* of room for improvement!
+As I am essentially an amateur developer, this is my first JavaScript package ever. Whether I have the ability to keep up with it, let alone deliver something good, remains to be seen: but you can feel free to signal any bugs that you find, or request a feature that you think might be cool to implement, or generally help with the code however you see fit. There is certainly *a lot* of room for improvement!
 
 ## Documentation
 
-The documentation is currently a work in progress, but a [tentative version of it](https://suzusuzu-haruharu.github.io/league-standings/) is currently hosted on Github Pages. Feel free to check it out, mainly to know what type of sorting criteria you have available, or which competitions already have their default rules labeled under a keyword, or generally how every method and the object initialization exactly work!
+The documentation is currently a work in progress, but a [tentative version of it](https://suzusuzu-haruharu.github.io/league-standings/) is hosted on Github Pages. Feel free to check it out, mainly to know what type of sorting criteria you have available, or which competitions already have their default rules labeled under a keyword, or generally how every method and the object initialization exactly work!
