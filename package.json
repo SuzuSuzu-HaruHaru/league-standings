@@ -29,7 +29,7 @@
         "LICENSE",
         "README.md"
     ],
-    "description": "A Javascript package that computes league tables from an array of matches. Types and order of tiebreakers are fully customizable, and it is possible to access the full description of which tiebreakers were used at what point in both textual and raw data form.",
+    "description": "A JavaScript package for generating league tables from match data, with customizable sorting options and detailed explanations of tiebreaker application available in both text and raw data formats.",
     "devDependencies": {
         "@babel/cli": "^7.25.9",
         "@babel/core": "^7.26.0",
