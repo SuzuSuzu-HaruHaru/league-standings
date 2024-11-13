@@ -12,13 +12,14 @@ permissions:
 
 jobs:
   release:
-    runs-on: ubuntu-latest  # Use 'ubuntu-latest' for npm publishing
+    if: startsWith(github.event.head_commit.message, 'feat') || startsWith(github.event.head_commit.message, 'fix') || startsWith(github.event.head_commit.message, 'perf')
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'   # Ensure correct indentation and syntax
-          registry-url: 'https://registry.npmjs.org'  # Necessary for npm auth
+          node-version: 'lts/*'
+          registry-url: 'https://registry.npmjs.org'
 
       - run: npm ci
       - run: npm run build
