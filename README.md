@@ -145,7 +145,7 @@ sorting: {
 
 Next up is `shootout`, which models a very peculiar rule that exists primarily in the UEFA Euros, but also in some other confederation-level competitions (e.g. the AFC Asian Cup). It is a rule stating that, if two teams are completely equal on all criteria up to right after the head-to-head/overall checks, and they happen to meet on the last matchday of the group and their encounter ends in a draw, then their position in the table is decided via a penalty shoot-out that takes place right there and then, just after the final whistle of that last match.
 
-It accepts the boolean values `true` or `false` depending on whether this special rule applies or not; we will see later how to interact with it, especially when it comes to submitting the results of the penalty shoot-out and what happens before and after this is done.ù
+It accepts the boolean values `true` or `false` depending on whether this special rule applies or not; we will see later how to interact with it, especially when it comes to submitting the results of the penalty shoot-out and what happens before and after this is done.
 
 #### `flags`
 
