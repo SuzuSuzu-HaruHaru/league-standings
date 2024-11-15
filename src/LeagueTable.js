@@ -7,41 +7,6 @@ export default class LeagueTable {
             throw new RangeError(`Invalid constructor argument (object must at least contain a key named "teams").`);
         }
 
-        if (Array.isArray(data.teams)) {
-            if (data.teams.every(item => typeof item === "string")) {
-                if (new Set(data.teams).size !== data.teams.length) {
-                    throw new Error(`Team identifiers must be unique.`);
-                } else {
-                    this.teams = data.teams;
-                }
-            } else if (data.teams.every(item =>
-                typeof item === "object" && item !== null &&
-                "team" in item && typeof item.team === "string" &&
-                "flags" in item && Array.isArray(item.flags) &&
-                item.flags.every(flag => Number.isInteger(flag))
-            )) {
-                const flagsLength = data.teams[0].flags.length;
-
-                if (!data.teams.every(item => item.flags.length === flagsLength)) {
-                    throw new Error(`All "flags" arrays must be the same length.`);
-                } else {
-                    const teamFlags = data.teams.map(item => item.flags);
-                    this.flags = teamFlags;
-                }
-
-                const teamIds = data.teams.map(item => item.team);
-                if (new Set(teamIds).size !== teamIds.length) {
-                    throw new Error(`Team identifiers must be unique.`);
-                } else {
-                    this.teams = teamIds;
-                }
-            } else {
-                throw new TypeError(`Invalid format: the value of the "teams" key must be either an array of strings or an array of objects with a "team" and "flags" key.`);
-            }
-        } else {
-            throw new TypeError(`Invalid data type: the value of the "teams" key must be an array.`);
-        }
-
         // Checks whether the inputs for the optional fields are correct, and fills them in if they are not present
         if (!("format" in data)) {
             this.format = "round-robin";
@@ -78,7 +43,7 @@ export default class LeagueTable {
                 criteria: ["diff", "for"],
                 h2h: {
                     when: "after",
-                    span: "all"
+                    span: "none"
                 },
                 additional: [],
                 shootout: false,
@@ -88,6 +53,7 @@ export default class LeagueTable {
                 }],
                 final: "lots"
             };
+            this.flagNames = this.sorting.flags.map(flag => flag.name.replace(/ /g, '_'));
         } else if (data.sorting == "UEFA Euro") {
             this.sorting = {
                 criteria: ["diff", "for"],
@@ -106,6 +72,7 @@ export default class LeagueTable {
                 }],
                 final: "lots"
             };
+            this.flagNames = this.sorting.flags.map(flag => flag.name.replace(/ /g, '_'));
         } else if (data.sorting == "pre-2021 UEFA Champions League") {
             this.sorting = {
                 criteria: ["diff", "for", "away_for"],
@@ -124,6 +91,7 @@ export default class LeagueTable {
                 }],
                 final: "lots"
             };
+            this.flagNames = this.sorting.flags.map(flag => flag.name.replace(/ /g, '_'));
         } else if (data.sorting == "2021-2024 UEFA Champions League") {
             this.sorting = {
                 criteria: ["diff", "for"],
@@ -142,6 +110,7 @@ export default class LeagueTable {
                 }],
                 final: "lots"
             };
+            this.flagNames = this.sorting.flags.map(flag => flag.name.replace(/ /g, '_'));
         } else {
             if (typeof data.sorting !== "object") {
                 throw new TypeError(`An explicitly specified "sorting" must be either an object or a default keyword.`);
@@ -170,8 +139,8 @@ export default class LeagueTable {
             if (h2h.when !== "before" && h2h.when !== "after") {
                 throw new RangeError(`An explicitly specified "sorting.h2h.when" must be either "before" or "after". Found: "${h2h.when}".`);
             }
-            if (h2h.span !== "all" && h2h.span !== "single") {
-                throw new RangeError(`An explicitly specified "sorting.h2h.span" must be either "all" or "single". Found: "${h2h.span}".`);
+            if (h2h.span !== "all" && h2h.span !== "single" && h2h.span !== "none") {
+                throw new RangeError(`An explicitly specified "sorting.h2h.span" must be either "all", "single" or "none". Found: "${h2h.span}".`);
             }
 
             if (additional === undefined) {
@@ -194,6 +163,7 @@ export default class LeagueTable {
 
             if (flags === undefined) {
                 data.sorting.flags = [];
+                this.flagNames = [];
             } else if (!Array.isArray(flags)) {
                 throw new TypeError(`An explicitly specified "sorting.flags" must be an array.`);
             } else {
@@ -208,6 +178,9 @@ export default class LeagueTable {
                         throw new RangeError(`The "order" in each "sorting.flags" element must be either "asc" or "desc". Found: "${flag.order}".`);
                     }
                 }
+
+                // If the flags are explicitly given, let us add them
+                this.flagNames = data.sorting.flags.map(flag => flag.name.replace(/ /g, '_'));
             }
 
             if (typeof final !== "string" || (final !== "lots" && final !== "alphabetical")) {
@@ -293,6 +266,46 @@ export default class LeagueTable {
             }
         }
 
+        // The compulsory "teams" field
+        if (Array.isArray(data.teams)) {
+            if (data.teams.every(item => typeof item === "string")) {
+                if (new Set(data.teams).size !== data.teams.length) {
+                    throw new Error(`Team identifiers must be unique.`);
+                } else {
+                    this.teams = data.teams;
+                }
+
+                if (this.sorting.flags.length > 0) {
+                    throw new Error(`Teams must be submitted as an array of objects with keys "team" and "flags" when sorting.flags is given explicitly as a nonempty array.`);
+                }
+            } else if (data.teams.every(item =>
+                typeof item === "object" && item !== null &&
+                "team" in item && typeof item.team === "string" &&
+                "flags" in item && Array.isArray(item.flags) &&
+                item.flags.every(flag => Number.isInteger(flag))
+            )) {
+                const flagsLength = this.sorting.flags.length;
+
+                if (!data.teams.every(item => item.flags.length === flagsLength)) {
+                    throw new Error(`All "flags" arrays within the team objects must be the same length, equal to the length of sorting.flags if it is given explicitly as a nonempty array.`);
+                } else {
+                    const teamFlags = data.teams.map(item => item.flags);
+                    this.flags = teamFlags;
+                }
+
+                const teamIds = data.teams.map(item => item.team);
+                if (new Set(teamIds).size !== teamIds.length) {
+                    throw new Error(`Team identifiers must be unique.`);
+                } else {
+                    this.teams = teamIds;
+                }
+            } else {
+                throw new TypeError(`Invalid format: the value of the "teams" key must be either an array of strings or an array of objects with a "team" and "flags" key.`);
+            }
+        } else {
+            throw new TypeError(`Invalid data type: the value of the "teams" key must be an array.`);
+        }
+
         this.matches = new Map();
 
         this.cycles = [];
@@ -320,55 +333,59 @@ export default class LeagueTable {
             });
         });
 
-        switch (this.format) {
-            case "round-robin":
-                for (const team of this.teams) {
-                    const matches = Array.from(this.matches.values()).filter(
-                        match => match.home === team || match.away === team
-                    );
+        const checkFormat = (format) => {
+            switch (format) {
+                case "round-robin":
+                    for (const team of this.teams) {
+                        const matches = Array.from(this.matches.values()).filter(
+                            match => match.home === team || match.away === team
+                        );
 
-                    if (matches.length > this.teams.length - 1) {
-                        console.warn(`The total number of games played by a team in a round-robin format cannot be more than the number of teams minus one (first thrown at team ${team}).`);
-                        break;
-                    } else {
-                        for (const opponent of this.teams) {
-                            if (opponent !== team) {
-                                const directMatches = matches.filter(match => match.home === opponent || match.away === opponent);
-                                if (directMatches.length != 1) {
-                                    console.warn(`In a round-robin format, teams must face each other exactly once (first thrown at teams ${team} and ${opponent}, found ${directMatches.length} matches).`);
-                                    break;
+                        if (matches.length > this.teams.length - 1) {
+                            console.warn(`The total number of games played by a team in a round-robin format cannot be more than the number of teams minus one (first thrown at team ${team}).`);
+                            return;
+                        } else {
+                            for (const opponent of this.teams) {
+                                if (opponent !== team) {
+                                    const directMatches = matches.filter(match => match.home === opponent || match.away === opponent);
+                                    if (directMatches.length != 1) {
+                                        console.warn(`In a round-robin format, teams must face each other exactly once (first thrown at teams ${team} and ${opponent}, found ${directMatches.length} matches).`);
+                                        return;
+                                    }
                                 }
                             }
                         }
                     }
-                }
-                break;
-            case "home-and-away":
-                for (const team of this.teams) {
-                    const matches = Array.from(this.matches.values()).filter(
-                        match => match.home === team || match.away === team
-                    );
+                    break;
+                case "home-and-away":
+                    for (const team of this.teams) {
+                        const matches = Array.from(this.matches.values()).filter(
+                            match => match.home === team || match.away === team
+                        );
 
-                    if (matches.length > (2 * this.teams.length) - 1) {
-                        console.warn(`The total number of games played by a team in a home-and-away format cannot be more than twice the number of teams minus one (first thrown at team ${team}).`);
-                        break;
-                    } else {
-                        for (const opponent of this.teams) {
-                            if (opponent !== team) {
-                                const directMatches = matches.filter(match => match.home === opponent || match.away === opponent);
-                                if (directMatches.length != 2) {
-                                    console.warn(`In a home-and-away format, teams must face each other exactly twice (first thrown at teams ${team} and ${opponent}, found ${directMatches.length} ${directMatches.length == 1 ? `match` : `matches`}).`);
-                                    break;
-                                } else if (directMatches[0].home == directMatches[1].home) {
-                                    console.warn(`In a home-and-away format, teams must face each other once at home and once away (first thrown at teams ${team} and ${opponent}).`);
-                                    break;
+                        if (matches.length > (2 * this.teams.length) - 1) {
+                            console.warn(`The total number of games played by a team in a home-and-away format cannot be more than twice the number of teams minus one (first thrown at team ${team}).`);
+                            return;
+                        } else {
+                            for (const opponent of this.teams) {
+                                if (opponent !== team) {
+                                    const directMatches = matches.filter(match => match.home === opponent || match.away === opponent);
+                                    if (directMatches.length != 2) {
+                                        console.warn(`In a home-and-away format, teams must face each other exactly twice (first thrown at teams ${team} and ${opponent}, found ${directMatches.length} ${directMatches.length == 1 ? `match` : `matches`}).`);
+                                        return;
+                                    } else if (directMatches[0].home == directMatches[1].home) {
+                                        console.warn(`In a home-and-away format, teams must face each other once at home and once away (first thrown at teams ${team} and ${opponent}).`);
+                                        return;
+                                    }
                                 }
                             }
                         }
                     }
-                }
-                break;
+                    break;
+            }
         }
+
+        checkFormat(this.format);
 
         const groupedByMatchday = Array.from(this.matches.values()).reduce((acc, match) => {
             if (!acc[match.matchday]) {
@@ -424,6 +441,13 @@ export default class LeagueTable {
                 });
             });
 
+            // If there are any flags, we add them to each team as fields
+            this.teams.forEach((team, teamIndex) => {
+                this.flagNames.forEach((flagName, flagNameIndex) => {
+                    standings[teamIndex][flagName] = this.flags[teamIndex][flagNameIndex];
+                });
+            });            
+
             this.matches.forEach((match, index) => {
                 this.#computeTableRows(match, index, standings);
             });
@@ -432,11 +456,11 @@ export default class LeagueTable {
             this.sorting.criteria.unshift("points");
         }
 
-        const sortAndDivideTable = (table, iteration, special = false, final = false) => {
+        const sortAndDivideTable = (table, iteration, criteria, special = false) => {
 
             /* EXPLANATION
     
-            This is the main function that is called to sort the teams into the table. It is a recursive function, with a recursive failsafe set at depth 50.
+            This is the main function that is called to sort the teams into the table. It is a recursive function, with a recursive failsafe set at depth 75.
     
             ALGORITHM     
             The algorithm is the following:
@@ -464,17 +488,15 @@ export default class LeagueTable {
                 iteration:
                     an object made of two keys, "type" and "index"; the type describes what kind of check we are doing (whether overall or head-to-head, but also "additional" the additional ones once those are completed, "shootout" for the penalty shootout step, and so on); meanwhile the index is an integer that is incremented at each depth level of the recursion: since step (3) divides the table and step (5) applies the recursion to each of the subtables, the index increments one by one if you follow the history of a specific team through the sorting process (for example, if at iteration.index equal to 7 a table containing "Italy", "Spain", "France" and "San Marino" is divided into "Italy", "Spain" and "France", "San Marino", each of the two next calls of the function on either subtable will begin at iteration.index equal to 8, as opposed to assigning 8 to one and 9 to the other).
                 run:
-                    the (integer) number of consecutive steps of the same type (overall or head-to-head) that we have taken so far, up to and including the latest one; when this reaches the length of the array of tiebreakers, we trigger the checks for deciding what to do next (switching to head-to-head, or switching to overall, or reapplying head-to-head from the start to a subset of the team concerned, or proceding to "final").
+                    the (integer) number of consecutive steps of the same type (overall or head-to-head) that we have taken so far, up to and EXCLUDING the current one; when this reaches the length of the array of tiebreakers, we trigger the checks for deciding what to do next (switching to head-to-head, or switching to overall, or reapplying head-to-head from the start to a subset of the team concerned, or proceding to "final").
                 this.cycles:
                     an array of objects whose each entry contains information about the current sorting step (whether it's head-to-head or overall, what criterion was used, if the "special" flag explained below is set, as well as the snapshot of the table that this function was analyzing at that step).
                 special:
                     a boolean whose job it is to keep track of *special* iterations, i.e. those that occur when h2h.span is set to "single" and we are making progress in breaking ties before a full check of all the criteria is completed, in which case the variable is set to true and survives to the next iteration to tell the function to restart the list of criteria from points even if we are not done checking all the criteria yet; it is set back to false immediately after doing this.
-                final:
-                    a boolean whose job it is to check whether or not we have exhausted all *standard* sorting options, i.e. the ones defined in this.sorting.criteria as well as the head-to-head run (either before or after); once this is detected, "final" is set to true and this will trigger the final list of criteria: the so-called additional ones, the penalty shootout, the flags set directly by the user (e.g. disciplinary points), and lastly, at the choice of the user, either a drawing of random lots or alphabetical order.
             */
 
             // Recursion failsafe
-            if (iteration.index > 50) {
+            if (iteration.index > 75) {
                 throw new RangeError(`Maximum recursion depth exceeded while sorting the teams.`);
             }
 
@@ -491,19 +513,19 @@ export default class LeagueTable {
             // Special check (see explanation above)
             if (special) {
                 run = 0;
-                tiebreaker = this.sorting.criteria[0];
+                tiebreaker = criteria[0];
                 this.cycles[this.cycles.length - 1].special = true;
                 special = false;
             } else {
-                run = computeRun(this.cycles, table) % this.sorting.criteria.length;
-                tiebreaker = this.sorting.criteria[run];
+                run = computeRun(this.cycles, table) % criteria.length;
+                tiebreaker = criteria[run];
             }
 
             // Records the tiebreaker being used into the current this.cycle entry
             this.cycles[this.cycles.length - 1].criterion = tiebreaker;
 
             // Step (2) of the algorithm
-            const recompute = iteration.type == "h2h" && (this.sorting.h2h.span == "all" ? run == 0 : true);
+            const recompute = iteration.type == "h2h" && (this.sorting.h2h.span !== "single" ? run == 0 : true);
 
             if (recompute) {
                 const matches = new Map(
@@ -515,7 +537,7 @@ export default class LeagueTable {
 
                 table.forEach(team => {
                     Object.keys(team).forEach(key => {
-                        if (key !== "id") {
+                        if (key == "points" || key == "for" || key == "against" || key == "diff" || key == "won" || key == "drawn" || key == "lost" || key == "away_for" || key == "away_won") {
                             team[key] = 0;
                         }
                     });
@@ -533,7 +555,7 @@ export default class LeagueTable {
             const groupByTiebreaker = (array, key) => {
 
                 // (Note 1) of the algorithm
-                if (iteration.type == "overall" && iteration.index != 0) {
+                if (iteration.type != "h2h" && iteration.index != 0) {
                     array = JSON.parse(JSON.stringify(this.timeline[this.timeline.length - 1].filter(team => table.some(element => team.id == element.id))));
                 }
 
@@ -553,18 +575,6 @@ export default class LeagueTable {
 
             const groups = groupByTiebreaker(table, tiebreaker);
 
-            /*  SPECIAL
-                
-                Happens whenever the sorting type is head-to-head and the span is set to "single", and we are doing progress (i.e. one or more teams have broken away from the tie, indicated by the fact that groups, as the array of subtables, is of length greater then two): if it is so, then even before the run has completed we set it back to zero so to reapply the criteria from the beginning (points)
-            */
-            const isProgress = () => groups.length > 1;
-
-            if (iteration.index >= 2 && this.sorting.h2h.span == "single" && iteration.type === "h2h" && isProgress()) {
-                run = 0;
-                tiebreaker = this.sorting.criteria[0];
-                special = true;
-            }
-
             // Step (4) of the algorithm
             if (this.timeline.length == 0) {
                 // If it is the first iteration, then the order is based on points
@@ -575,8 +585,13 @@ export default class LeagueTable {
                 this.timeline.push(JSON.parse(JSON.stringify(this.timeline[this.timeline.length - 1])).sort((a, b) => {
                     if (table.some(team => team.id === a.id) &&
                         table.some(team => team.id === b.id)) {
-                        if (!final) {
-                            // Standard ordering (i.e. the one based on the tiebreaker that is currently being employed)
+
+                        // Standard ordering (i.e. the one based on the tiebreaker that is currently being employed)
+                        if (iteration.type == "overall" ||
+                            iteration.type == "h2h" ||
+                            iteration.type == "additional" ||
+                            iteration.type == "flags") {
+
                             let aTeam;
                             let bTeam;
 
@@ -593,99 +608,104 @@ export default class LeagueTable {
                                 }
                             }
 
+                            // In the case of h2h we compare from the groups as they are the ones holding the rewritten version of the table after the head-to-head recomputation; for flags, we sort depending on whether it is set as ascending or descending by the user
                             switch (iteration.type) {
                                 case "overall":
                                     return b[tiebreaker] - a[tiebreaker];
+                                case "additional":
+                                    return b[tiebreaker] - a[tiebreaker];
+                                case "flags":
+                                    if (this.sorting.flags.length > 0) {
+                                        if (this.sorting.flags.find(flag => flag.name.replace(/ /g, '_') == tiebreaker).order == "desc") {
+                                            return b[tiebreaker] - a[tiebreaker];
+                                        } else if (this.sorting.flags.find(flag => flag.name.replace(/ /g, '_') == tiebreaker).order == "asc") {
+                                            return a[tiebreaker] - b[tiebreaker];
+                                        }
+                                    } else {
+                                        return 0;
+                                    }
                                 case "h2h":
                                     return bTeam[tiebreaker] - aTeam[tiebreaker];
                             }
                         } else {
-                            // If we move onto additional criteria, in any case the snapshot has to be set back to the overall criteria
-                            this.cycles[this.cycles.length - 1].snapshot = JSON.parse(JSON.stringify(this.timeline[this.timeline.length - 1]))
-                                .filter(team => table.some(element => element.id === team.id));
+                            // Peculiar cases for which we do not have to compare according to a specific tiebreaker
+                            // Essentially the case of the penalty shootout, if present, and the case of the final alphabetical order/drawing of random lots step
+                            switch (iteration.type) {
+                                case "shootout":
+                                    // Penalty shootout
+                                    if (this.sorting.shootout) {
+                                        const numberOfMatches = this.teams.length - 1;
+                                        const check = a.played == numberOfMatches && b.played == numberOfMatches;
+                                        const lastMatch = Array.from(this.matches.values()).filter(match => match.matchday == numberOfMatches).find(match => (match.home == a.id && match.away == b.id) || (match.home == b.id && match.away == a.id));
 
-                            // Additional overall criteria after the standard head-to-head / overall routine
-                            for (const tiebreaker of this.sorting.additional) {
-                                groups.forEach(group => group.length = 1);
-                                if (b[tiebreaker] != a[tiebreaker]) {
-                                    this.cycles[this.cycles.length - 1].type = "additional";
-                                    this.cycles[this.cycles.length - 1].criterion = tiebreaker;
-                                    return b[tiebreaker] - a[tiebreaker];
-                                }
-                            }
+                                        if (table.length == 2 &&
+                                            this.format == "round-robin" &&
+                                            check &&
+                                            lastMatch &&
+                                            lastMatch.home_for == lastMatch.away_for
+                                        ) {
+                                            const shootout = this.shootouts.find(shootout => (shootout[0] == a.id && shootout[1] == b.id) || (shootout[0] == b.id && shootout[1] == a.id));
 
-                            // If two teams that are still tied meet on the last matchday and their match is drawn, and sorting.shootout is set to true, then trigger a request for a shootout result
-                            if (this.sorting.shootout) {
-                                const numberOfMatches = this.teams.length - 1;
-                                const check = a.played == numberOfMatches && b.played == numberOfMatches;
-                                const lastMatch = Array.from(this.matches.values()).filter(match => match.matchday == numberOfMatches).find(match => (match.home == a.id && match.away == b.id) || (match.home == b.id && match.away == a.id));
+                                            if (shootout) {
+                                                const aTeam = shootout.findIndex(element => element == a.id);
+                                                const bTeam = shootout.findIndex(element => element == b.id);
+                                                let aShootout, bShootout;
+                                                if (aTeam == 0 && bTeam == 1) {
+                                                    aShootout = shootout[2];
+                                                    bShootout = shootout[3];
+                                                } else {
+                                                    aShootout = shootout[3];
+                                                    bShootout = shootout[2];
+                                                }
 
-                                if (table.length == 2 &&
-                                    this.format == "round-robin" &&
-                                    check &&
-                                    lastMatch &&
-                                    lastMatch.home_for == lastMatch.away_for
-                                ) {
-                                    const shootout = this.shootouts.find(shootout => (shootout[0] == a.id && shootout[1] == b.id) || (shootout[0] == b.id && shootout[1] == a.id));
-
-                                    if (shootout) {
-                                        const aTeam = shootout.findIndex(element => element == a.id);
-                                        const bTeam = shootout.findIndex(element => element == b.id);
-                                        let aShootout, bShootout;
-                                        if (aTeam == 0 && bTeam == 1) {
-                                            aShootout = shootout[2];
-                                            bShootout = shootout[3];
+                                                groups.forEach(group => group.length = 1);
+                                                this.cycles[this.cycles.length - 1].type = "shootout";
+                                                this.cycles[this.cycles.length - 1].criterion = "shootout";
+                                                return bShootout - aShootout;
+                                            } else {
+                                                groups.forEach(group => group.length = 1);
+                                                this.cycles[this.cycles.length - 1].type = "shootout";
+                                                this.cycles[this.cycles.length - 1].criterion = "provisional";
+                                                return Math.random() > 0.5 ? -1 : 1;
+                                            }
                                         } else {
-                                            aShootout = shootout[3];
-                                            bShootout = shootout[2];
-                                        }
-
-                                        groups.forEach(group => group.length = 1);
-                                        this.cycles[this.cycles.length - 1].type = "shootout";
-                                        this.cycles[this.cycles.length - 1].criterion = "shootout";
-                                        return bShootout - aShootout;
-                                    } else {
-                                        groups.forEach(group => group.length = 1);
-                                        this.cycles[this.cycles.length - 1].type = "shootout";
-                                        this.cycles[this.cycles.length - 1].criterion = "provisional";
-                                        return Math.random() > 0.5 ? -1 : 1;
-                                    }
-                                }
-                            }
-
-                            // Flags set by the user
-                            if (this.flags) {
-                                const aIndex = this.teams.findIndex(team => team == a.id);
-                                const bIndex = this.teams.findIndex(team => team == b.id);
-
-                                for (let i = 0; i < this.flags[0].length; i++) {
-                                    if (this.flags[bIndex][i] != this.flags[aIndex][i]) {
-                                        groups.forEach(group => group.length = 1);
-                                        this.cycles[this.cycles.length - 1].type = "flag";
-                                        this.cycles[this.cycles.length - 1].criterion = this.sorting.flags[i].name;
-                                        switch (this.sorting.flags[i].order) {
-                                            case "desc":
-                                                return this.flags[bIndex][i] - this.flags[aIndex][i];
-                                            case "asc":
-                                                return this.flags[aIndex][i] - this.flags[bIndex][i];
+                                            this.cycles[this.cycles.length - 1].type = "shootout";
+                                            this.cycles[this.cycles.length - 1].criterion = "none";
                                         }
                                     }
-                                }
-                            }
-
-                            // Drawing of random lots or alphabetical order
-                            groups.forEach(group => group.length = 1);
-                            switch (this.sorting.final) {
-                                case "lots":
-                                    this.cycles[this.cycles.length - 1].type = "lots";
-                                    return Math.random() > 0.5 ? -1 : 1;
-                                case "alphabetical":
-                                    this.cycles[this.cycles.length - 1].type = "alphabetical";
-                                    return a.id.localeCompare(b.id);
+                                    break;
+                                case "final":
+                                    // Drawing of random lots or alphabetical order
+                                    groups.forEach(group => group.length = 1);
+                                    switch (this.sorting.final) {
+                                        case "lots":
+                                            this.cycles[this.cycles.length - 1].type = "final";
+                                            this.cycles[this.cycles.length - 1].criterion = "lots";
+                                            return Math.random() > 0.5 ? -1 : 1;
+                                        case "alphabetical":
+                                            this.cycles[this.cycles.length - 1].type = "final";
+                                            this.cycles[this.cycles.length - 1].criterion = "alphabetical";
+                                            return a.id.localeCompare(b.id);
+                                    }
+                                    break;
                             }
                         }
                     }
                 }));
+            }
+
+            /*  SPECIAL ACTION
+                
+                Happens whenever the sorting type is head-to-head and the span is set to "single", and we are doing progress (i.e. one or more teams have broken away from the tie, indicated by the fact that groups, as the array of subtables, is of length greater then two): if it is so, then even before the run has completed we set it back to zero so to reapply the criteria from the beginning (points)
+
+                // Amended: now it is decided by whether or not the cycles have shortened with respect to the beginning of the run
+            */
+
+            const groupsCheck = (groups.length > 1 && groups.some(group => group.length > 1));
+            if (iteration.index >= 2 && this.sorting.h2h.span == "single" && iteration.type === "h2h" && groupsCheck) {
+                run = 0;
+                tiebreaker = criteria[0];
+                special = true;
             }
 
             // Step (5) of the algorithm
@@ -701,37 +721,75 @@ export default class LeagueTable {
                 This step also includes the triggering of "final" (see VARIABLES again) in case there is nothing coming up next (e.g. if a run of overall-type criteria reaches its limit while h2h.when was set to "before", and so those are already gone too).
                 */
 
-                let nextType;
-                const criteriaLimitReached = run > this.sorting.criteria.length - 2;
-                const finalize = () => final = true;
+                let nextType = iteration.type;
+                let nextCriteria = criteria;
+                const criteriaLimitReached = () => (tiebreaker == criteria[criteria.length - 1]);
+                const isProgress = () => (this.cycles[this.cycles.length - 1].snapshot.length != this.cycles[this.cycles.length - 1 - run].snapshot.length) ||
+                    (groups.length > 1 && groups.some(group => group.length > 1));
 
                 if (iteration.index === 0 && this.sorting.h2h.when === "before") {
                     // Point (a)
                     nextType = "h2h";
-                } else if (iteration.type === "overall" && criteriaLimitReached) {
+                } else if (iteration.type === "overall" && criteriaLimitReached()) {
                     if (this.sorting.h2h.when === "after") {
                         // Point (b)
                         nextType = "h2h";
                     } else if (this.sorting.h2h.when === "before" && !isProgress()) {
-                        finalize();
+
+                        if (this.sorting.additional.length > 0) {
+                            nextType = "additional";
+                            nextCriteria = this.sorting.additional;
+                        } else if (this.sorting.shootout) {
+                            nextType = "shootout";
+                        } else if (this.sorting.flags.length > 0) {
+                            nextType = "flags";
+                            nextCriteria = this.flagNames;
+                        } else {
+                            nextType = "final";
+                        }
                     }
-                } else if (iteration.type === "h2h" && criteriaLimitReached) {
-                    if (isProgress()) {
+                } else if (iteration.type === "h2h" && criteriaLimitReached()) {
+                    if (isProgress() && this.sorting.h2h.span != "none") {
+                        special = true;
                         nextType = iteration.type;
                     } else if (this.sorting.h2h.when === "before") {
                         // Point (c)
                         nextType = "overall";
                     } else {
-                        finalize();
+                        if (this.sorting.additional.length > 0) {
+                            nextType = "additional";
+                            nextCriteria = this.sorting.additional;
+                        } else if (this.sorting.shootout) {
+                            nextType = "shootout";
+                        } else if (this.sorting.flags.length > 0) {
+                            nextType = "flags";
+                            nextCriteria = this.flagNames;
+                        } else {
+                            nextType = "final";
+                        }
                     }
-                } else {
-                    // Otherwise we continue the run with the same type, as it has not ended yet
-                    nextType = iteration.type;
+                } else if (iteration.type === "additional" && criteriaLimitReached()) {
+                    if (this.sorting.shootout == true) {
+                        nextType = "shootout";
+                    } else if (this.sorting.flags.length > 0) {
+                        nextType = "flags";
+                        nextCriteria = this.flagNames;
+                    } else {
+                        nextType = "final";
+                    }
+                } else if (iteration.type === "shootout") {
+                    nextType = "flags";
+                    nextCriteria = this.flagNames;
+                } else if (iteration.type === "flags" && criteriaLimitReached()) {
+                    nextType = "final";
                 }
 
                 // Step (5) of the algorithm
                 if (group.length > 1) {
-                    sortAndDivideTable(group, { index: iteration.index + 1, type: nextType }, special, final);
+                    sortAndDivideTable(group,
+                        { index: iteration.index + 1, type: nextType },
+                        nextCriteria,
+                        special);
                 }
             });
 
@@ -759,11 +817,21 @@ export default class LeagueTable {
         sortAndDivideTable(standings, {
             index: 0,
             type: "overall"
-        });
+        }, this.sorting.criteria);
 
         switch (options) {
             case undefined:
-                return this.timeline[this.timeline.length - 1].map(({ away_for, away_won, ...rest }) => rest);
+                return this.timeline[this.timeline.length - 1].map(team => ({
+                    id: team.id,
+                    points: team.points,
+                    for: team.for,
+                    against: team.against,
+                    diff: team.diff,
+                    won: team.won,
+                    drawn: team.drawn,
+                    lost: team.lost,
+                    played: team.played
+                }));
             case "all":
                 return this.timeline[this.timeline.length - 1];
             default:
@@ -850,6 +918,25 @@ export default class LeagueTable {
             };
             this.information.push(information);
 
+            const getTypeString = (type) => {
+                switch (type) {
+                    case "h2h":
+                        return `${this.names.h2h} `;
+                    case "overall":
+                        return `${this.names.overall} `;
+                    case "flags":
+                        return ``;
+                    case "additional":
+                        return `${this.names.overall} `;
+                    default:
+                        return '';
+                }
+            }
+
+            const getSpecialString = (special, criteriaLength) => {
+                return special ? `[Reapplying criteria 1-${criteriaLength}] ` : ``;
+            }
+
             story.forEach((step, index) => {
                 const previous = story[index - 1];
 
@@ -858,6 +945,7 @@ export default class LeagueTable {
                     information.messages.push(`${formatNames(step.snapshot.map(team => team.id).sort())} are tied on ${this.names.points} (${this.cycles[0].snapshot.filter(team => step.snapshot.map(team => team.id).some(element => element == team.id))[0].points}).`);
                 }
 
+                // Then, every time the length of the teams array being considered in the story step gets shortened, we print the data relative to the previous step as evidently that's where some teams got broken off
                 if (index > 0 && step.snapshot.length < previous.snapshot.length) {
                     const snapshot = previous.snapshot;
                     const criterion = previous.criterion;
@@ -869,41 +957,23 @@ export default class LeagueTable {
                     const sorted = snapshot.filter(team => pointsCount[team[criterion]] === 1);
 
                     // Whenever, while going through the history of the steps that eventually separated two teams, there were more than just two teams at the start, and then from a certain step to the next they became fewer, this means that some of the teams broke away and were sorted at that step, and so we stop to describe this fact
-                    let type;
-
-                    switch (story[story.length - 1].type) {
-                        case "h2h":
-                            type = `${this.names.h2h} `;
-                            break;
-                        case "overall":
-                            type = `${this.names.overall} `;
-                            break;
-                        case "additional":
-                            type = `${this.names.overall} `;
-                            break;
-                    }
+                    const type = getTypeString(previous.type);
+                    const special = getSpecialString(previous.special, this.sorting.criteria.length);
+                    const criterionName = this.names[criterion] ?? criterion.replace(/_/g, ' ');
 
                     if (sorted.length == 1) {
-                        information.messages.push(`The position of ${formatNames([sorted[0].id])} is decided on ${type}${this.names[criterion]} (${snapshot.sort((a, b) => { return b[criterion] - a[criterion] }).map(team => `${team.id}: ${team[criterion]}`).join('; ')}).`);
+                        information.messages.push(`${special}The position of ${formatNames([sorted[0].id])} is decided on ${type}${criterionName} (${snapshot.sort((a, b) => { return b[criterion] - a[criterion] }).map(team => `${team.id}: ${team[criterion]}`).join('; ')}).`);
                     } else if (sorted.length > 1) {
-                        information.messages.push(`${formatNames(sorted.map(team => team.id).sort())} are sorted on ${type}${this.names[criterion]} (${snapshot.sort((a, b) => { return b[criterion] - a[criterion] }).map(team => `${team.id}: ${team[criterion]}`).join('; ')}).`);
+                        information.messages.push(`${special}${formatNames(sorted.map(team => team.id).sort())} are sorted on ${type}${criterionName} (${snapshot.sort((a, b) => { return b[criterion] - a[criterion] }).map(team => `${team.id}: ${team[criterion]}`).join('; ')}).`);
                     }
                 }
             });
 
-            let type;
-
-            switch (last.type) {
-                case "h2h":
-                    type = `${this.names.h2h} `;
-                    break;
-                case "overall":
-                    type = `${this.names.overall} `;
-                    break;
-                case "additional":
-                    type = `${this.names.overall} `;
-                    break;
-            }
+            const type = getTypeString(last.type);
+            const special = getSpecialString(last.special, this.sorting.criteria.length);
+            const criterionName = this.names[last.criterion] ?? (last.criterion ?
+                last.criterion.replace(/_/g, ' ') :
+                null);
 
             switch (last.type) {
                 case "shootout":
@@ -924,20 +994,26 @@ export default class LeagueTable {
                     }
                     break;
                 case "flag":
-                    information.messages.push(`After running though all criteria, ${formatNames(last.snapshot.map(team => team.id).sort())} are sorted on ${last.criterion} (${last.snapshot.map(team => {
+                    information.messages.push(`${formatNames(last.snapshot.map(team => team.id).sort())} are sorted on ${last.criterion} (${last.snapshot.map(team => {
                         const flagIndex = this.sorting.flags.findIndex(flag => flag.name == last.criterion);
                         return `${team.id}: ${this.flags[this.teams.findIndex(element => element == team.id)][flagIndex]}`;
                     }).join('; ')}).`);
                     break;
-                case "lots":
-                    information.messages.push(`After running though all criteria, ${formatNames(last.snapshot.map(team => team.id).sort())} are sorted ${this.names.lots}.`);
+                case "final":
+                    information.messages.push(`${formatNames(last.snapshot.map(team => team.id).sort())} are sorted on ${last.criterion == "lots" ? this.names.lots : this.names.alphabetical
+                        }.`);
                     break;
                 case "alphabetical":
-                    information.messages.push(`After running though all criteria, ${formatNames(last.snapshot.map(team => team.id).sort())} are sorted ${this.names.alphabetical}.`);
+                    information.messages.push(`${formatNames(last.snapshot.map(team => team.id).sort())} are sorted on ${this.names.alphabetical}.`);
+                    break;
+                case "additional":
+                    information.messages.push(`${special}${formatNames(last.snapshot.map(team => team.id).sort())} are sorted on ${type}${criterionName} (${this.timeline[0].filter(team => last.snapshot.map(element => element.id).includes(team.id)).sort((a, b) => {
+                        return this.timeline[0].find(team => team.id == b.id)[last.criterion] - this.timeline[0].find(team => team.id == a.id)[last.criterion]
+                    }).map(team => `${team.id}: ${team[last.criterion]}`).join('; ')}).`);
                     break;
                 default:
                     // However, in general, this is the step that describes any *normal* sorting of two teams, if we are not in any of the other special cases illustrated above or in the other cases of this switch statement
-                    information.messages.push(`${formatNames(last.snapshot.map(team => team.id).sort())} are sorted on ${type}${this.names[last.criterion]} (${last.snapshot.sort((a, b) => { return b[last.criterion] - a[last.criterion] }).map(team => `${team.id}: ${team[last.criterion]}`).join('; ')}).`);
+                    information.messages.push(`${special}${formatNames(last.snapshot.map(team => team.id).sort())} are sorted on ${type}${criterionName} (${last.snapshot.sort((a, b) => { return b[last.criterion] - a[last.criterion] }).map(team => `${team.id}: ${team[last.criterion]}`).join('; ')}).`);
                     break;
             }
         });

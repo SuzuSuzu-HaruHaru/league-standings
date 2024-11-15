@@ -68,7 +68,7 @@ See [**`shootout`**](https://github.com/SuzuSuzu-HaruHaru/league-standings?tab=r
 |------------------------|--------------------------------------------------------------------|
 | **Description**        | Retrieves the standings, as computed from the matches.             |
 | **Expected input**     | Either none or the string `"all"`.                                 |
-| **Expected output**    | An array of objects with keys `id`, `points`, `for`, `against`, `diff`, `won`, `drawn`, `lost`, `played` (additionally `away_for`, `away_won` if the input is set to `"all"`). |
+| **Expected output**    | An array of objects with keys `id`, `points`, `for`, `against`, `diff`, `won`, `drawn`, `lost`, `played` (additionally `away_for`, `away_won` and any other user-submitted flag if the input is set to `"all"`). |
 
 The array in question will already be ordered as per the final standings of the league; for example, calling `table.standings()[2].for` on an `table` object of type `LeagueTable` will retrieve the number of goals scored by the team that placed third in the league (as per usual, Javascript arrays are zero-indexed so the third element in the array is accessible via the index two).
 

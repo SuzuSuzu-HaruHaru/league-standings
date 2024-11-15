@@ -12,7 +12,7 @@ where the input object must have the following compulsory key.
 |                        |                                                                |
 |------------------------|----------------------------------------------------------------|
 | **Description**        | The list of the teams that are taking part in the league.      |
-| **Expected value**     | An array of unique identifiers of any type.                    |
+| **Expected value**     | An array of unique identifiers of any type, or an array of objects with keys `"team"` and `"flags"` where the values of the first keys are unique identifiers of any type, while the values of the second key are arrays of integers all of which have the same length that is equal to the length of `sorting.flags`. |
 | **Compulsory**         | **Yes.**                                                       |
 
 It is best if `teams` is an array of strings comprising of the (unique) names of the teams involved, but any other type of unique identifier works; repeated entries **will throw an error** of type
@@ -20,6 +20,8 @@ It is best if `teams` is an array of strings comprising of the (unique) names of
 ```
 Team identifiers must be unique.
 ```
+Notice that explicitly submitting [`sorting.flags`](#optional-subkey-flags) as a nonempty array will require `teams` to be an array of objects as opposed to an array of strings; this includes circumstances in which `sorting` is decided via a keyword (e.g. `"FIFA World Cup"`) that is defined in the code to have a nonempty `sorting.flags` array (see [`sorting`](#optional-key-sorting) down below for a list of the default kewords, as well as the flags associated with them).
+
 Additionally, the starting object may have any of the following optional keys.
 
 ## Optional key `format`
@@ -83,7 +85,7 @@ messages: [
 | **Compulsory**         | No.                                                                |
 | **Default**            | *See below*                                                        |
 
-When wanting to initialize the `sorting` key to a preset corresponding to a real-world tournament, then the above accepts either the string `"FIFA World Cup"`, the string `"UEFA Euro"`, the string `"pre-2021 UEFA Champions League"` or the string `"2021-2024 UEFA Champions League"`; leaving out this key during object creation will default it to the object
+When wanting to initialize the `sorting` key to a preset corresponding to a real-world tournament, then the above accepts either the string `"FIFA World Cup"` (accepts a single [flag](#optional-subkey-flags): fair play points), the string `"UEFA Euro"` (accepts two flags: disciplinary points and European Qualifiers overall ranking), the string `"pre-2021 UEFA Champions League"` or the string `"2021-2024 UEFA Champions League"` (each accepting two flags: disciplinary points and UEFA club coefficient); leaving out this key during object creation will default it to the object
 
 ```js
 {
@@ -115,7 +117,7 @@ The criteria correspond respectively to the goal difference, the number of goals
 |                        |                                                                    |
 |------------------------|--------------------------------------------------------------------|
 | **Description**        | Handles the head-to-head section of the sorting procedure.         |
-| **Expected value**     | An object with keys `when` (accepting only either the string `"before"` or the string `"after"`) and `span` (accepting only either the string `"all"` or the string `"single"`). |
+| **Expected value**     | An object with keys `when` (accepting only either the string `"before"` or the string `"after"`) and `span` (accepting only either the string `"all"` the string `"single"`, or the string `"none"`). |
 | **Compulsory**         | **Yes** if `sorting` is specified explicitly as an object.         |
 
 See [**Head-to-head v. overall**](https://github.com/SuzuSuzu-HaruHaru/league-standings?tab=readme-ov-file#head-to-head-v-overall) and [**Head-to-head reapplication**](https://github.com/SuzuSuzu-HaruHaru/league-standings?tab=readme-ov-file#head-to-head-reapplication) on Github for a pratical explanation of the real-world effects that these parameters have.

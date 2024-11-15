@@ -120,6 +120,8 @@ But here is the catch: according to official European Championship regulations, 
 
 **Whether the full list of criteria is expected to run out before resetting the head-to-head procedure is decided by the `sorting.h2h.span` key,** which can take the string value `"all"` to signify the style that we have just seen (the one where we must wait until all criteria are applied before re-evaluating any head-to-head sub-tables) or the string value `"single"` to mean the opposite, i.e. the case when head-to-head restarts from the beginning every single time some teams separate from others (basically the same line of reasoning that, in our fictional example, had made Belgium the winner of the group).
 
+Notice, however, how some competitions do not have this provision at all: the FIFA World Cup is one prime example, where head-to-head criteria apply after the overall one but there is no requirement to restart them at any point should they only help to separate some teams, but not others. This behavior can be replicated via the third and last accepted value, `"none"`.
+
 ### Optional sorting keys
 
 In addition to the subkeys seen above, that are required whenever the `sorting` key is stated explicitly as an object, there are some more that may or may not be provided when initializing the object.
@@ -243,7 +245,7 @@ with `.ties()` now saying
 
 ### Displaying a description of how ties were broken via `.ties()`
 
-- There is currently one point of improvement that I would like to focus on next: the `additional`, `shootout`, `flag` and `final` steps all count as one step, meaning that if more than two teams are involved and some of them are separated by one of these steps while the others are separated by another, only one message will be displayed. ***The teams will be sorted correctly in any case,*** but it is the text description that is insufficient in this scenario.
+~~- There is currently one point of improvement that I would like to focus on next: the `additional`, `shootout`, `flag` and `final` steps all count as one step, meaning that if more than two teams are involved and some of them are separated by one of these steps while the others are separated by another, only one message will be displayed. ***The teams will be sorted correctly in any case,*** but it is the text description that is insufficient in this scenario.~~ **(solved as of v.1.0.2)**
 
 ## Helping with the package
 
