@@ -1,0 +1,864 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      
+        <link rel="next" href="methods/">
+      
+      
+      <link rel="icon" href="assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.44">
+    
+    
+      
+        <title>league-standings</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.0253249f.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="purple">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#instantiation" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="." title="league-standings" class="md-header__button md-logo" aria-label="league-standings" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            league-standings
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Instantiation
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="purple"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6m0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4M7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="pink" data-md-color-accent="yellow"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="." class="md-tabs__link">
+        
+  
+    
+  
+  Instantiation
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="methods/" class="md-tabs__link">
+        
+  
+    
+  
+  Methods
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="." title="league-standings" class="md-nav__button md-logo" aria-label="league-standings" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    league-standings
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Instantiation
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="." class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Instantiation
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#key-teams" class="md-nav__link">
+    <span class="md-ellipsis">
+      Key teams
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#optional-key-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      Optional key format
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#optional-key-points" class="md-nav__link">
+    <span class="md-ellipsis">
+      Optional key points
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#optional-key-names" class="md-nav__link">
+    <span class="md-ellipsis">
+      Optional key names
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#optional-key-sorting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Optional key sorting
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Optional key sorting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#subkey-criteria" class="md-nav__link">
+    <span class="md-ellipsis">
+      Subkey criteria
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subkey-h2h" class="md-nav__link">
+    <span class="md-ellipsis">
+      Subkey h2h
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subkey-final" class="md-nav__link">
+    <span class="md-ellipsis">
+      Subkey final
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optional-subkey-additional" class="md-nav__link">
+    <span class="md-ellipsis">
+      Optional subkey additional
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optional-subkey-shootout" class="md-nav__link">
+    <span class="md-ellipsis">
+      Optional subkey shootout
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optional-subkey-flags" class="md-nav__link">
+    <span class="md-ellipsis">
+      Optional subkey flags
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="methods/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Methods
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="instantiation">Instantiation</h1>
+<p>A new league table can be created via</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="ow">new</span><span class="w"> </span><span class="nx">LeagueTable</span><span class="p">(</span><span class="o">&lt;</span><span class="nb">Object</span><span class="o">&gt;</span><span class="p">);</span>
+</code></pre></div>
+where the input object must have the following compulsory key.</p>
+<h2 id="key-teams">Key <code>teams</code></h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Description</strong></td>
+<td>The list of the teams that are taking part in the league.</td>
+</tr>
+<tr>
+<td><strong>Expected value</strong></td>
+<td>An array of unique identifiers of any type, or an array of objects with keys <code>"team"</code> and <code>"flags"</code> where the values of the first keys are unique identifiers of any type, while the values of the second key are arrays of integers all of which have the same length that is equal to the length of <code>sorting.flags</code>.</td>
+</tr>
+<tr>
+<td><strong>Compulsory</strong></td>
+<td><strong>Yes.</strong></td>
+</tr>
+</tbody>
+</table>
+<p>It is best if <code>teams</code> is an array of strings comprising of the (unique) names of the teams involved, but any other type of unique identifier works; repeated entries <strong>will throw an error</strong> of type</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Team identifiers must be unique.
+</code></pre></div>
+Notice that explicitly submitting <a href="#optional-subkey-flags"><code>sorting.flags</code></a> as a nonempty array will require <code>teams</code> to be an array of objects as opposed to an array of strings; this includes circumstances in which <code>sorting</code> is decided via a keyword (e.g. <code>"FIFA World Cup"</code>) that is defined in the code to have a nonempty <code>sorting.flags</code> array (see <a href="#optional-key-sorting"><code>sorting</code></a> down below for a list of the default kewords, as well as the flags associated with them).</p>
+<p>Additionally, the starting object may have any of the following optional keys.</p>
+<h2 id="optional-key-format">Optional key <code>format</code></h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Description</strong></td>
+<td>Whether the league is played as round-robin or home-and-away.</td>
+</tr>
+<tr>
+<td><strong>Expected value</strong></td>
+<td>Either the string <code>"round-robin"</code> or the string <code>"home-and-away"</code>.</td>
+</tr>
+<tr>
+<td><strong>Compulsory</strong></td>
+<td>No.</td>
+</tr>
+<tr>
+<td><strong>Default</strong></td>
+<td><code>"round-robin"</code></td>
+</tr>
+</tbody>
+</table>
+<p>A <code>"round-robin"</code> league is one where the teams face each other only once; a <code>"home-and-away"</code> league is one in which teams face each other exactly twice (once at home and once away).</p>
+<h2 id="optional-key-points">Optional key <code>points</code></h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Description</strong></td>
+<td>How to calculate the points that teams get after every match.</td>
+</tr>
+<tr>
+<td><strong>Expected value</strong></td>
+<td>Either the string <code>"standard"</code> or the string <code>"old"</code>, or alternatively any function that accepts exactly three arguments (number of games won, number of games drawn, number of games lost).</td>
+</tr>
+<tr>
+<td><strong>Compulsory</strong></td>
+<td>No.</td>
+</tr>
+<tr>
+<td><strong>Default</strong></td>
+<td><code>"standard"</code></td>
+</tr>
+</tbody>
+</table>
+<p>The <code>"standard"</code> points system corresponds to the current one used in football that awards three points for a win, one for a draw and none for a loss, whereas the <code>"old"</code> one is the one used by FIFA before 1994 that awarded only two points for a win, one for a draw and none for a loss.</p>
+<p>A function can also be passed as a value for <code>points</code></p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kd">const</span><span class="w"> </span><span class="nx">table</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">LeagueTable</span><span class="p">({</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="c1">// ...</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="nx">points</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">w</span><span class="p">,</span><span class="w"> </span><span class="nx">d</span><span class="p">,</span><span class="w"> </span><span class="nx">l</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="mf">3</span><span class="o">*</span><span class="nx">w</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="p">});</span>
+</code></pre></div>
+where for example wins would still be worth three points here, but draws would not contribute anything.</p>
+<h2 id="optional-key-names">Optional key <code>names</code></h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Description</strong></td>
+<td>Specifies what terms are to be used when requiring a description of the ties.</td>
+</tr>
+<tr>
+<td><strong>Expected value</strong></td>
+<td>An object with either of the keys <code>points</code>, <code>diff</code>, <code>for</code>, <code>won</code>, <code>away_for</code>, <code>away_won</code>, <code>lots</code>, <code>alphabetical</code>, <code>h2h</code>, <code>overall</code>, each of which accepting a string as a value.</td>
+</tr>
+<tr>
+<td><strong>Compulsory</strong></td>
+<td>No.</td>
+</tr>
+<tr>
+<td><strong>Default</strong></td>
+<td><em>See below</em></td>
+</tr>
+</tbody>
+</table>
+<p>If any of the keys in <code>names</code> are not specified, or if the whole key is absent, each unspecified term will default respectively to <code>"points"</code>, <code>"goal difference"</code>, <code>"number of goals scored"</code>, <code>"number of games won"</code>, <code>"number of goals scored away from home"</code>, <code>"number of games won away from home"</code>, <code>"drawing of random lots"</code>, <code>"the alphabetical order of their names"</code>, <code>"head-to-head"</code> and <code>"overall"</code>.</p>
+<p>For example, writing <code>names: { points: "the amount of points earned", lots: "at random" }</code> will have this effect when <code>.ties()</code> is called</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nx">messages</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span><span class="s1">&#39;Italy and Spain are tied on the amount of points earned (4).&#39;</span><span class="p">,</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="s1">&#39;Italy and Spain are sorted at random.&#39;</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="p">]</span>
+</code></pre></div>
+<h2 id="optional-key-sorting">Optional key <code>sorting</code></h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Description</strong></td>
+<td>How the teams are to be sorted if they are even on points.</td>
+</tr>
+<tr>
+<td><strong>Expected value</strong></td>
+<td>Either a default string keyword or an object (<em>See below</em>)</td>
+</tr>
+<tr>
+<td><strong>Compulsory</strong></td>
+<td>No.</td>
+</tr>
+<tr>
+<td><strong>Default</strong></td>
+<td><em>See below</em></td>
+</tr>
+</tbody>
+</table>
+<p>When wanting to initialize the <code>sorting</code> key to a preset corresponding to a real-world tournament, then the above accepts either the string <code>"FIFA World Cup"</code> (accepts a single <a href="#optional-subkey-flags">flag</a>: fair play points), the string <code>"UEFA Euro"</code> (accepts two flags: disciplinary points and European Qualifiers overall ranking), the string <code>"pre-2021 UEFA Champions League"</code> or the string <code>"2021-2024 UEFA Champions League"</code> (each accepting two flags: disciplinary points and UEFA club coefficient); leaving out this key during object creation will default it to the object</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="p">{</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span><span class="nx">criteria</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;diff&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;for&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;won&quot;</span><span class="p">],</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="nx">h2h</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">        </span><span class="nx">when</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;before&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">        </span><span class="nx">span</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;all&quot;</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">    </span><span class="p">},</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">    </span><span class="nx">additional</span><span class="o">:</span><span class="w"> </span><span class="p">[],</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">    </span><span class="nx">shootout</span><span class="o">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">    </span><span class="nx">flags</span><span class="o">:</span><span class="w"> </span><span class="p">[],</span>
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">    </span><span class="kr">final</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;lots&quot;</span>
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="p">}</span>
+</code></pre></div>
+In all other circumstances, <code>sorting</code> will accept an object with the following compulsory keys (see also the <a href="https://github.com/SuzuSuzu-HaruHaru/league-standings?tab=readme-ov-file#tiebreakers-and-sorting-options"><strong>Tiebreakers and sorting options</strong></a> section from the <code>README.md</code> file over on Github for the practical explanation of the phenomena some of these keys model).</p>
+<h3 id="subkey-criteria">Subkey <code>criteria</code></h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Description</strong></td>
+<td>The list of criteria that will be applied one after the other to sort teams that are equal on points.</td>
+</tr>
+<tr>
+<td><strong>Expected value</strong></td>
+<td>An array containing any of the strings <code>"diff"</code>, <code>"for"</code>, <code>"won"</code>, <code>"away_for"</code>, <code>"away_won"</code>.</td>
+</tr>
+<tr>
+<td><strong>Compulsory</strong></td>
+<td><strong>Yes</strong> if <code>sorting</code> is specified explicitly as an object.</td>
+</tr>
+</tbody>
+</table>
+<p>The criteria correspond respectively to the goal difference, the number of goals scored, the number of games won, the number of goals scored away from home and the number of games won away from home.</p>
+<h3 id="subkey-h2h">Subkey <code>h2h</code></h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Description</strong></td>
+<td>Handles the head-to-head section of the sorting procedure.</td>
+</tr>
+<tr>
+<td><strong>Expected value</strong></td>
+<td>An object with keys <code>when</code> (accepting only either the string <code>"before"</code> or the string <code>"after"</code>) and <code>span</code> (accepting only either the string <code>"all"</code> the string <code>"single"</code>, or the string <code>"none"</code>).</td>
+</tr>
+<tr>
+<td><strong>Compulsory</strong></td>
+<td><strong>Yes</strong> if <code>sorting</code> is specified explicitly as an object.</td>
+</tr>
+</tbody>
+</table>
+<p>See <a href="https://github.com/SuzuSuzu-HaruHaru/league-standings?tab=readme-ov-file#head-to-head-v-overall"><strong>Head-to-head v. overall</strong></a> and <a href="https://github.com/SuzuSuzu-HaruHaru/league-standings?tab=readme-ov-file#head-to-head-reapplication"><strong>Head-to-head reapplication</strong></a> on Github for a pratical explanation of the real-world effects that these parameters have.</p>
+<h3 id="subkey-final">Subkey <code>final</code></h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Description</strong></td>
+<td>How to sort the teams after every other criterion has proven inconclusive.</td>
+</tr>
+<tr>
+<td><strong>Expected value</strong></td>
+<td>Either the string <code>"lots"</code> or the string <code>"alphabetical"</code>.</td>
+</tr>
+<tr>
+<td><strong>Compulsory</strong></td>
+<td><strong>Yes</strong> if <code>sorting</code> is specified explicitly as an object.</td>
+</tr>
+</tbody>
+</table>
+<p>The value <code>"lots"</code> indicates that the last criterion of all has to be a drawing of random lots, whereas <code>"alphabetical"</code> indicates that it should simply be the alphabetical order of their names.</p>
+<p>Additionally, the <code>sorting</code> key object may have any of the following optional subkeys.</p>
+<h3 id="optional-subkey-additional">Optional subkey <code>additional</code></h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Description</strong></td>
+<td>A list of criteria that has to be applied after both the overall and head-to-head ones have proven inconclusive.</td>
+</tr>
+<tr>
+<td><strong>Expected value</strong></td>
+<td>Same as with <code>criteria</code>.</td>
+</tr>
+<tr>
+<td><strong>Compulsory</strong></td>
+<td>No.</td>
+</tr>
+<tr>
+<td><strong>Default</strong></td>
+<td>[] <em>(the empty array)</em></td>
+</tr>
+</tbody>
+</table>
+<p>See also <a href="https://github.com/SuzuSuzu-HaruHaru/league-standings?tab=readme-ov-file#additional"><strong><code>additional</code></strong></a> on Github.</p>
+<h3 id="optional-subkey-shootout">Optional subkey <code>shootout</code></h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Description</strong></td>
+<td>Whether the league uses the rule according to which, if the league is round-robin <em>and</em> exactly two teams are tied on points <em>and</em> they meet on the last matchday <em>and</em> their game is drawn, then their position in the league is decided via a penalty shoot-out that takes place at the end of that game.</td>
+</tr>
+<tr>
+<td><strong>Expected value</strong></td>
+<td>A boolean.</td>
+</tr>
+<tr>
+<td><strong>Compulsory</strong></td>
+<td>No.</td>
+</tr>
+<tr>
+<td><strong>Default</strong></td>
+<td><code>false</code></td>
+</tr>
+</tbody>
+</table>
+<p>See also <a href="https://github.com/SuzuSuzu-HaruHaru/league-standings?tab=readme-ov-file#shootout"><strong><code>shootout</code></strong></a> on Github.</p>
+<h3 id="optional-subkey-flags">Optional subkey <code>flags</code></h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Description</strong></td>
+<td>Lets the user create <em>flags</em>, i.e. objects with a name and an ordering rule, that can be used to sort teams when all else fails right before sorting alphabetically or drawing lots.</td>
+</tr>
+<tr>
+<td><strong>Expected value</strong></td>
+<td>An array of obects with keys <code>name</code> (accepting a string) and <code>order</code> (accepting only either the string <code>"asc"</code> or the string <code>"desc"</code>).</td>
+</tr>
+<tr>
+<td><strong>Compulsory</strong></td>
+<td>No.</td>
+</tr>
+<tr>
+<td><strong>Default</strong></td>
+<td>[] <em>(the empty array)</em></td>
+</tr>
+</tbody>
+</table>
+<p>See also <a href="https://github.com/SuzuSuzu-HaruHaru/league-standings?tab=readme-ov-file#flags"><strong><code>flags</code></strong></a> on Github.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2024 <a href="https://github.com/SuzuSuzu-HaruHaru"  target="_blank" rel="noopener">SuzuSuzu-HaruHaru</a>
+
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": ".", "features": ["navigation.tabs", "navigation.sections", "toc.integrate", "navigation.top", "search.suggest", "search.highlight", "content.tabs.link", "content.code.annotation", "content.code.copy"], "search": "assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="assets/javascripts/bundle.83f73b43.min.js"></script>
+      
+    
+  </body>
+</html>
