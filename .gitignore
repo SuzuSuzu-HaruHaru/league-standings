@@ -7,7 +7,6 @@ tests/
 .npmignore
 *.config.js
 *.test.js
-.babelrc
 venv/
 .venv/
 env/
