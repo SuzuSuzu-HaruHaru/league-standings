@@ -1,11 +1,16 @@
-name: ci 
+name: Deploy MKDocs to GitHub Pages
+
 on:
   push:
     branches:
-      - master 
+      - master
       - main
+    paths:
+      - 'docs/**/*.md'
+
 permissions:
   contents: write
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
