@@ -251,6 +251,10 @@ with `.ties()` now saying
 
 As I am essentially an amateur developer, this is my first JavaScript package ever. Whether I have the ability to keep up with it, let alone deliver something good, remains to be seen: but you can feel free to signal any bugs that you find, or request a feature that you think might be cool to implement, or generally help with the code however you see fit. There is certainly *a lot* of room for improvement!
 
+If you want to act directly on the code, keep in mind that the `tests/` folder contains a list of examples (both real-world and custom-created) meant to run in [Jest](https://www.npmjs.com/package/jest); to work with it, after having cloned this repository and run `npm install` to get all the development dependencies needed (Jest included), simply hit `npm test`: you will see that (as the package currently stands) all tests will be marked as passed. Make sure to always run this command after modifying the package to check that the tests still work properly: this is of course not a *sufficient* condition (a success in all tests does not guarantee there are no more subtle bugs anywhere, even in the present code)—but it is certainly a *necessary* one, as any version of the code must at the very least sort teams correctly in all those instances.
+
+Contributing by adding more real-world or custom-created examples in the style that is already shown in the test files is also greatly appreciated!
+
 ## Documentation
 
 The documentation is currently a work in progress, but a [tentative version of it](https://suzusuzu-haruharu.github.io/league-standings/) is hosted on Github Pages. Feel free to check it out, mainly to know what type of sorting criteria you have available, or which competitions already have their default rules labeled under a keyword, or generally how every method and the object initialization exactly work!
