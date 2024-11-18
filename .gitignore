@@ -3,12 +3,8 @@ debug/
 dist/
 examples/
 node_modules/
-tests/
 .npmignore
 *.config.js
-*.test.js
 venv/
 .venv/
 env/
-__pycache__/
-*.py[cod]
