@@ -120,7 +120,7 @@ But here is the catch: according to official European Championship regulations, 
 
 **Whether the full list of criteria is expected to run out before resetting the head-to-head procedure is decided by the `sorting.h2h.span` key,** which can take the string value `"all"` to signify the style that we have just seen (the one where we must wait until all criteria are applied before re-evaluating any head-to-head sub-tables) or the string value `"single"` to mean the opposite, i.e. the case where head-to-head checks restart from the beginning every single time some teams separate from others (basically the same line of reasoning that, in our fictional example, had made Belgium the winner of the group).
 
-Notice, however, how some competitions do not have this provision at all: the FIFA World Cup is one prime example, where head-to-head criteria apply after the overall one but there is no requirement to restart them at any point should they only help to separate some teams, but not others. This behavior can be replicated via the third and last accepted value, `"none"`.
+Notice, however, how some competitions do not have this provision at all: the FIFA World Cup is one prime example, where head-to-head criteria apply after the overall ones but there is no requirement to restart them at any point should they only help to separate some teams, but not others. This behavior can be replicated via the third and last accepted value, `"none"`.
 
 ### Optional sorting keys
 
